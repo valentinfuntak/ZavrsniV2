@@ -1,5 +1,5 @@
 import { createSignal } from 'solid-js';
-import supabase from '../Backend/supabaseClient'; // Vaš Supabase client
+import supabase from '../Backend/supabaseClient'; 
 import Plane from "../assets/planefav.png";
 
 function Prijava(props) {
@@ -9,7 +9,6 @@ function Prijava(props) {
     const [loading, setLoading] = createSignal(false);
     const [rememberMe, setRememberMe] = createSignal(false);
 
-    // Funkcija za prijavu korisnika
     const handleLogin = async (e) => {
         e.preventDefault();
         setLoading(true);
@@ -22,13 +21,13 @@ function Prijava(props) {
             });
 
             if (signInError) {
-                setError(signInError.message);
+                setError("Podaci koji ste unjeli nisu ispravni.");
+                console.log(signInError);
                 setLoading(false);
                 return;
             }
 
-            // Ako je prijava uspješna, preusmjerite korisnika na početnu stranicu
-            window.location.href = '/#/pocetna';  // Preusmjerava na početnu stranicu
+            window.location.href = '/#/pocetna'; 
         } catch (err) {
             setError('Došlo je do pogreške pri prijavi.');
         } finally {
@@ -104,7 +103,7 @@ function Prijava(props) {
                                     {loading() ? 'Prijava...' : 'Prijava'}
                                 </button>
                                 <p class="text-sm font-light text-gray-500 dark:text-gray-400">
-                                    Nemate račun? <a href="/#/registracija" class="font-medium text-primary-600 hover:underline dark:text-primary-500">Registracija</a>
+                                    Nemate račun? <a href="/" class="font-medium text-primary-600 hover:underline dark:text-primary-500">Registracija</a>
                                 </p>
                             </form>
                         </div>

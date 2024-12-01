@@ -1,6 +1,22 @@
+import { createSignal } from "solid-js";
+
 import Plane from "../assets/planefav.png"
 
 export default function MainLayout(props) {
+
+    const [isUserDropdownOpen, setUserDropdownOpen] = createSignal(false);
+    const [isNavbarDropdownOpen, setNavbarDropdownOpen] = createSignal(false);
+
+    const toggleUserDropdown = () => {
+        setUserDropdownOpen(!isUserDropdownOpen());
+        setNavbarDropdownOpen(false);
+    };
+    
+    const toggleNavbarDropdown = () => {
+        setNavbarDropdownOpen(!isNavbarDropdownOpen());
+        setUserDropdownOpen(false); 
+    };
+
     return (
         <>
             {/*PRIKAZ ZAGLAVLJE*/}
@@ -10,54 +26,117 @@ export default function MainLayout(props) {
                         <img src={Plane} class="h-8" alt="Flowbite Logo" />
                         <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">Plane Spotter</span>
                     </a>
-                    <div class="flex items-center md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
-                        <button type="button" class="flex text-sm bg-gray-800 rounded-full md:me-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600" id="user-menu-button" aria-expanded="false" data-dropdown-toggle="user-dropdown" data-dropdown-placement="bottom">
+                    <div class="flex items-center md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse relative">
+                        <button
+                            type="button"
+                            class="flex text-sm bg-gray-800 rounded-full md:me-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
+                            id="user-menu-button"
+                            aria-expanded="false"
+                            onClick={toggleUserDropdown}
+                        >
                             <span class="sr-only">Open user menu</span>
                             <img class="w-8 h-8 rounded-full" src={Plane} alt="user photo" />
                         </button>
 
-                        <div class="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600" id="user-dropdown">
-                            <div class="px-4 py-3">
-                                <span class="block text-sm text-gray-900 dark:text-white">Korisnik</span>
-                                <span class="block text-sm  text-gray-500 truncate dark:text-gray-400">name@flowbite.com</span>
+                        {/* User Dropdown menu */}
+                        {isUserDropdownOpen() && (
+                            <div
+                                id="user-dropdown"
+                                class="absolute left-0 top-full mt-2 z-50 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600"
+                            >
+                                <div class="px-4 py-3">
+                                    <span class="block text-sm text-gray-900 dark:text-white">Korisnik</span>
+                                    <span class="block text-sm text-gray-500 truncate dark:text-gray-400">
+                                        name@flowbite.com
+                                    </span>
+                                </div>
+                                <ul class="py-2" aria-labelledby="user-menu-button">
+                                    <li>
+                                        <a
+                                            href="/Pocetna"
+                                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
+                                        >
+                                            Pocetna
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a
+                                            href="/Postavke"
+                                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
+                                        >
+                                            Postavke
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a
+                                            href="#"
+                                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
+                                        >
+                                            Odjava
+                                        </a>
+                                    </li>
+                                </ul>
                             </div>
-                            <ul class="py-2" aria-labelledby="user-menu-button">
-                                <li>
-                                    <a href="/" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Pocetna</a>
-                                </li>
-                                <li>
-                                    <a href="/Postavke" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Postavke</a>
-                                </li>
-                                <li>
-                                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Odjava</a>
-                                </li>
-                            </ul>
-                        </div>
+                        )}
                     </div>
 
                     <div class="items-center justify-between hidden w-full md:flex md:w-auto md:order-1" id="navbar-user">
                         <ul class="flex flex-col font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
                             <li>
-                                <a href="/" class="block py-2 px-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 md:dark:text-blue-500" aria-current="page">Pocetna</a>
+                                <a href="/Pocetna" class="block py-2 px-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 md:dark:text-blue-500" aria-current="page">Pocetna</a>
                             </li>
-                            <li>
-                                <button id="dropdownNavbarLink" data-dropdown-toggle="dropdownNavbar" class="flex items-center justify-between w-full py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 md:w-auto dark:text-white md:dark:hover:text-blue-500 dark:focus:text-white dark:border-gray-700 dark:hover:bg-gray-700 md:dark:hover:bg-transparent">Izbornik <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4" />
-                                </svg></button>
-                                {/* Dropdown menu */}
-                                <div id="dropdownNavbar" class="z-10 hidden font-normal bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600">
-                                    <ul class="py-2 text-sm text-gray-700 dark:text-gray-400" aria-labelledby="dropdownLargeButton">
-                                        <li>
-                                            <a href="/Program" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Program</a>
-                                        </li>
-                                        <li>
-                                            <a href="/Informacije" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Informacije</a>
-                                        </li>
-                                    </ul>
-                                    {/*<div class="py-1">
-                                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Sign out</a>
-                                    </div>*/}
-                                </div>
+                            <li class="relative">
+                                <button
+                                    id="dropdownNavbarLink"
+                                    onClick={toggleNavbarDropdown}
+                                    class="flex items-center justify-between w-full py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 md:w-auto dark:text-white md:dark:hover:text-blue-500 dark:focus:text-white dark:border-gray-700 dark:hover:bg-gray-700 md:dark:hover:bg-transparent"
+                                >
+                                    Izbornik
+                                    <svg
+                                        class="w-2.5 h-2.5 ms-2.5"
+                                        aria-hidden="true"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 10 6"
+                                    >
+                                        <path
+                                            stroke="currentColor"
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="m1 1 4 4 4-4"
+                                        />
+                                    </svg>
+                                </button>
+                                {/* Navbar Dropdown menu */}
+                                {isNavbarDropdownOpen() && (
+                                    <div
+                                        id="dropdownNavbar"
+                                        class="absolute left-0 top-full mt-1 z-10 font-normal bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600"
+                                    >
+                                        <ul
+                                            class="py-2 text-sm text-gray-700 dark:text-gray-400"
+                                            aria-labelledby="dropdownNavbarLink"
+                                        >
+                                            <li>
+                                                <a
+                                                    href="/Program"
+                                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                                                >
+                                                    Program
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a
+                                                    href="/Informacije"
+                                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                                                >
+                                                    Informacije
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                )}
                             </li>
                             <li>
                                 <a href="/Onama" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">O nama</a>
@@ -71,9 +150,9 @@ export default function MainLayout(props) {
             </nav>
 
             {/*PRIKAZ ELEMENATA*/}
-            <div div class="bg-white border-gray-200 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-400 min-h-[75vh]" >
-                <div class="mx-auto w-full max-w-screen-xl p-4 py-6 lg:py-8">{props.children}</div>
-            </div >
+            <div class="bg-gray-800 text-gray-100 min-h-[75vh]">
+        <div class="mx-auto w-full max-w-screen-xl p-4 py-6 lg:py-8">{props.children}</div>
+      </div>
 
             {/*PRIKAZ PODNOŽJE*/}
             <footer footer class="bg-white dark:bg-gray-900" >

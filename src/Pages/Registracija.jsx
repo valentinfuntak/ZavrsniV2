@@ -1,5 +1,5 @@
 import { createSignal } from 'solid-js';
-import supabase from '../Backend/supabaseClient';  // Importirajte svoju instancu Supabase
+import supabase from '../Backend/supabaseClient'; 
 import Plane from "../assets/planefav.png";
 
 function Registracija(props) {
@@ -8,14 +8,14 @@ function Registracija(props) {
   const [confirmPassword, setConfirmPassword] = createSignal('');
   const [error, setError] = createSignal('');
   const [loading, setLoading] = createSignal(false);
-  const [success, setSuccess] = createSignal(false);  // Dodajte signal za uspjeh
+  const [success, setSuccess] = createSignal(false);  
 
-  // Funkcija za registraciju korisnika
+
   const handleRegistration = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
-    setSuccess(false);  // Resetirajte uspjeh
+    setSuccess(false);  
 
     if (password() !== confirmPassword()) {
       setError('Lozinke se ne poklapaju!');
@@ -24,7 +24,6 @@ function Registracija(props) {
     }
 
     try {
-      // Kreirajte korisnika pomoću Supabase-a
       const { data, error: signUpError } = await supabase.auth.signUp({
         email: email(),
         password: password(),
@@ -36,26 +35,23 @@ function Registracija(props) {
         return;
       }
 
-      // Dohvatite user_id iz odgovora nakon registracije
       const userId = data?.user?.id;
 
       if (userId) {
-        // Spremite korisničke podatke u vašu tablicu 'users'
         const { data: userData, error: dbError } = await supabase
-          .from('users') // Vaša tablica korisnika
+          .from('users') 
           .insert([{
-            user_id: userId,  // Spremite user_id
+            user_id: userId,
             email: email(),
-            password: password(),  // Spremite lozinku (ako želite)
-            created_at: new Date().toISOString(),  // Datum kreiranja
+            password: password(),
+            created_at: new Date().toISOString(),
           }]);
 
         if (dbError) {
           setError(`Greška prilikom spremanja u bazu: ${dbError.message}`);
         } else {
-          setSuccess(true);  // Postavite uspjeh
+          setSuccess(true); 
           console.log('Korisnik uspješno spremljen u bazu:', userData);
-          // Preusmjerite korisnika na prijavu nakon uspješne registracije
           window.location.href = '/#/prijava';
         }
       } else {
