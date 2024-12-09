@@ -19,7 +19,6 @@ function Prijava(props) {
                 email: email(),
                 password: password(),
             });
-
             if (signInError) {
                 setError("Podaci koji ste unjeli nisu ispravni.");
                 console.log(signInError);
