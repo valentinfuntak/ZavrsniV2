@@ -1,4 +1,3 @@
-import FetchMessage from "../Components/Funkcija";
 function Pocetna() {
     return (
         <>
@@ -10,9 +9,6 @@ function Pocetna() {
                         Saznajte više o letovima u vašem području!
                     </p>
                 </div>
-            </div>
-            <div>
-                <FetchMessage />
             </div>
         </>
     );

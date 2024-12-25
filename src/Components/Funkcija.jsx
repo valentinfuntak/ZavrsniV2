@@ -40,15 +40,20 @@ function FetchMessage() {
   }
 
   return (
-    <div>
-      <h2>Supabase funkcija</h2>
-      <button onClick={fetchMessage} disabled={loading()}>
+    <div className="p-6 bg-gray-900 rounded-lg shadow-lg max-w mx-auto mt-10">
+      <h2 className="text-2xl font-semibold text-white mb-4">SUPABASE FUNKCIJA</h2>
+      <button
+        onClick={fetchMessage}
+        disabled={loading()}
+        className="w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-600 disabled:bg-gray-400 transition"
+      >
         {loading() ? "Učitavanje..." : "Pozovi funkciju"}
       </button>
-      {error() && <p style={{ color: "red" }}>{error()}</p>} {/* Prikazivanje greške */}
-      <p>{message()}</p> {/* Prikazivanje poruke */}
+      {error() && <p className="text-red-500 mt-2">{error()}</p>} {/* Prikazivanje greške */}
+      {message() && <p className="mt-4 text-gray-700">{message()}</p>} {/* Prikazivanje poruke */}
     </div>
   );
+  
 }
 
 export default FetchMessage;
