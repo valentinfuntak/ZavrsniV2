@@ -20,6 +20,8 @@ const [elevation, setElevation] = createSignal(0);
 const [avionLng, setAvionLng] = createSignal(0);
 const [avionLat, setAvionLat] = createSignal(0);
 const [visina, setVisina] = createSignal(0);
+const [brzina, setBrzina] = createSignal(0);
+const [model, setModel] = createSignal(0);
 
 let cubeRef;
 let mapContainer;
@@ -126,7 +128,6 @@ export default function KomponentaProgram(props) {
     }
   }
 
-
   //Orijentacija mobitela
   const handleOrientation = (event) => {
     setAlpha(event.alpha);
@@ -145,12 +146,15 @@ export default function KomponentaProgram(props) {
     };
   });
 
+
   //DEFINIRANJE ZRAČNOG PROSTORA U KOJEM SE TRAŽE AVIONI
   //jedan stupanj lat (geo širina) je 111.11km / 60  = 1.85183333333km  u minuti broj 9.72009720099 * 1.85... daje okrug od 36km
   // jedan stupanj lng (geo visine) PRIBLIŽNO je 111*cos(lat)
   function prozor(lat, lng) {
     setUdaljenostLatE(lat + 9.72009720099 / 60);
     setUdaljenostLatW(lat - 9.72009720099 / 60);
+
+    //OVO TU PREGLEDAT VRIJEDNOSTI SU SUMNJIVE
     setUdaljenostLngN(lng + 111 * Math.cos(lat * (Math.PI / 180)));
     setUdaljenostLngS(lng - 111 * Math.cos(lat * (Math.PI / 180)));
 
@@ -190,100 +194,111 @@ export default function KomponentaProgram(props) {
     }
   }
 
-  //Sveukupni izračun kuteva
-  function skeniranje(lat, lng, avionLat, avionLng, visina, gamma) {
-    const R = 6371000;
-    const X1 = avionLat * (Math.PI / 180);
-    const Y1 = avionLng * (Math.PI / 180);
-    const X2 = lat * (Math.PI / 180);
-    const Y2 = lng * (Math.PI / 180);
-
-    const dlat = X2 - X1;
-    const dlon = Y2 - Y1;
-
-    const a = Math.sin(dlat / 2) ** 2 + Math.cos(X1) * Math.cos(X2) * Math.sin(dlon / 2) ** 2;
-    const c = 2 * Math.asin(Math.sqrt(a));
-    const UdaljenostZRCVal = R * c;
-
-    if (UdaljenostZRCVal != 0) {
+    //Sveukupni izračun kuteva, moral sam stavit async zbog dodavanja podataka
+    async function skeniranje(lat, lng, avionLat, avionLng, visina, gamma) {
+      const R = 6371000;
+      const X1 = avionLat * (Math.PI / 180);
+      const Y1 = avionLng * (Math.PI / 180);
+      const X2 = lat * (Math.PI / 180);
+      const Y2 = lng * (Math.PI / 180);
+  
+      const dlat = X2 - X1;
+      const dlon = Y2 - Y1;
+  
+      const a = Math.sin(dlat / 2) ** 2 + Math.cos(X1) * Math.cos(X2) * Math.sin(dlon / 2) ** 2;
+      const c = 2 * Math.asin(Math.sqrt(a));
+      const UdaljenostZRCVal = R * c;
+  
+      if(UdaljenostZRCVal != 0){
       setUdaljenostZRC(UdaljenostZRCVal);
-    } else if (UdaljenostZRCVal === null) {
-      console.log("UdaljenostZRC je null, provjeriti funkciju skeniranje")
-    } else {
-      setUdaljenostZRC(visina());
+      } else if(UdaljenostZRCVal === null){
+    console.log("UdaljenostZRC je null, provjeriti funkciju skeniranje")
+      } else{
+        setUdaljenostZRC(visina());
+      }
+      const VisinaDelta = visina() - elevation();
+  
+      const kutAvionYValue = Math.atan(UdaljenostZRC() / VisinaDelta) * (180 / Math.PI);
+      setKutYAvion(kutAvionYValue);
+      kutKor_AV(avionLat(), avionLng(), latitude(), longitude());
+  
+      gornjaGranicaY = kutYAvion + 5;
+      donjaGranicaY = kutYAvion - 5;
+      gornjaGranicaX = kutAvionaX + 5;
+      donjaGranicaX = kutAvionaX - 5;
+      console.log("Gornja i donja granica kuta x:", gornjaGranicaX, donjaGranicaX);
+      console.log("Gornja i donja granica kuta y:", gornjaGranicaY, donjaGranicaY);
+  
+      if (gamma() >= donjaGranicaY && gamma() <= gornjaGranicaY && magHeading() >= donjaGranicaX && magHeading() <= gornjaGranicaX) {
+        var audio = document.getElementById("audiosuccess");
+        audio.play();
+        let now = new Date();
+        let vrijeme = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        
+        //Dodavanje aviona u bazu (id je samonumeriranje)
+        const { error } = await supabase
+        .from('AvioniNadjeno') //ime tablice
+        .insert({ model:model(), time:vrijeme, latitude:avionLat(), longitude:avionLng(), altitude:visina(), speed:brzina()})
+        if(error){
+          console.log(error, "Greška prilikom slanja u BP");
+        }
+      } else {
+        var audio = document.getElementById("audiofail");
+        audio.play();
+        console.log("Avion se ne nalazi u traženom zračnom prostoru");
+      }
+  
     }
-    const VisinaDelta = visina() - elevation();
-
-    const kutAvionYValue = Math.atan(UdaljenostZRC() / VisinaDelta) * (180 / Math.PI);
-    setKutYAvion(kutAvionYValue);
-    kutKor_AV(avionLat(), avionLng(), latitude(), longitude());
-
-    gornjaGranicaY = kutYAvion + 5;
-    donjaGranicaY = kutYAvion - 5;
-    gornjaGranicaX = kutAvionaX + 5;
-    donjaGranicaX = kutAvionaX - 5;
-    console.log("Gornja i donja granica kuta x:", gornjaGranicaX, donjaGranicaX);
-    console.log("Gornja i donja granica kuta y:", gornjaGranicaY, donjaGranicaY);
-
-    if (gamma() >= donjaGranicaY && gamma() <= gornjaGranicaY && magHeading() >= donjaGranicaX && magHeading() <= gornjaGranicaX) {
-      //Dodati avion u bazu
-      var audio = document.getElementById("audiosuccess");
-      audio.play();
-    } else {
-      var audio = document.getElementById("audiofail");
-      audio.play();
-      console.log("Avion se ne nalazi u traženom zračnom prostoru");
-    }
-
-  }
 
   //FLIGHTRADAR24
-  async function fetchFlightData() {
-    try {
-      const bounds = {
-        udaljenostLatE: udaljenostLatE(),
-        udaljenostLatW: udaljenostLatW(),
-        udaljenostLngN: udaljenostLngN(),
-        udaljenostLngS: udaljenostLngS(),
-      };
-      const response = await fetch(
-        "https://veclcridxyeqhbenssvk.supabase.co/functions/v1/APIpoziv",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${process.env.VITE_SUPABASE_KEY}`,
-          },
-          body: JSON.stringify(bounds),
+ async function fetchFlightData() {
+  try {
+    const bounds = {
+      udaljenostLatE: udaljenostLatE(),
+      udaljenostLatW: udaljenostLatW(),
+      udaljenostLngN: udaljenostLngN(),
+      udaljenostLngS: udaljenostLngS(),
+    };
+    const response = await fetch(
+      "https://veclcridxyeqhbenssvk.supabase.co/functions/v1/APIpoziv",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.VITE_SUPABASE_KEY}`,
         },
-      );
-      const data = await response.json();
-      if (response.ok) {
-        data.forEach((flight) => {
-          setAvionLat(lat);
-          setAvionLng(lon);
-          setVisina(alt);
-          L.marker([avionLat(), avionLng()]).addTo(mapContainer)
-            .bindPopup(
-              `Let: ${call}, Zrakoplov: ${aircraft}, Altituda: ${visina()} m`,
-            )
-            .openPopup();
-          skeniranje(
-            latitude(),
-            longitude(),
-            avionLat(),
-            avionLng(),
-            visina(),
-            gamma(),
-          );
-        });
-      } else {
-        console.log("Postoje problemi s dohvačanjem informacija o avionima");
-      }
-    } catch (error) {
-      console.error(error);
+        body: JSON.stringify(bounds),
+      },
+    );
+    const data = await response.json();
+    if (response.ok) {
+      data.forEach((flight) => {
+        setAvionLat(lat);
+        setAvionLng(lon);
+        setVisina(alt);
+        setBrzina(brz);
+        setModel(modelA);
+        L.marker([avionLat(), avionLng()]).addTo(mapContainer)
+          .bindPopup(
+            `Let: ${call}, Zrakoplov: ${model()}, Altituda: ${visina()} m`,
+          )
+          .openPopup();
+        skeniranje(
+          latitude(),
+          longitude(),
+          avionLat(),
+          avionLng(),
+          visina(),
+          gamma(),
+        );
+      });
+    } else {
+      console.log("Postoje problemi s dohvačanjem informacija o avionima");
     }
+  } catch (error) {
+    console.error(error);
   }
+ }
 
 
   async function pokretac() {
@@ -296,6 +311,104 @@ export default function KomponentaProgram(props) {
     console.log("Korisnikova lokacija: ", latitude(), longitude());
 
   }
+
+  /*
+  async function pokretac() {
+    try {
+
+      await lokacijaKorisnik();
+      if (latitude() !== null && longitude() !== null) {
+
+        const map = L.map(mapContainer).setView([latitude(), longitude()], 13);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 19,
+          attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+
+        const userMarker = L.marker([latitude(), longitude()])
+          .addTo(map)
+          .bindPopup("Vaša lokacija")
+          .openPopup();
+        prozor(latitude(), longitude());
+
+
+        await getElevation(latitude(), longitude());
+
+        fetchFlightData();
+
+        console.log("Korisnikova lokacija: ", latitude(), longitude());
+      } else {
+        console.log("Pričekajte da se LAT i LNG učitaju");
+      }
+    } catch (error) {
+      console.error("Error during the process:", error);
+    }
+  }
+
+
+export default function KomponentaProgram(props) {
+  const [map, setMap] = createSignal(null);
+
+  // Funkcija za postavljanje mape
+  const initializeMap = (mapContainer) => {
+    // Kreiramo instancu mape
+    const mapInstance = L.map(mapContainer, {
+      zoomControl: false, // Uklanjanje kontrole za zoom
+      attributionControl: false, // Uklanjanje atribucije
+    }).setView([51.505, -0.09], 13); // Postavite početnu poziciju i zoom
+
+    // Dodajemo OpenStreetMap tile
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(mapInstance);
+
+    // Provjera da li preglednik podržava geolokaciju
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+
+          // Centriranje mape na trenutnu lokaciju
+          mapInstance.setView([latitude, longitude], 13);
+
+          // Dodavanje markera za trenutnu lokaciju
+          L.marker([latitude, longitude])
+            .addTo(mapInstance)
+            .bindPopup("Vaša trenutna lokacija")
+            .openPopup();
+        },
+        (error) => {
+          // Ako se geolokacija ne može dobiti, ispisuje grešku
+          console.error("Geolokacija nije dostupna: ", error);
+        },
+        {
+          enableHighAccuracy: true, 
+          timeout: 10000, // Postavljanje vremenskog ograničenja za dobivanje lokacije
+          maximumAge: 0, // Ne koristi staru lokaciju
+        }
+      );
+    } else {
+      console.error("Geolokacija nije podržana u ovom pregledniku");
+    }
+
+    setMap(mapInstance);
+  };
+
+  // Čistimo mapu kada se komponenta ukloni
+  onCleanup(() => {
+    if (map()) {
+      map().remove();
+    }
+  });
+
+  // Funkcija za inicijalizaciju komponente
+  onMount(() => {
+    const mapContainer = document.getElementById("map-container");
+    if (mapContainer) {
+      initializeMap(mapContainer);
+    }
+  });
+*/
 
   return (
     <div class="p-6 bg-gray-50 dark:bg-gray-900 min-h-screen rounded-3xl">
