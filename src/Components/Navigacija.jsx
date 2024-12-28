@@ -2,6 +2,10 @@ import { createSignal, onCleanup, onMount } from "solid-js";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css"; 
 import "../styles/kocka.css"
+import supabase from '../Backend/supabaseClient'; 
+
+const url = import.meta.env.VITE_SUPABASE_URL;
+const apiKey = import.meta.env.VITE_SUPABASE_API_KEY;
 
 const [latitude, setLatitude] = createSignal(null);
 const [longitude, setLongitude] = createSignal(null);
@@ -163,7 +167,7 @@ async function ucitajPodatke(){
     setUdaljenostLatE(lat + 9.72009720099 / 60);
     setUdaljenostLatW(lat - 9.72009720099 / 60);
 
-    konstantaUdaljenostiLng = 9.72009720099 / 60 * Math.cos(lat * Math.PI / 180)
+    const konstantaUdaljenostiLng = 9.72009720099 / 60 * Math.cos(lat * Math.PI / 180)
     setUdaljenostLngN(lng + konstantaUdaljenostiLng);
     setUdaljenostLngS(lng - konstantaUdaljenostiLng);
 
@@ -260,54 +264,54 @@ async function ucitajPodatke(){
     }
 
   //FLIGHTRADAR24
- async function fetchFlightData() {
-  try {
-    const bounds = {
-      udaljenostLatE: udaljenostLatE(),
-      udaljenostLatW: udaljenostLatW(),
-      udaljenostLngN: udaljenostLngN(),
-      udaljenostLngS: udaljenostLngS(),
-    };
-    const response = await fetch(
-      "https://veclcridxyeqhbenssvk.supabase.co/functions/v1/APIpoziv",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${process.env.VITE_SUPABASE_KEY}`,
+  async function fetchFlightData() {
+    try {
+      const bounds = {
+        udaljenostLatE: udaljenostLatE(),
+        udaljenostLatW: udaljenostLatW(),
+        udaljenostLngN: udaljenostLngN(),
+        udaljenostLngS: udaljenostLngS(),
+      };
+      const response = await fetch(
+        "https://veclcridxyeqhbenssvk.supabase.co/functions/v1/APIpoziv",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${apiKey}`,
+          },
+          body: JSON.stringify(bounds),
         },
-        body: JSON.stringify(bounds),
-      },
-    );
-    const data = await response.json();
-    if (response.ok) {
-      data.forEach((flight) => {
-        setAvionLat(lat);
-        setAvionLng(lon);
-        setVisina(alt);
-        setBrzina(brz);
-        setModel(modelA);
-        L.marker([avionLat(), avionLng()]).addTo(mapContainer)
-          .bindPopup(
-            `Let: ${call}, Zrakoplov: ${model()}, Altituda: ${visina()} m`,
-          )
-          .openPopup();
-        skeniranje(
-          latitude(),
-          longitude(),
-          avionLat(),
-          avionLng(),
-          visina(),
-          gamma(),
-        );
-      });
-    } else {
-      console.log("Postoje problemi s dohvačanjem informacija o avionima");
+      );
+      const data = await response.json();
+      if (response.ok) {
+        data.forEach((flight) => {
+          setAvionLat(lat);
+          setAvionLng(lon);
+          setVisina(alt);
+          setBrzina(brz);
+          setModel(modelA);
+          L.marker([avionLat(), avionLng()]).addTo(mapContainer)
+            .bindPopup(
+              `Let: ${call}, Zrakoplov: ${model()}, Altituda: ${visina()} m`,
+            )
+            .openPopup();
+          skeniranje(
+            latitude(),
+            longitude(),
+            avionLat(),
+            avionLng(),
+            visina(),
+            gamma(),
+          );
+        });
+      } else {
+        console.log("Postoje problemi s dohvačanjem informacija o avionima");
+      }
+    } catch (error) {
+      console.error(error);
     }
-  } catch (error) {
-    console.error(error);
-  }
- }
+   }
 
 
   async function pokretac() {

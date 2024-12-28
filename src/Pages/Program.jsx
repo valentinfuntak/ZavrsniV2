@@ -1,11 +1,17 @@
+import { createResource, For } from "solid-js";
+import { getPlanes } from "../Backend/supabaseClient";
+
 import Navigacija from "../Components/Navigacija"
 import FetchMessage from "../Components/Funkcija";
 
 function Program(props) {
+
+    const [planes] = createResource(getPlanes);
+
     return (
-        <>  
-            <Navigacija/>
-            <FetchMessage/>  
+        <>
+            <Navigacija />
+            <FetchMessage />
             <div class="mt-5 flex flex-column sm:flex-row flex-wrap space-y-4 sm:space-y-0 items-center justify-between pb-4">
                 <div>
                     <button id="dropdownRadioButton" data-dropdown-toggle="dropdownRadio" class="inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700" type="button">
@@ -64,27 +70,35 @@ function Program(props) {
                 <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                     <caption class="p-5 text-lg font-semibold text-left rtl:text-right text-gray-900 bg-white dark:text-white dark:bg-gray-800">
                         Prikaz pronađenih aviona
-                        <p class="mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">Ovdje možete detaljnije pregledati informacije o avionima koje ste pronašli.</p>
+                        <p class="mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">
+                            Ovdje možete detaljnije pregledati informacije o avionima koje ste pronašli.
+                        </p>
                     </caption>
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
-                            <th scope="col" class="px-6 py-3">
-                                Model
-                            </th>
-                            <th scope="col" class="px-6 py-3">
-                                Vrijeme
-                            </th>
+                            <th scope="col" class="px-6 py-3">ID</th>
+                            <th scope="col" class="px-6 py-3">Model</th>
+                            <th scope="col" class="px-6 py-3">Vrijeme</th>
+                            <th scope="col" class="px-6 py-3">Latituda</th>
+                            <th scope="col" class="px-6 py-3">Longituda</th>
+                            <th scope="col" class="px-6 py-3">Altituda</th>
+                            <th scope="col" class="px-6 py-3">Brzina</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
-                            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                F16 ovdi staviti signal model()
-                            </th>
-                            <td class="px-6 py-4">
-                                19:25:04 ovdi staviti varijablu vrijeme
-                            </td>
-                        </tr>
+                        <For each={planes()} fallback={<tr><td colspan="7" class="text-center py-4">Trenutno nema aviona</td></tr>}>
+                            {(plane) => (
+                                <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
+                                    <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{plane.id}</td>
+                                    <td class="px-6 py-4">{plane.model}</td>
+                                    <td class="px-6 py-4">{plane.time}</td>
+                                    <td class="px-6 py-4">{plane.latitude}</td>
+                                    <td class="px-6 py-4">{plane.longitude}</td>
+                                    <td class="px-6 py-4">{plane.altitude}</td>
+                                    <td class="px-6 py-4">{plane.speed}</td>
+                                </tr>
+                            )}
+                        </For>
                     </tbody>
                 </table>
             </div>
