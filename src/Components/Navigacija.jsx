@@ -1,6 +1,6 @@
 import { createSignal, onCleanup, onMount } from "solid-js";
 import L from "leaflet";
-import "leaflet/dist/leaflet.css"; // Uključite Leaflet CSS
+import "leaflet/dist/leaflet.css"; 
 import "../styles/kocka.css"
 
 const [latitude, setLatitude] = createSignal(null);
@@ -37,7 +37,7 @@ export default function KomponentaProgram(props) {
       attributionControl: false, // Uklanjanje atribucije
     }).setView([51.505, -0.09], 13); // Postavite početnu poziciju i zoom
 
-    // Dodajemo OpenStreetMap tile
+    // MAKNUTI
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(mapInstance);
 
     // Provjera da li preglednik podržava geolokaciju
@@ -78,13 +78,30 @@ export default function KomponentaProgram(props) {
       map().remove();
     }
   });
+//provjeriti stupce, ubaciti u tablicu data.time, data.latitude...
+async function ucitajPodatke(){
+  const { data, error } = await supabase
+  .from('AvioniNadjeno')
+  .select()
+  .order('id', {ascending: false})
+  .limit(5);
 
+  if (error) {
+    console.error("Greška prilikom dohvacanja podataka iz baze:", error);
+    return null;
+}
+}
   // Funkcija za inicijalizaciju komponente
   onMount(() => {
+    ucitajPodatke();
     const mapContainer = document.getElementById("map-container");
     if (mapContainer) {
       initializeMap(mapContainer);
     }
+    window.addEventListener("deviceorientation", handleOrientation);
+    return () => {
+      window.removeEventListener("deviceorientation", handleOrientation);
+    };
   });
   //DODANO
   function lokacijaKorisnik() {
@@ -139,14 +156,6 @@ export default function KomponentaProgram(props) {
     }
   };
 
-  onMount(() => {
-    window.addEventListener("deviceorientation", handleOrientation);
-    return () => {
-      window.removeEventListener("deviceorientation", handleOrientation);
-    };
-  });
-
-
   //DEFINIRANJE ZRAČNOG PROSTORA U KOJEM SE TRAŽE AVIONI
   //jedan stupanj lat (geo širina) je 111.11km / 60  = 1.85183333333km  u minuti broj 9.72009720099 * 1.85... daje okrug od 36km
   // jedan stupanj lng (geo visine) PRIBLIŽNO je 111*cos(lat)
@@ -154,9 +163,9 @@ export default function KomponentaProgram(props) {
     setUdaljenostLatE(lat + 9.72009720099 / 60);
     setUdaljenostLatW(lat - 9.72009720099 / 60);
 
-    //OVO TU PREGLEDAT VRIJEDNOSTI SU SUMNJIVE
-    setUdaljenostLngN(lng + 111 * Math.cos(lat * (Math.PI / 180)));
-    setUdaljenostLngS(lng - 111 * Math.cos(lat * (Math.PI / 180)));
+    konstantaUdaljenostiLng = 9.72009720099 / 60 * Math.cos(lat * Math.PI / 180)
+    setUdaljenostLngN(lng + konstantaUdaljenostiLng);
+    setUdaljenostLngS(lng - konstantaUdaljenostiLng);
 
     console.log("Okvir gledanja", udaljenostLatE(), udaljenostLatW(), udaljenostLngN(), udaljenostLngS());
   }
@@ -303,7 +312,7 @@ export default function KomponentaProgram(props) {
 
   async function pokretac() {
     await lokacijaKorisnik();
-
+    prozor(latitude(), longitude());
     await getElevation(latitude(), longitude());
 
     fetchFlightData();

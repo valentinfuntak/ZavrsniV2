@@ -3,69 +3,63 @@
 // This enables autocomplete, go to definition, etc.
 
 // Setup type definitions for built-in Supabase Runtime APIs
-import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import "jsr:@supabase/functions-js/edge-runtime.d.ts"
 
-console.log("Hello from Functions!");
+console.log("Hello from Functions!")
 
 //Deno.serve(async (req) => {
-Deno.serve(async (req: Request) => {
-  if (req.method === "POST") {
-    try {
+  Deno.serve(async (req: Request) => {
+   if(req.method ==="POST"){
+    try{
       const body = await req.json();
-      const { udaljenostLatE, udaljenostLatW, udaljenostLngN, udaljenostLngS } =
-        body;
+      const {udaljenostLatE, udaljenostLatW, udaljenostLngN, udaljenostLngS} = body;
+    
+    if (!udaljenostLatE || !udaljenostLatW || !udaljenostLngN || !udaljenostLngS) {
+      return new Response(JSON.stringify({ message: "Koordinate nisu pronađene" }), {
+        headers: { "Content-Type": "application/json" },
+      
+  });
+}else{
+ const extResponse= await fetch(
+ `https://fr24api.flightradar24.com/common/v1/search.json?bounds=${udaljenostLatE},${udaljenostLatW},${udaljenostLngN},${udaljenostLngS}`,
+ {
+  method: "GET",
+  headers:{
+    Authorization:`Bearer ${process.env.FLIGHTRADAR_KEY}`,
+    "Content-Type": "application/json",
+  },
+ });
+ const jsonData = await extResponse.json();
+ if(!jsonData){
+  return new Response(
+  JSON.stringify({message: "Nema zrakoplova u danom području"}),
+  { headers: { "Content-Type": "application/json" }, status: 404 }
+  );
+}
+const flights = jsonData.data.map((flight:any)=>({
+  lat: flight.lat,
+  lon: flight.lon,
+  alt: flight.alt,
+  call: flight.callsign,
+  brz: flight.gspeed,
+  modelA: flight.type
+}));
 
-      if (
-        !udaljenostLatE ||
-        !udaljenostLatW ||
-        !udaljenostLngN ||
-        !udaljenostLngS
-      ) {
-        return new Response(
-          JSON.stringify({ message: "Koordinate nisu pronađene" }),
-          {
-            headers: { "Content-Type": "application/json" },
-          }
-        );
-      } else {
-        const extResponse = await fetch(
-          `https://fr24api.flightradar24.com/common/v1/search.json?bounds=${udaljenostLatE},${udaljenostLatW},${udaljenostLngN},${udaljenostLngS}`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${process.env.FLIGHTRADAR_KEY}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
-        const jsonData = await extResponse.json();
-        if (!jsonData) {
-          return new Response(
-            JSON.stringify({ message: "Nema zrakoplova u danom području" }),
-            { headers: { "Content-Type": "application/json" }, status: 404 }
-          );
-        }
-        const flights = jsonData.data.map((flight: any) => ({
-          lat: flight.lat,
-          lon: flight.lon,
-          alt: flight.alt,
-          call: flight.callsign,
-          aircraft: flight.aircraft,
-        }));
+return new Response(
+  JSON.stringify({ message: "Nađeni avioni", flights }),
+  { headers: { "Content-Type": "application/json" } }
+);
 
-        return new Response(
-          JSON.stringify({ message: "Nađeni avioni", flights }),
-          { headers: { "Content-Type": "application/json" } }
-        );
-      }
-    } catch (error) {
-      console.error(error);
-      return new Response("Došlo je do greške!");
-    }
-  } else {
-    return new Response("Metoda nije dozvoljena");
-  }
-});
+}
+}catch(error){
+  console.error(error);
+  return new Response("Došlo je do greške!");
+}
+   }else{
+return new Response("Metoda nije dozvoljena");
+   }
+   });
+  
 
 /* To invoke locally:
 
