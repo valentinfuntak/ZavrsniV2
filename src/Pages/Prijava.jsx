@@ -13,26 +13,36 @@ function Prijava(props) {
         e.preventDefault();
         setLoading(true);
         setError('');
-
+        
         try {
-            const { error: signInError } = await supabase.auth.signInWithPassword({
-                email: email(),
-                password: password(),
-            });
-            if (signInError) {
-                setError("Podaci koji ste unjeli nisu ispravni.");
-                console.log(signInError);
+            // Provjera postoji li korisnik s tim emailom u tablici 'users' i usporedba lozinke
+            const { data, error } = await supabase
+                .from('users')
+                .select('*')
+                .eq('email', email())  // Provjera emaila
+                .eq('password', password())  // Provjera lozinke
+                .single(); // Očekujemo samo jedan rezultat
+    
+            if (error || !data) {
+                setError('Neispravni podaci za prijavu.');
+                console.log(error?.message || 'Incorrect email or password');
                 setLoading(false);
                 return;
             }
-
-            window.location.href = '/#/pocetna'; 
+    
+            // Ako su podaci ispravni, preusmjerite korisnika na početnu stranicu
+            window.location.href = '/#/pocetna';
         } catch (err) {
             setError('Došlo je do pogreške pri prijavi.');
+            console.error(err); // Logirajte pogreške
         } finally {
             setLoading(false);
         }
     };
+    
+    
+    
+    
     return (
         <>
             <section class="bg-gray-50 dark:bg-gray-900">

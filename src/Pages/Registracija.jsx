@@ -10,7 +10,6 @@ function Registracija(props) {
   const [loading, setLoading] = createSignal(false);
   const [success, setSuccess] = createSignal(false);  
 
-
   const handleRegistration = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -24,38 +23,21 @@ function Registracija(props) {
     }
 
     try {
-      const { data, error: signUpError } = await supabase.auth.signUp({
-        email: email(),
-        password: password(),
-      });
+      // Spremanje podataka samo u tablicu 'users'
+      const { data, error: dbError } = await supabase
+        .from('users') 
+        .insert([{
+          email: email(),
+          password: password(),
+          created_at: new Date().toISOString(),
+        }]);
 
-      if (signUpError) {
-        setError(signUpError.message);
-        setLoading(false);
-        return;
-      }
-
-      const userId = data?.user?.id;
-
-      if (userId) {
-        const { data: userData, error: dbError } = await supabase
-          .from('users') 
-          .insert([{
-            user_id: userId,
-            email: email(),
-            password: password(),
-            created_at: new Date().toISOString(),
-          }]);
-
-        if (dbError) {
-          setError(`Greška prilikom spremanja u bazu: ${dbError.message}`);
-        } else {
-          setSuccess(true); 
-          console.log('Korisnik uspješno spremljen u bazu:', userData);
-          window.location.href = '/#/prijava';
-        }
+      if (dbError) {
+        setError(`Greška prilikom spremanja u bazu: ${dbError.message}`);
       } else {
-        setError('Greška prilikom dobivanja user_id.');
+        setSuccess(true); 
+        console.log('Korisnik uspješno spremljen u bazu:', data);
+        window.location.href = '/#/prijava';
       }
     } catch (err) {
       setError('Došlo je do pogreške pri registraciji.');
