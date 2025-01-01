@@ -54,7 +54,7 @@ export default function MainLayout(props) {
                                 >
                                     Izbornik
                                     <svg
-                                        class="w-2.5 h-2.5 ms-2.5"
+                                        class="w-2.5 h-2.5 ms-2.5"                                        
                                         aria-hidden="true"
                                         xmlns="http://www.w3.org/2000/svg"
                                         fill="none"
@@ -93,6 +93,14 @@ export default function MainLayout(props) {
                                                     class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                                                 >
                                                     Informacije
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a
+                                                    href="/Test"
+                                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                                                >
+                                                    Test
                                                 </a>
                                             </li>
                                         </ul>
