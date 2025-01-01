@@ -1,8 +1,9 @@
+//Slozit magHeading i magnetometar funkciju
 import { createSignal, onCleanup, onMount } from "solid-js";
 import L from "leaflet";
-import "leaflet/dist/leaflet.css"; 
+import "leaflet/dist/leaflet.css";
 import "../styles/kocka.css"
-import supabase from '../Backend/supabaseClient'; 
+import supabase from '../Backend/supabaseClient';
 
 const url = import.meta.env.VITE_SUPABASE_URL;
 const apiKey = import.meta.env.VITE_SUPABASE_API_KEY;
@@ -82,31 +83,21 @@ export default function KomponentaProgram(props) {
       map().remove();
     }
   });
-//provjeriti stupce, ubaciti u tablicu data.time, data.latitude...
-async function ucitajPodatke(){
-  const { data, error } = await supabase
-  .from('AvioniNadjeno')
-  .select()
-  .order('id', {ascending: false})
-  .limit(5);
 
-  if (error) {
-    console.error("Greška prilikom dohvacanja podataka iz baze:", error);
-    return null;
-}
-}
-  // Funkcija za inicijalizaciju komponente
-  onMount(() => {
-    ucitajPodatke();
-    const mapContainer = document.getElementById("map-container");
-    if (mapContainer) {
-      initializeMap(mapContainer);
+  //provjeriti stupce, ubaciti u tablicu data.time, data.latitude...
+  async function ucitajPodatke() {
+    const { data, error } = await supabase
+      .from('AvioniNadjeno')
+      .select()
+      .order('id', { ascending: false })
+      .limit(5);
+
+    if (error) {
+      console.error("Greška prilikom dohvacanja podataka iz baze:", error);
+      return null;
     }
-    window.addEventListener("deviceorientation", handleOrientation);
-    return () => {
-      window.removeEventListener("deviceorientation", handleOrientation);
-    };
-  });
+  }
+
   //DODANO
   function lokacijaKorisnik() {
     return new Promise((resolve, reject) => {
@@ -160,6 +151,20 @@ async function ucitajPodatke(){
     }
   };
 
+  // Funkcija za inicijalizaciju komponente
+  onMount(() => {
+    ucitajPodatke();
+    magnetometar();
+    const mapContainer = document.getElementById("map-container");
+    if (mapContainer) {
+      initializeMap(mapContainer);
+    }
+    window.addEventListener("deviceorientation", handleOrientation);
+    return () => {
+      window.removeEventListener("deviceorientation", handleOrientation);
+    };
+  });
+
   //DEFINIRANJE ZRAČNOG PROSTORA U KOJEM SE TRAŽE AVIONI
   //jedan stupanj lat (geo širina) je 111.11km / 60  = 1.85183333333km  u minuti broj 9.72009720099 * 1.85... daje okrug od 36km
   // jedan stupanj lng (geo visine) PRIBLIŽNO je 111*cos(lat)
@@ -207,61 +212,60 @@ async function ucitajPodatke(){
     }
   }
 
-    //Sveukupni izračun kuteva, moral sam stavit async zbog dodavanja podataka
-    async function skeniranje(lat, lng, avionLat, avionLng, visina, gamma) {
-      const R = 6371000;
-      const X1 = avionLat * (Math.PI / 180);
-      const Y1 = avionLng * (Math.PI / 180);
-      const X2 = lat * (Math.PI / 180);
-      const Y2 = lng * (Math.PI / 180);
-  
-      const dlat = X2 - X1;
-      const dlon = Y2 - Y1;
-  
-      const a = Math.sin(dlat / 2) ** 2 + Math.cos(X1) * Math.cos(X2) * Math.sin(dlon / 2) ** 2;
-      const c = 2 * Math.asin(Math.sqrt(a));
-      const UdaljenostZRCVal = R * c;
-  
-      if(UdaljenostZRCVal != 0){
+  //Sveukupni izračun kuteva, moral sam stavit async zbog dodavanja podataka
+  async function skeniranje(lat, lng, avionLat, avionLng, visina, gamma) {
+    const R = 6371000;
+    const X1 = avionLat * (Math.PI / 180);
+    const Y1 = avionLng * (Math.PI / 180);
+    const X2 = lat * (Math.PI / 180);
+    const Y2 = lng * (Math.PI / 180);
+
+    const dlat = X2 - X1;
+    const dlon = Y2 - Y1;
+
+    const a = Math.sin(dlat / 2) ** 2 + Math.cos(X1) * Math.cos(X2) * Math.sin(dlon / 2) ** 2;
+    const c = 2 * Math.asin(Math.sqrt(a));
+    const UdaljenostZRCVal = R * c;
+
+    if (UdaljenostZRCVal != 0) {
       setUdaljenostZRC(UdaljenostZRCVal);
-      } else if(UdaljenostZRCVal === null){
-    console.log("UdaljenostZRC je null, provjeriti funkciju skeniranje")
-      } else{
-        setUdaljenostZRC(visina());
-      }
-      const VisinaDelta = visina() - elevation();
-  
-      const kutAvionYValue = Math.atan(UdaljenostZRC() / VisinaDelta) * (180 / Math.PI);
-      setKutYAvion(kutAvionYValue);
-      kutKor_AV(avionLat(), avionLng(), latitude(), longitude());
-  
-      gornjaGranicaY = kutYAvion + 5;
-      donjaGranicaY = kutYAvion - 5;
-      gornjaGranicaX = kutAvionaX + 5;
-      donjaGranicaX = kutAvionaX - 5;
-      console.log("Gornja i donja granica kuta x:", gornjaGranicaX, donjaGranicaX);
-      console.log("Gornja i donja granica kuta y:", gornjaGranicaY, donjaGranicaY);
-  
-      if (gamma() >= donjaGranicaY && gamma() <= gornjaGranicaY && magHeading() >= donjaGranicaX && magHeading() <= gornjaGranicaX) {
-        var audio = document.getElementById("audiosuccess");
-        audio.play();
-        let now = new Date();
-        let vrijeme = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-        
-        //Dodavanje aviona u bazu (id je samonumeriranje)
-        const { error } = await supabase
-        .from('AvioniNadjeno') //ime tablice
-        .insert({ model:model(), time:vrijeme, latitude:avionLat(), longitude:avionLng(), altitude:visina(), speed:brzina()})
-        if(error){
-          console.log(error, "Greška prilikom slanja u BP");
-        }
-      } else {
-        var audio = document.getElementById("audiofail");
-        audio.play();
-        console.log("Avion se ne nalazi u traženom zračnom prostoru");
-      }
-  
+    } else if (UdaljenostZRCVal === null) {
+      console.log("UdaljenostZRC je null, provjeriti funkciju skeniranje")
+    } else {
+      setUdaljenostZRC(visina());
     }
+    const VisinaDelta = visina() - elevation();
+
+    const kutAvionYValue = Math.atan(UdaljenostZRC() / VisinaDelta) * (180 / Math.PI);
+    setKutYAvion(kutAvionYValue);
+    kutKor_AV(avionLat(), avionLng(), latitude(), longitude());
+
+    gornjaGranicaY = kutYAvion + 5;
+    donjaGranicaY = kutYAvion - 5;
+    gornjaGranicaX = kutAvionaX + 5;
+    donjaGranicaX = kutAvionaX - 5;
+    console.log("Gornja i donja granica kuta x:", gornjaGranicaX, donjaGranicaX);
+    console.log("Gornja i donja granica kuta y:", gornjaGranicaY, donjaGranicaY);
+
+    if (gamma() >= donjaGranicaY && gamma() <= gornjaGranicaY && magHeading() >= donjaGranicaX && magHeading() <= gornjaGranicaX) {
+      var audio = document.getElementById("audiosuccess");
+      audio.play();
+      let now = new Date();
+      let vrijeme = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+      //Dodavanje aviona u bazu (id je samonumeriranje)
+      const { error } = await supabase
+        .from('AvioniNadjeno') //ime tablice
+        .insert({ model: model(), time: vrijeme, latitude: avionLat(), longitude: avionLng(), altitude: visina(), speed: brzina() })
+      if (error) {
+        console.log(error, "Greška prilikom slanja u BP");
+      }
+    } else {
+      var audio = document.getElementById("audiofail");
+      audio.play();
+      console.log("Avion se ne nalazi u traženom zračnom prostoru");
+    }
+  }
 
   //FLIGHTRADAR24
   async function fetchFlightData() {
@@ -311,15 +315,16 @@ async function ucitajPodatke(){
     } catch (error) {
       console.error(error);
     }
-   }
+  }
 
 
   async function pokretac() {
     await lokacijaKorisnik();
+
     prozor(latitude(), longitude());
     await getElevation(latitude(), longitude());
+    await fetchFlightData();
 
-    fetchFlightData();
 
     console.log("Korisnikova lokacija: ", latitude(), longitude());
 
@@ -436,25 +441,25 @@ export default function KomponentaProgram(props) {
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div class="bg-gray-100 dark:bg-gray-600 p-4 rounded-lg shadow-md transition-transform transform hover:scale-105">
             <h2 class="text-lg font-semibold mb-2 text-gray-800 dark:text-white">Podaci o avionu</h2>
-            <p class="text-gray-700 dark:text-gray-300"><strong>Kut X između korisnika i aviona:</strong> 0</p>
-            <p class="text-gray-700 dark:text-gray-300"><strong>Kut Y do aviona:</strong> 0</p>
-            <p class="text-gray-700 dark:text-gray-300"><strong>Koordinate aviona:</strong> 0, 0</p>
-            <p class="text-gray-700 dark:text-gray-300"><strong>Visina aviona:</strong> 0</p>
-            <p class="text-gray-700 dark:text-gray-300"><strong>Elevacija:{elevation()}</strong></p>
+            <p class="text-gray-700 dark:text-gray-300"><strong>Kut X između korisnika i aviona: {kutAvionaX()}</strong></p>
+            <p class="text-gray-700 dark:text-gray-300"><strong>Kut Y do aviona: {kutYAvion()}</strong></p>
+            <p class="text-gray-700 dark:text-gray-300"><strong>Koordinate aviona: {avionLat()}, {avionLng()}</strong></p>
+            <p class="text-gray-700 dark:text-gray-300"><strong>Visina aviona: {visina()}</strong></p>
+            <p class="text-gray-700 dark:text-gray-300"><strong>Elevacija: {elevation()}</strong></p>
           </div>
 
           <div class="bg-gray-100 dark:bg-gray-600 p-4 rounded-lg shadow-md transition-transform transform hover:scale-105">
             <h2 class="text-lg font-semibold mb-2 text-gray-800 dark:text-white">Nagib uređaja</h2>
-            <p class="text-gray-700 dark:text-gray-300"><strong>Alpha (Z os):</strong> 0.00</p>
-            <p class="text-gray-700 dark:text-gray-300"><strong>Beta (X os):</strong> 0.00</p>
-            <p class="text-gray-700 dark:text-gray-300"><strong>Gamma (Y os):</strong> 0.00</p>
-            <p class="text-gray-700 dark:text-gray-300"><strong>Kut gledanja:</strong> 0</p>
+            <p class="text-gray-700 dark:text-gray-300"><strong>Alpha (Z os): {gamma().toFixed(2)}</strong></p>
+            <p class="text-gray-700 dark:text-gray-300"><strong>Beta (X os): {alpha().toFixed(2)}</strong></p>
+            <p class="text-gray-700 dark:text-gray-300"><strong>Gamma (Y os): {beta().toFixed(2)}</strong></p>
+            <p class="text-gray-700 dark:text-gray-300"><strong>Kut gledanja: {magHeading()}</strong></p>
           </div>
 
           {/* Proširena kocka unutar forme */}
           <div class="bg-gray-100 dark:bg-gray-600 p-4 rounded-lg shadow-md transition-transform transform hover:scale-105 col-span-1 md:col-span-2 flex justify-center items-center">
             <div class="cube-scene pt-16 w-full h-64"> {/* Povećan prostor za kocku */}
-              <div class="cube">
+              <div class="cube"  ref={el => cubeRef = el}>
                 <div class="cube-face front">Front</div>
                 <div class="cube-face back">Back</div>
                 <div class="cube-face left">Left</div>

@@ -6,6 +6,7 @@ export default function TestFunction(props) {
     const [data, setData] = createSignal(null); // Signal za praćenje podataka
     const [error, setError] = createSignal(null); // Signal za praćenje grešaka
 
+    
 
     onMount(async () => {
         const { data, error } = await supabase.functions.invoke('hello-world', {
