@@ -1,4 +1,10 @@
-//Slozit magHeading i magnetometar funkciju
+//Slozit magHeading i magnetometar funkciju --> treba ukljuciti flags sa chrome://flags ili edge://flags
+//ako je moguce dobiti pravi sjever i dodati ga na magHeading
+//Popravit kocku css
+//Slozit prijavu
+//Slozit edge funkciju za flightradar
+
+
 import { createSignal, onCleanup, onMount } from "solid-js";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -98,6 +104,26 @@ export default function KomponentaProgram(props) {
     }
   }
 
+  const magnetometar = () => {
+    if ("Magnetometer" in window) {
+      const sensor = new Magnetometer();
+      sensor.start();
+
+      //KUT X S OBZIROM NA SJEVER (KORISNIK)
+      sensor.onreading = () => {
+        let kut;
+        let smjer = Math.atan2(sensor.y, sensor.x) * (180 / Math.PI);
+        kut = (smjer + 360) % 360;
+        kut = kut.toFixed(2);
+        setMagHeading(kut);
+      };
+      onCleanup(() => {
+        sensor.stop();
+      });
+    }else{
+      alert("Nije podržan magnetometar!");
+    }
+  }
   //DODANO
   function lokacijaKorisnik() {
     return new Promise((resolve, reject) => {
@@ -122,23 +148,7 @@ export default function KomponentaProgram(props) {
     });
   }
 
-  const magnetometar = () => {
-    if ("Magnetometer" in window) {
-      const sensor = new Magnetometer();
-      sensor.start();
-
-      //KUT X S OBZIROM NA SJEVER (KORISNIK)
-      sensor.onreading = () => {
-        let kut;
-        let smjer = Math.atan2(sensor.y, sensor.x) * (180 / Math.PI);
-        kut = (smjer + 360) % 360;
-        setMagHeading(kut);
-      };
-      onCleanup(() => {
-        sensor.stop();
-      });
-    }
-  }
+  
 
   //Orijentacija mobitela
   const handleOrientation = (event) => {
@@ -153,8 +163,8 @@ export default function KomponentaProgram(props) {
 
   // Funkcija za inicijalizaciju komponente
   onMount(() => {
-    ucitajPodatke();
     magnetometar();
+    ucitajPodatke();
     const mapContainer = document.getElementById("map-container");
     if (mapContainer) {
       initializeMap(mapContainer);
@@ -181,8 +191,13 @@ export default function KomponentaProgram(props) {
 
   // Izračun kuta X između korisnika i aviona
   function kutKor_AV(avionLat, avionLng, lat, lng) {
+    //const yH = Math.sin(Lng*(180/Math.PI))*Math.cos(90*(180/Math.PI));
+   // const xH = Math.cos(lat*(180/Math.PI)) * Math.sin(90*(180/Math.PI)) - Math.sin(lat*(180/Math.PI)) * Math.cos(90*(180/Math.PI)) * Math.cos(Lng*(180/Math.PI));
+   // MagPol = Math.atan2(yH, xH) * (180/Math.PI);
     const kutY = Math.atan2(avionLat - lat, avionLng - lng) * (180 / Math.PI);
+//KUT X S OBZIROM NA PRAVI SJEVER
     const kutAvionaX = (90 - kutY + 360) % 360;
+   // const kutAvionaX = (kutAvionaXbezMag-MagPol + 360) % 360;
     setKutAvionaX(kutAvionaX);
     return kutAvionaX;
   }
@@ -321,6 +336,7 @@ export default function KomponentaProgram(props) {
 
 
   async function pokretac() {
+    
     await lokacijaKorisnik();
 
     prozor(latitude(), longitude());
@@ -331,105 +347,6 @@ export default function KomponentaProgram(props) {
     console.log("Korisnikova lokacija: ", latitude(), longitude());
 
   }
-
-  /*
-  async function pokretac() {
-    try {
-
-      await lokacijaKorisnik();
-      if (latitude() !== null && longitude() !== null) {
-
-        const map = L.map(mapContainer).setView([latitude(), longitude()], 13);
-
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          maxZoom: 19,
-          attribution: '© OpenStreetMap contributors'
-        }).addTo(map);
-
-
-        const userMarker = L.marker([latitude(), longitude()])
-          .addTo(map)
-          .bindPopup("Vaša lokacija")
-          .openPopup();
-        prozor(latitude(), longitude());
-
-
-        await getElevation(latitude(), longitude());
-
-        fetchFlightData();
-
-        console.log("Korisnikova lokacija: ", latitude(), longitude());
-      } else {
-        console.log("Pričekajte da se LAT i LNG učitaju");
-      }
-    } catch (error) {
-      console.error("Error during the process:", error);
-    }
-  }
-
-
-export default function KomponentaProgram(props) {
-  const [map, setMap] = createSignal(null);
-
-  // Funkcija za postavljanje mape
-  const initializeMap = (mapContainer) => {
-    // Kreiramo instancu mape
-    const mapInstance = L.map(mapContainer, {
-      zoomControl: false, // Uklanjanje kontrole za zoom
-      attributionControl: false, // Uklanjanje atribucije
-    }).setView([51.505, -0.09], 13); // Postavite početnu poziciju i zoom
-
-    // Dodajemo OpenStreetMap tile
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(mapInstance);
-
-    // Provjera da li preglednik podržava geolokaciju
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-
-          // Centriranje mape na trenutnu lokaciju
-          mapInstance.setView([latitude, longitude], 13);
-
-          // Dodavanje markera za trenutnu lokaciju
-          L.marker([latitude, longitude])
-            .addTo(mapInstance)
-            .bindPopup("Vaša trenutna lokacija")
-            .openPopup();
-        },
-        (error) => {
-          // Ako se geolokacija ne može dobiti, ispisuje grešku
-          console.error("Geolokacija nije dostupna: ", error);
-        },
-        {
-          enableHighAccuracy: true, 
-          timeout: 10000, // Postavljanje vremenskog ograničenja za dobivanje lokacije
-          maximumAge: 0, // Ne koristi staru lokaciju
-        }
-      );
-    } else {
-      console.error("Geolokacija nije podržana u ovom pregledniku");
-    }
-
-    setMap(mapInstance);
-  };
-
-  // Čistimo mapu kada se komponenta ukloni
-  onCleanup(() => {
-    if (map()) {
-      map().remove();
-    }
-  });
-
-  // Funkcija za inicijalizaciju komponente
-  onMount(() => {
-    const mapContainer = document.getElementById("map-container");
-    if (mapContainer) {
-      initializeMap(mapContainer);
-    }
-  });
-*/
-
   return (
     <div class="p-6 bg-gray-50 dark:bg-gray-900 min-h-screen rounded-3xl">
       <h1 class="text-3xl font-bold text-center mb-6 text-gray-800 dark:text-white">PROGRAM</h1>
