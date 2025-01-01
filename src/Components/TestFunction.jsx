@@ -20,7 +20,7 @@ export default function TestFunction(props) {
         }
     });
 
-
+    
     return (
         <>
             <div>{data() ? data().message : "Loading..."}</div>

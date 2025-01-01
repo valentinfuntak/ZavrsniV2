@@ -440,7 +440,7 @@ export default function KomponentaProgram(props) {
             <p class="text-gray-700 dark:text-gray-300"><strong>Kut Y do aviona:</strong> 0</p>
             <p class="text-gray-700 dark:text-gray-300"><strong>Koordinate aviona:</strong> 0, 0</p>
             <p class="text-gray-700 dark:text-gray-300"><strong>Visina aviona:</strong> 0</p>
-            <p class="text-gray-700 dark:text-gray-300"><strong>Elevacija:</strong> 171</p>
+            <p class="text-gray-700 dark:text-gray-300"><strong>Elevacija:</strong></p>
           </div>
 
           <div class="bg-gray-100 dark:bg-gray-600 p-4 rounded-lg shadow-md transition-transform transform hover:scale-105">
