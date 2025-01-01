@@ -20,6 +20,7 @@ console.log("Hello from Functions!")
       
   });
 }else{
+  //Pristupanje flightradar APIU s varijablama koje su sad kod servera, Dohvacanje podataka
  const extResponse= await fetch(
  `https://fr24api.flightradar24.com/common/v1/search.json?bounds=${udaljenostLatE},${udaljenostLatW},${udaljenostLngN},${udaljenostLngS}`,
  {
@@ -30,12 +31,16 @@ console.log("Hello from Functions!")
   },
  });
  const jsonData = await extResponse.json();
+
+ //ako podaci ne postoje
  if(!jsonData){
   return new Response(
   JSON.stringify({message: "Nema zrakoplova u danom području"}),
   { headers: { "Content-Type": "application/json" }, status: 404 }
   );
 }
+
+//Ako podaci postoje dohvacaju se podaci i spremaju se u map flights
 const flights = jsonData.data.map((flight:any)=>({
   lat: flight.lat,
   lon: flight.lon,

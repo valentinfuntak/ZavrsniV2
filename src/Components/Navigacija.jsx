@@ -192,7 +192,8 @@ export default function KomponentaProgram(props) {
     const dataset = "etopo1";
     const url =
       `https://api.opentopodata.org/v1/${dataset}?locations=${lat},${lng}`;
-
+    
+    //dohvacanje podataka 
     try {
       const response = await fetch(url, {
         method: "GET",
@@ -263,7 +264,7 @@ export default function KomponentaProgram(props) {
     } else {
       var audio = document.getElementById("audiofail");
       audio.play();
-      console.log("Avion se ne nalazi u traženom zračnom prostoru");
+      alert("Avion se ne nalazi u traženom zračnom prostoru");
     }
   }
 
@@ -295,6 +296,7 @@ export default function KomponentaProgram(props) {
           setVisina(alt);
           setBrzina(brz);
           setModel(modelA);
+          console.log(model(), brzina(), visina());
           L.marker([avionLat(), avionLng()]).addTo(mapContainer)
             .bindPopup(
               `Let: ${call}, Zrakoplov: ${model()}, Altituda: ${visina()} m`,
@@ -313,7 +315,7 @@ export default function KomponentaProgram(props) {
         console.log("Postoje problemi s dohvačanjem informacija o avionima");
       }
     } catch (error) {
-      console.error(error);
+      console.log(error);
     }
   }
 
@@ -324,7 +326,7 @@ export default function KomponentaProgram(props) {
     prozor(latitude(), longitude());
     await getElevation(latitude(), longitude());
     await fetchFlightData();
-
+    
 
     console.log("Korisnikova lokacija: ", latitude(), longitude());
 
