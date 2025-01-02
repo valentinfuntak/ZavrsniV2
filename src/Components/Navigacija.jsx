@@ -1,5 +1,6 @@
-//Slozit magHeading i magnetometar funkciju --> treba ukljuciti flags sa chrome://flags ili edge://flags
-//ako je moguce dobiti pravi sjever i dodati ga na magHeading
+//SLozeno magHeading i magnetometar funkciju --> treba ukljuciti flags sa chrome://flags ili edge://flags
+
+
 //Popravit kocku css
 //Slozit prijavu
 //Slozit edge funkciju za flightradar
@@ -40,7 +41,7 @@ let mapContainer;
 export default function KomponentaProgram(props) {
   const [map, setMap] = createSignal(null);
 
-  // Funkcija za postavljanje mape
+  // POSTAVLJANJE MAPE RADI
   const initializeMap = (mapContainer) => {
     // Kreiramo instancu mape
     const mapInstance = L.map(mapContainer, {
@@ -90,7 +91,7 @@ export default function KomponentaProgram(props) {
     }
   });
 
-  //provjeriti stupce, ubaciti u tablicu data.time, data.latitude...
+  //provjeriti stupce, ubaciti u tablicu data.time, data.latitude... DODATI U CLIENT POD OPCIJE ZA FILTER
   async function ucitajPodatke() {
     const { data, error } = await supabase
       .from('AvioniNadjeno')
@@ -104,18 +105,23 @@ export default function KomponentaProgram(props) {
     }
   }
 
+ //KUT X S OBZIROM NA SJEVER (KORISNIK) RADI
   const magnetometar = () => {
     if ("Magnetometer" in window) {
       const sensor = new Magnetometer();
       sensor.start();
-
-      //KUT X S OBZIROM NA SJEVER (KORISNIK)
       sensor.onreading = () => {
-        let kut;
-        let smjer = Math.atan2(sensor.y, sensor.x) * (180 / Math.PI);
-        kut = (smjer + 360) % 360;
-        kut = kut.toFixed(2);
-        setMagHeading(kut);
+        sensor.onreading = () => {
+          let kut = Math.atan2(sensor.x, sensor.y) * (180 / Math.PI);
+          if (kut < 0) {
+              kut += 360; 
+          }
+          const declination = 0;
+          kut += declination;
+          if (kut >= 360)kut -= 360;
+          kut = kut.toFixed(2);
+          setMagHeading(kut);
+      };
       };
       onCleanup(() => {
         sensor.stop();
@@ -124,7 +130,8 @@ export default function KomponentaProgram(props) {
       alert("Nije podržan magnetometar!");
     }
   }
-  //DODANO
+
+  //DOBIVANJE LAT I LNG KORISNIKA RADI
   function lokacijaKorisnik() {
     return new Promise((resolve, reject) => {
       if ("geolocation" in navigator) {
@@ -150,7 +157,7 @@ export default function KomponentaProgram(props) {
 
   
 
-  //Orijentacija mobitela
+  //ORIJENTACIJA MOBITELA RADI
   const handleOrientation = (event) => {
     setAlpha(event.alpha);
     setBeta(event.beta);
@@ -161,8 +168,9 @@ export default function KomponentaProgram(props) {
     }
   };
 
-  // Funkcija za inicijalizaciju komponente
+  // POKRETANJE MAGNETOMETAR, UCITAVANJE PODATAKA IZ DB, ORIJENTACIJA I MAPA RADI
   onMount(() => {
+    alert("Kako bi ste koristili magnetometar, posjetite lokaciju chrome://flags ili edge://flags te dozvolite rad magnetometra!")
     magnetometar();
     ucitajPodatke();
     const mapContainer = document.getElementById("map-container");
@@ -175,7 +183,7 @@ export default function KomponentaProgram(props) {
     };
   });
 
-  //DEFINIRANJE ZRAČNOG PROSTORA U KOJEM SE TRAŽE AVIONI
+  //DEFINIRANJE ZRAČNOG PROSTORA U KOJEM SE TRAŽE AVIONI RADI
   //jedan stupanj lat (geo širina) je 111.11km / 60  = 1.85183333333km  u minuti broj 9.72009720099 * 1.85... daje okrug od 36km
   // jedan stupanj lng (geo visine) PRIBLIŽNO je 111*cos(lat)
   function prozor(lat, lng) {
@@ -189,20 +197,16 @@ export default function KomponentaProgram(props) {
     console.log("Okvir gledanja", udaljenostLatE(), udaljenostLatW(), udaljenostLngN(), udaljenostLngS());
   }
 
-  // Izračun kuta X između korisnika i aviona
+  // KUT X IZMEĐU KORISNIKA I AVIONA, KUTY NIJE KUTYAVIONA!!! RADI?
+  //daje vrijednosti od 0-360
   function kutKor_AV(avionLat, avionLng, lat, lng) {
-    //const yH = Math.sin(Lng*(180/Math.PI))*Math.cos(90*(180/Math.PI));
-   // const xH = Math.cos(lat*(180/Math.PI)) * Math.sin(90*(180/Math.PI)) - Math.sin(lat*(180/Math.PI)) * Math.cos(90*(180/Math.PI)) * Math.cos(Lng*(180/Math.PI));
-   // MagPol = Math.atan2(yH, xH) * (180/Math.PI);
     const kutY = Math.atan2(avionLat - lat, avionLng - lng) * (180 / Math.PI);
-//KUT X S OBZIROM NA PRAVI SJEVER
     const kutAvionaX = (90 - kutY + 360) % 360;
-   // const kutAvionaX = (kutAvionaXbezMag-MagPol + 360) % 360;
     setKutAvionaX(kutAvionaX);
-    return kutAvionaX;
+    console.log(kutAvionaX());
   }
 
-  // API elevacija
+  // API ELEVACIJA RADI
   async function getElevation(lat, lng) {
     const dataset = "etopo1";
     const url =
@@ -228,8 +232,8 @@ export default function KomponentaProgram(props) {
     }
   }
 
-  //Sveukupni izračun kuteva, moral sam stavit async zbog dodavanja podataka
-  async function skeniranje(lat, lng, avionLat, avionLng, visina, gamma) {
+  //IZRAČUN ZRAČNE UDALJENOSTI, KUTA Y AVIONA I MEĐA ZA IDENTIFIKACIJU AVIONA
+  async function skeniranje(lat, lng, avionLat, avionLng, visina, gamma, elevacija) {
     const R = 6371000;
     const X1 = avionLat * (Math.PI / 180);
     const Y1 = avionLng * (Math.PI / 180);
@@ -248,24 +252,25 @@ export default function KomponentaProgram(props) {
     } else if (UdaljenostZRCVal === null) {
       console.log("UdaljenostZRC je null, provjeriti funkciju skeniranje")
     } else {
-      setUdaljenostZRC(visina());
+      setUdaljenostZRC(visina);
     }
-    const VisinaDelta = visina() - elevation();
+    const VisinaDelta = visina - elevacija;
 
     const kutAvionYValue = Math.atan(UdaljenostZRC() / VisinaDelta) * (180 / Math.PI);
     setKutYAvion(kutAvionYValue);
     kutKor_AV(avionLat(), avionLng(), latitude(), longitude());
 
-    gornjaGranicaY = kutYAvion + 5;
-    donjaGranicaY = kutYAvion - 5;
-    gornjaGranicaX = kutAvionaX + 5;
-    donjaGranicaX = kutAvionaX - 5;
+    gornjaGranicaY = kutYAvion() + 5;
+    donjaGranicaY = kutYAvion() - 5;
+    gornjaGranicaX = kutAvionaX() + 5;
+    donjaGranicaX = kutAvionaX() - 5;
     console.log("Gornja i donja granica kuta x:", gornjaGranicaX, donjaGranicaX);
     console.log("Gornja i donja granica kuta y:", gornjaGranicaY, donjaGranicaY);
 
     if (gamma() >= donjaGranicaY && gamma() <= gornjaGranicaY && magHeading() >= donjaGranicaX && magHeading() <= gornjaGranicaX) {
       var audio = document.getElementById("audiosuccess");
       audio.play();
+
       let now = new Date();
       let vrijeme = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 
@@ -283,7 +288,7 @@ export default function KomponentaProgram(props) {
     }
   }
 
-  //FLIGHTRADAR24
+  //FLIGHTRADAR24 NERADI
   async function fetchFlightData() {
     try {
       const bounds = {
@@ -334,7 +339,7 @@ export default function KomponentaProgram(props) {
     }
   }
 
-
+  //POKRECE SVE RADI
   async function pokretac() {
     
     await lokacijaKorisnik();
