@@ -105,7 +105,7 @@ export default function KomponentaProgram(props) {
     }
   }
 
- //KUT X S OBZIROM NA SJEVER (KORISNIK) RADI
+ //KUT X S OBZIROM NA MAGNETSKI SJEVER KORISNIK RADI
   const magnetometar = () => {
     if ("Magnetometer" in window) {
       const sensor = new Magnetometer();
