@@ -1,63 +1,62 @@
 .cube-scene {
-    width: 150px; /* Manja širina kocke */
-    height: 150px; /* Manja visina kocke */
-    perspective: 1000px;
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .cube {
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    transform-style: preserve-3d;
-    transform: rotateX(30deg) rotateY(45deg); /* Postavite kut rotacije ovdje */
-  }
-  
-  .cube-face {
-    position: absolute;
-    width: 100px; /* Manja veličina svake strane kocke */
-    height: 100px; /* Manja visina svake strane kocke */
-    background: rgba(255, 255, 255, 0.8);
-    border: 1px solid #ccc;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 16px; /* Manji font */
-    font-weight: bold;
-    color: #333;
-  }
-  
-  /* Position each face */
-  .cube-face.front {
-    transform: rotateY(0deg) translateZ(50px); /* Manja translacija */
-    background-color: #3498db;
-  }
-  
-  .cube-face.back {
-    transform: rotateY(180deg) translateZ(50px); /* Manja translacija */
-    background-color: #e74c3c;
-  }
-  
-  .cube-face.left {
-    transform: rotateY(-90deg) translateZ(50px); /* Manja translacija */
-    background-color: #f1c40f;
-  }
-  
-  .cube-face.right {
-    transform: rotateY(90deg) translateZ(50px); /* Manja translacija */
-    background-color: #2ecc71;
-  }
-  
-  .cube-face.top {
-    transform: rotateX(90deg) translateZ(50px); /* Manja translacija */
-    background-color: #9b59b6;
-  }
-  
-  .cube-face.bottom {
-    transform: rotateX(-90deg) translateZ(50px); /* Manja translacija */
-    background-color: #e67e22;
-  }
-  
+  width: 150px; /* Manja širina kocke */
+  height: 150px; /* Manja visina kocke */
+  perspective: 1000px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.cube {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  transform-style: preserve-3d;
+  transform: rotateX(30deg) rotateY(45deg); /* Postavite kut rotacije ovdje */
+}
+
+.cube-face {
+  position: absolute;
+  width: 100px; /* Manja veličina svake strane kocke */
+  height: 100px; /* Manja visina svake strane kocke */
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid #ccc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 16px; /* Manji font */
+  font-weight: bold;
+  color: #333;
+}
+
+/* Position each face */
+.cube-face.front {
+  transform: rotateY(0deg) translateZ(50px); /* Manja translacija */
+  background-color: #3498db;
+}
+
+.cube-face.back {
+  transform: rotateY(180deg) translateZ(50px); /* Manja translacija */
+  background-color: #e74c3c;
+}
+
+.cube-face.left {
+  transform: rotateY(-90deg) translateZ(50px); /* Manja translacija */
+  background-color: #f1c40f;
+}
+
+.cube-face.right {
+  transform: rotateY(90deg) translateZ(50px); /* Manja translacija */
+  background-color: #2ecc71;
+}
+
+.cube-face.top {
+  transform: rotateX(90deg) translateZ(50px); /* Manja translacija */
+  background-color: #9b59b6;
+}
+
+.cube-face.bottom {
+  transform: rotateX(-90deg) translateZ(50px); /* Manja translacija */
+  background-color: #e67e22;
+}

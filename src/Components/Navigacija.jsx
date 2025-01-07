@@ -1,4 +1,11 @@
-//Slozit magHeading i magnetometar funkciju
+//SLozeno magHeading i magnetometar funkciju --> treba ukljuciti flags sa chrome://flags ili edge://flags
+
+
+//Popravit kocku css
+//Slozit prijavu
+//Slozit edge funkciju za flightradar
+
+
 import { createSignal, onCleanup, onMount } from "solid-js";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -34,7 +41,7 @@ let mapContainer;
 export default function KomponentaProgram(props) {
   const [map, setMap] = createSignal(null);
 
-  // Funkcija za postavljanje mape
+  // POSTAVLJANJE MAPE RADI
   const initializeMap = (mapContainer) => {
     // Kreiramo instancu mape
     const mapInstance = L.map(mapContainer, {
@@ -84,7 +91,7 @@ export default function KomponentaProgram(props) {
     }
   });
 
-  //provjeriti stupce, ubaciti u tablicu data.time, data.latitude...
+  //provjeriti stupce, ubaciti u tablicu data.time, data.latitude... DODATI U CLIENT POD OPCIJE ZA FILTER
   async function ucitajPodatke() {
     const { data, error } = await supabase
       .from('AvioniNadjeno')
@@ -98,7 +105,33 @@ export default function KomponentaProgram(props) {
     }
   }
 
-  //DODANO
+ //KUT X S OBZIROM NA MAGNETSKI SJEVER KORISNIK RADI
+  const magnetometar = () => {
+    if ("Magnetometer" in window) {
+      const sensor = new Magnetometer();
+      sensor.start();
+      sensor.onreading = () => {
+        sensor.onreading = () => {
+          let kut = Math.atan2(sensor.x, sensor.y) * (180 / Math.PI);
+          if (kut < 0) {
+              kut += 360; 
+          }
+          const declination = 0;
+          kut += declination;
+          if (kut >= 360)kut -= 360;
+          kut = kut.toFixed(2);
+          setMagHeading(kut);
+      };
+      };
+      onCleanup(() => {
+        sensor.stop();
+      });
+    }else{
+      alert("Nije podržan magnetometar!");
+    }
+  }
+
+  //DOBIVANJE LAT I LNG KORISNIKA RADI
   function lokacijaKorisnik() {
     return new Promise((resolve, reject) => {
       if ("geolocation" in navigator) {
@@ -122,25 +155,9 @@ export default function KomponentaProgram(props) {
     });
   }
 
-  const magnetometar = () => {
-    if ("Magnetometer" in window) {
-      const sensor = new Magnetometer();
-      sensor.start();
+  
 
-      //KUT X S OBZIROM NA SJEVER (KORISNIK)
-      sensor.onreading = () => {
-        let kut;
-        let smjer = Math.atan2(sensor.y, sensor.x) * (180 / Math.PI);
-        kut = (smjer + 360) % 360;
-        setMagHeading(kut);
-      };
-      onCleanup(() => {
-        sensor.stop();
-      });
-    }
-  }
-
-  //Orijentacija mobitela
+  //ORIJENTACIJA MOBITELA RADI
   const handleOrientation = (event) => {
     setAlpha(event.alpha);
     setBeta(event.beta);
@@ -151,10 +168,11 @@ export default function KomponentaProgram(props) {
     }
   };
 
-  // Funkcija za inicijalizaciju komponente
+  // POKRETANJE MAGNETOMETAR, UCITAVANJE PODATAKA IZ DB, ORIJENTACIJA I MAPA RADI
   onMount(() => {
-    ucitajPodatke();
+    alert("Kako bi ste koristili magnetometar, posjetite lokaciju chrome://flags ili edge://flags te dozvolite rad magnetometra!")
     magnetometar();
+    ucitajPodatke();
     const mapContainer = document.getElementById("map-container");
     if (mapContainer) {
       initializeMap(mapContainer);
@@ -165,7 +183,7 @@ export default function KomponentaProgram(props) {
     };
   });
 
-  //DEFINIRANJE ZRAČNOG PROSTORA U KOJEM SE TRAŽE AVIONI
+  //DEFINIRANJE ZRAČNOG PROSTORA U KOJEM SE TRAŽE AVIONI RADI
   //jedan stupanj lat (geo širina) je 111.11km / 60  = 1.85183333333km  u minuti broj 9.72009720099 * 1.85... daje okrug od 36km
   // jedan stupanj lng (geo visine) PRIBLIŽNO je 111*cos(lat)
   function prozor(lat, lng) {
@@ -179,15 +197,16 @@ export default function KomponentaProgram(props) {
     console.log("Okvir gledanja", udaljenostLatE(), udaljenostLatW(), udaljenostLngN(), udaljenostLngS());
   }
 
-  // Izračun kuta X između korisnika i aviona
+  // KUT X IZMEĐU KORISNIKA I AVIONA, KUTY NIJE KUTYAVIONA!!! RADI?
+  //daje vrijednosti od 0-360
   function kutKor_AV(avionLat, avionLng, lat, lng) {
     const kutY = Math.atan2(avionLat - lat, avionLng - lng) * (180 / Math.PI);
     const kutAvionaX = (90 - kutY + 360) % 360;
     setKutAvionaX(kutAvionaX);
-    return kutAvionaX;
+    console.log(kutAvionaX());
   }
 
-  // API elevacija
+  // API ELEVACIJA RADI
   async function getElevation(lat, lng) {
     const dataset = "etopo1";
     const url =
@@ -213,8 +232,8 @@ export default function KomponentaProgram(props) {
     }
   }
 
-  //Sveukupni izračun kuteva, moral sam stavit async zbog dodavanja podataka
-  async function skeniranje(lat, lng, avionLat, avionLng, visina, gamma) {
+  //IZRAČUN ZRAČNE UDALJENOSTI, KUTA Y AVIONA I MEĐA ZA IDENTIFIKACIJU AVIONA
+  async function skeniranje(lat, lng, avionLat, avionLng, visina, gamma, elevacija) {
     const R = 6371000;
     const X1 = avionLat * (Math.PI / 180);
     const Y1 = avionLng * (Math.PI / 180);
@@ -233,24 +252,25 @@ export default function KomponentaProgram(props) {
     } else if (UdaljenostZRCVal === null) {
       console.log("UdaljenostZRC je null, provjeriti funkciju skeniranje")
     } else {
-      setUdaljenostZRC(visina());
+      setUdaljenostZRC(visina);
     }
-    const VisinaDelta = visina() - elevation();
+    const VisinaDelta = visina - elevacija;
 
     const kutAvionYValue = Math.atan(UdaljenostZRC() / VisinaDelta) * (180 / Math.PI);
     setKutYAvion(kutAvionYValue);
     kutKor_AV(avionLat(), avionLng(), latitude(), longitude());
 
-    gornjaGranicaY = kutYAvion + 5;
-    donjaGranicaY = kutYAvion - 5;
-    gornjaGranicaX = kutAvionaX + 5;
-    donjaGranicaX = kutAvionaX - 5;
+    gornjaGranicaY = kutYAvion() + 5;
+    donjaGranicaY = kutYAvion() - 5;
+    gornjaGranicaX = kutAvionaX() + 5;
+    donjaGranicaX = kutAvionaX() - 5;
     console.log("Gornja i donja granica kuta x:", gornjaGranicaX, donjaGranicaX);
     console.log("Gornja i donja granica kuta y:", gornjaGranicaY, donjaGranicaY);
 
     if (gamma() >= donjaGranicaY && gamma() <= gornjaGranicaY && magHeading() >= donjaGranicaX && magHeading() <= gornjaGranicaX) {
       var audio = document.getElementById("audiosuccess");
       audio.play();
+
       let now = new Date();
       let vrijeme = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 
@@ -268,7 +288,7 @@ export default function KomponentaProgram(props) {
     }
   }
 
-  //FLIGHTRADAR24
+  //FLIGHTRADAR24 NERADI
   async function fetchFlightData() {
     try {
       const bounds = {
@@ -319,8 +339,9 @@ export default function KomponentaProgram(props) {
     }
   }
 
-
+  //POKRECE SVE RADI
   async function pokretac() {
+    
     await lokacijaKorisnik();
 
     prozor(latitude(), longitude());
@@ -331,105 +352,6 @@ export default function KomponentaProgram(props) {
     console.log("Korisnikova lokacija: ", latitude(), longitude());
 
   }
-
-  /*
-  async function pokretac() {
-    try {
-
-      await lokacijaKorisnik();
-      if (latitude() !== null && longitude() !== null) {
-
-        const map = L.map(mapContainer).setView([latitude(), longitude()], 13);
-
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          maxZoom: 19,
-          attribution: '© OpenStreetMap contributors'
-        }).addTo(map);
-
-
-        const userMarker = L.marker([latitude(), longitude()])
-          .addTo(map)
-          .bindPopup("Vaša lokacija")
-          .openPopup();
-        prozor(latitude(), longitude());
-
-
-        await getElevation(latitude(), longitude());
-
-        fetchFlightData();
-
-        console.log("Korisnikova lokacija: ", latitude(), longitude());
-      } else {
-        console.log("Pričekajte da se LAT i LNG učitaju");
-      }
-    } catch (error) {
-      console.error("Error during the process:", error);
-    }
-  }
-
-
-export default function KomponentaProgram(props) {
-  const [map, setMap] = createSignal(null);
-
-  // Funkcija za postavljanje mape
-  const initializeMap = (mapContainer) => {
-    // Kreiramo instancu mape
-    const mapInstance = L.map(mapContainer, {
-      zoomControl: false, // Uklanjanje kontrole za zoom
-      attributionControl: false, // Uklanjanje atribucije
-    }).setView([51.505, -0.09], 13); // Postavite početnu poziciju i zoom
-
-    // Dodajemo OpenStreetMap tile
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(mapInstance);
-
-    // Provjera da li preglednik podržava geolokaciju
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-
-          // Centriranje mape na trenutnu lokaciju
-          mapInstance.setView([latitude, longitude], 13);
-
-          // Dodavanje markera za trenutnu lokaciju
-          L.marker([latitude, longitude])
-            .addTo(mapInstance)
-            .bindPopup("Vaša trenutna lokacija")
-            .openPopup();
-        },
-        (error) => {
-          // Ako se geolokacija ne može dobiti, ispisuje grešku
-          console.error("Geolokacija nije dostupna: ", error);
-        },
-        {
-          enableHighAccuracy: true, 
-          timeout: 10000, // Postavljanje vremenskog ograničenja za dobivanje lokacije
-          maximumAge: 0, // Ne koristi staru lokaciju
-        }
-      );
-    } else {
-      console.error("Geolokacija nije podržana u ovom pregledniku");
-    }
-
-    setMap(mapInstance);
-  };
-
-  // Čistimo mapu kada se komponenta ukloni
-  onCleanup(() => {
-    if (map()) {
-      map().remove();
-    }
-  });
-
-  // Funkcija za inicijalizaciju komponente
-  onMount(() => {
-    const mapContainer = document.getElementById("map-container");
-    if (mapContainer) {
-      initializeMap(mapContainer);
-    }
-  });
-*/
-
   return (
     <div class="p-6 bg-gray-50 dark:bg-gray-900 min-h-screen rounded-3xl">
       <h1 class="text-3xl font-bold text-center mb-6 text-gray-800 dark:text-white">PROGRAM</h1>
