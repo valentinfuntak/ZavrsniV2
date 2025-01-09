@@ -14,7 +14,6 @@ import Onama from "./Pages/Onama";
 import Kontakt from "./Pages/Kontakt";
 import Postavke from './Pages/Postavke';
 
-import TestFunction from './Components/TestFunction';
 
 export default function App() {
   return (
@@ -27,7 +26,6 @@ export default function App() {
       <Route path="/Onama" component={<MainLayout><Onama /></MainLayout>} />
       <Route path="/Kontakt" component={<MainLayout><Kontakt /></MainLayout>} />
       <Route path="/Postavke" component={<MainLayout><Postavke /></MainLayout>} />
-      <Route path="/test" component={<MainLayout><TestFunction/></MainLayout>} />
     </HashRouter>
   );
 }

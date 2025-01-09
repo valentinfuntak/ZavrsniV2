@@ -7,6 +7,9 @@
 
 
 import { createSignal, onCleanup, onMount } from "solid-js";
+import { getFlightPositions } from '../Services/FlightRadarAPI';
+import { getElevationData } from '../Services/ElevacijaAPI';
+
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "../styles/kocka.css"
@@ -14,6 +17,7 @@ import supabase from '../Backend/supabaseClient';
 
 const url = import.meta.env.VITE_SUPABASE_URL;
 const apiKey = import.meta.env.VITE_SUPABASE_API_KEY;
+const flightRadarKey = import.meta.env.FLIGHTRADAR_KEY;
 
 const [latitude, setLatitude] = createSignal(null);
 const [longitude, setLongitude] = createSignal(null);
@@ -41,7 +45,7 @@ let mapContainer;
 export default function KomponentaProgram(props) {
   const [map, setMap] = createSignal(null);
 
-  // POSTAVLJANJE MAPE RADI
+  //MAPA
   const initializeMap = (mapContainer) => {
     // Kreiramo instancu mape
     const mapInstance = L.map(mapContainer, {
@@ -105,7 +109,7 @@ export default function KomponentaProgram(props) {
     }
   }
 
- //KUT X S OBZIROM NA MAGNETSKI SJEVER KORISNIK RADI
+  //KUT X S OBZIROM NA MAGNETSKI SJEVER KORISNIK RADI
   const magnetometar = () => {
     if ("Magnetometer" in window) {
       const sensor = new Magnetometer();
@@ -114,19 +118,19 @@ export default function KomponentaProgram(props) {
         sensor.onreading = () => {
           let kut = Math.atan2(sensor.x, sensor.y) * (180 / Math.PI);
           if (kut < 0) {
-              kut += 360; 
+            kut += 360;
           }
           const declination = 0;
           kut += declination;
-          if (kut >= 360)kut -= 360;
+          if (kut >= 360) kut -= 360;
           kut = kut.toFixed(2);
           setMagHeading(kut);
-      };
+        };
       };
       onCleanup(() => {
         sensor.stop();
       });
-    }else{
+    } else {
       alert("Nije podržan magnetometar!");
     }
   }
@@ -155,9 +159,9 @@ export default function KomponentaProgram(props) {
     });
   }
 
-  
 
-  //ORIJENTACIJA MOBITELA RADI
+
+  //ORIJENTACIJA MOBITELA
   const handleOrientation = (event) => {
     setAlpha(event.alpha);
     setBeta(event.beta);
@@ -205,30 +209,35 @@ export default function KomponentaProgram(props) {
     setKutAvionaX(kutAvionaX);
     console.log(kutAvionaX());
   }
-
-  // API ELEVACIJA RADI
+/*
+  // API ELEVACIJA 
   async function getElevation(lat, lng) {
     const dataset = "etopo1";
-    const url =
-      `https://api.opentopodata.org/v1/${dataset}?locations=${lat},${lng}`;
-    
-    //dohvacanje podataka 
+      try{
+        const data = await getElevationData(dataset, lat, lng);
+        const elevation = data.results[0]?.elevation;
+        if (data !== null) {
+          setElevation(elevation);
+        } else{
+          console.log("API za elevaciju vratio je null vrijednost");
+        }
+      }catch (error){
+        console.error("Greška pri pokušaju dohvaćanja elevacije: ", error);
+      }
+    }
+      */
+
+  // API ELEVACIJA open-meto
+  async function getElevation(lat, lng) {
     try {
-      const response = await fetch(url, {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-      });
-
-      const jsonData = await response.json();
-
-      if (jsonData && jsonData.results && jsonData.results[0]) {
-        const elevationData = jsonData.results[0].elevation;
+      const elevationData = await getElevationData(lat, lng);
+      if (elevationData !== null) {
         setElevation(elevationData);
       } else {
-        console.error("Nije moguće pronači elevaciju");
+        console.log("API za elevaciju vratio je null vrijednost");
       }
     } catch (error) {
-      console.error("Greška pri dohvaćanju podataka o elevaciji:", error);
+      console.error("Greška pri pokušaju dohvaćanja elevacije: ", error);
     }
   }
 
@@ -288,7 +297,52 @@ export default function KomponentaProgram(props) {
     }
   }
 
-  //FLIGHTRADAR24 NERADI
+  //const [flights, setFlights] = createSignal(null);
+  const [loading, setLoading] = createSignal(false);
+  // const apiToken = '${flightRadarKey}';
+
+  const fetchFlightData = async () => {
+    setLoading(true);
+    try {
+      //const bounds = '${udaljenostLatE()},${udaljenostLatW()},${udaljenostLngN()},${udaljenostLngS()}';
+      const bounds = '50.682,46.218,14.422,22.243';
+      const data = await getFlightPositions("9d64c490-73c1-4abc-b7b7-efe16ecf1a6a|GWNYeAKtJ1cXb1wM4fhW3SPeKTbeGABtWTxnaTEh4f35fc6d", bounds);
+      //setFlights(data);
+      if (data !== null) {
+        data.forEach((flight) => {
+          setAvionLat(flight.lat);
+          setAvionLng(flight.lon);
+         let visinaMetri = flight.alt / 3.28;
+         visinaMetri = visinaMetri.toFixed(2);
+          setVisina(visinaMetri);
+          let brzinaA = flight.brz * 1.852;
+          brzinaA = Math.round(brzinaA);
+          setBrzina(brzinaA);
+          setModel(flight.modelA);
+          L.marker([avionLat(), avionLng()]).addTo(map())
+            .bindPopup(
+              `Let: ${flight.call}, Zrakoplov: ${model()}, Altituda: ${visina()} m`,
+            )
+            .openPopup();
+          skeniranje(
+            latitude(),
+            longitude(),
+            avionLat(),
+            avionLng(),
+            visina(),
+            gamma()
+          );
+          console.log("Podaci o avionu:: ", flight);
+        });
+      }
+    } catch (error) {
+      console.error('Failed to fetch flight data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  /*FLIGHTRADAR24 NERADI
   async function fetchFlightData() {
     try {
       const bounds = {
@@ -338,16 +392,17 @@ export default function KomponentaProgram(props) {
       console.log(error);
     }
   }
+*/
+
 
   //POKRECE SVE RADI
   async function pokretac() {
-    
+
     await lokacijaKorisnik();
 
     prozor(latitude(), longitude());
     await getElevation(latitude(), longitude());
     await fetchFlightData();
-    
 
     console.log("Korisnikova lokacija: ", latitude(), longitude());
 
@@ -383,7 +438,7 @@ export default function KomponentaProgram(props) {
           {/* Proširena kocka unutar forme */}
           <div class="bg-gray-100 dark:bg-gray-600 p-4 rounded-lg shadow-md transition-transform transform hover:scale-105 col-span-1 md:col-span-2 flex justify-center items-center">
             <div class="cube-scene pt-16 w-full h-64"> {/* Povećan prostor za kocku */}
-              <div class="cube"  ref={el => cubeRef = el}>
+              <div class="cube" ref={el => cubeRef = el}>
                 <div class="cube-face front">Front</div>
                 <div class="cube-face back">Back</div>
                 <div class="cube-face left">Left</div>
