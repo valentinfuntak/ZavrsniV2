@@ -2,6 +2,7 @@ import { createResource, For } from "solid-js";
 import { getPlanes } from "../Backend/supabaseClient";
 
 import Navigacija from "../Components/Navigacija"
+//import { konverzijaDatum } from "../Components/Navigacija"
 
 
 function Program(props) {
@@ -90,7 +91,7 @@ function Program(props) {
                                 <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
                                     <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{plane.id}</td>
                                     <td class="px-6 py-4">{plane.model}</td>
-                                    <td class="px-6 py-4">{plane.time}</td>
+                                    <td class="px-6 py-4">{/*konverzijaDatum()*/plane.time}</td>
                                     <td class="px-6 py-4">{plane.latitude}</td>
                                     <td class="px-6 py-4">{plane.longitude}</td>
                                     <td class="px-6 py-4">{plane.altitude}</td>

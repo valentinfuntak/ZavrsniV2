@@ -6,7 +6,10 @@ const apiKey = import.meta.env.VITE_SUPABASE_API_KEY;
 export const supabase = createClient(url, apiKey);
 
 export async function getPlanes() {
-  const { data, error } = await supabase.from("AvioniNadjeno").select("*");
+  const { data, error } = await supabase.from("AvioniNadjeno")
+  .select("*")
+  .order('id', { ascending: false })
+  .limit(5);
   if (error) {
     console.error("Greška pri dohvaćanju aviona:", error.message);
     return [];

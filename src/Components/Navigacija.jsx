@@ -41,7 +41,11 @@ const [model, setModel] = createSignal(0);
 
 let cubeRef;
 let mapContainer;
-
+/*
+export function konverzijaDatum(vrijeme){
+  const datum = new Date(vrijeme);
+}
+*/
 export default function KomponentaProgram(props) {
   const [map, setMap] = createSignal(null);
 
@@ -95,19 +99,7 @@ export default function KomponentaProgram(props) {
     }
   });
 
-  //provjeriti stupce, ubaciti u tablicu data.time, data.latitude... DODATI U CLIENT POD OPCIJE ZA FILTER
-  async function ucitajPodatke() {
-    const { data, error } = await supabase
-      .from('AvioniNadjeno')
-      .select()
-      .order('id', { ascending: false })
-      .limit(5);
-
-    if (error) {
-      console.error("Greška prilikom dohvacanja podataka iz baze:", error);
-      return null;
-    }
-  }
+  
 
   //KUT X S OBZIROM NA MAGNETSKI SJEVER KORISNIK RADI
   const magnetometar = () => {
@@ -176,7 +168,6 @@ export default function KomponentaProgram(props) {
   onMount(() => {
     alert("Kako bi ste koristili magnetometar, posjetite lokaciju chrome://flags ili edge://flags te dozvolite rad magnetometra!")
     magnetometar();
-    ucitajPodatke();
     const mapContainer = document.getElementById("map-container");
     if (mapContainer) {
       initializeMap(mapContainer);
@@ -210,23 +201,6 @@ export default function KomponentaProgram(props) {
     setKutAvionaX(kutAvionaX);
     //console.log(kutAvionaX());
   }
-/*
-  // API ELEVACIJA 
-  async function getElevation(lat, lng) {
-    const dataset = "etopo1";
-      try{
-        const data = await getElevationData(dataset, lat, lng);
-        const elevation = data.results[0]?.elevation;
-        if (data !== null) {
-          setElevation(elevation);
-        } else{
-          console.log("API za elevaciju vratio je null vrijednost");
-        }
-      }catch (error){
-        console.error("Greška pri pokušaju dohvaćanja elevacije: ", error);
-      }
-    }
-      */
 
   // API ELEVACIJA open-meto
   async function getElevation(lat, lng) {
@@ -267,6 +241,9 @@ export default function KomponentaProgram(props) {
     const VisinaDelta = visina - elevacija;
 
     const kutAvionYValue = Math.atan(UdaljenostZRC() / VisinaDelta) * (180 / Math.PI);
+    console.log("ZRACNA UDALJENOST JE:", UdaljenostZRC());
+    console.log("KUT Y JE", kutAvionYValue);
+    console.log("VISINA JE:", visina);
     setKutYAvion(kutAvionYValue);
     kutKor_AV(avionLat(), avionLng(), latitude(), longitude());
 
@@ -331,7 +308,8 @@ export default function KomponentaProgram(props) {
             avionLat(),
             avionLng(),
             visina(),
-            gamma()
+            gamma(),
+            elevation()
           );
           console.log("Podaci o avionu:: ", flight);
         });
@@ -342,59 +320,6 @@ export default function KomponentaProgram(props) {
       setLoading(false);
     }
   };
-
-  /*FLIGHTRADAR24 NERADI
-  async function fetchFlightData() {
-    try {
-      const bounds = {
-        udaljenostLatE: udaljenostLatE(),
-        udaljenostLatW: udaljenostLatW(),
-        udaljenostLngN: udaljenostLngN(),
-        udaljenostLngS: udaljenostLngS(),
-      };
-      const response = await fetch(
-        "https://jgzhrmujjmcuanvbufwh.supabase.co/functions/v1/APIPoziv",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${apiKey}`,
-          },
-          body: JSON.stringify(bounds),
-        },
-      );
-      const data = await response.json();
-      if (response.ok) {
-        data.forEach((flight) => {
-          setAvionLat(lat);
-          setAvionLng(lon);
-          setVisina(alt);
-          setBrzina(brz);
-          setModel(modelA);
-          console.log(model(), brzina(), visina());
-          L.marker([avionLat(), avionLng()]).addTo(mapContainer)
-            .bindPopup(
-              `Let: ${call}, Zrakoplov: ${model()}, Altituda: ${visina()} m`,
-            )
-            .openPopup();
-          skeniranje(
-            latitude(),
-            longitude(),
-            avionLat(),
-            avionLng(),
-            visina(),
-            gamma(),
-          );
-        });
-      } else {
-        console.log("Postoje problemi s dohvačanjem informacija o avionima");
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
-*/
-
 
   //POKRECE SVE RADI
   async function pokretac() {
