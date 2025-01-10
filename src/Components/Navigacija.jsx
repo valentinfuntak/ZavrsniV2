@@ -38,14 +38,24 @@ const [avionLat, setAvionLat] = createSignal(0);
 const [visina, setVisina] = createSignal(0);
 const [brzina, setBrzina] = createSignal(0);
 const [model, setModel] = createSignal(0);
+export const [AzurirajBazu, setAzurirajBazu] = createSignal(false);
 
 let cubeRef;
 let mapContainer;
+
+
 /*
 export function konverzijaDatum(vrijeme){
   const datum = new Date(vrijeme);
 }
 */
+
+export async function pokreniAzuriranje(Azuriraj){
+if(Azuriraj === false){
+setAzurirajBazu(true);
+}
+}
+
 export default function KomponentaProgram(props) {
   const [map, setMap] = createSignal(null);
 
@@ -265,7 +275,8 @@ export default function KomponentaProgram(props) {
       const { error } = await supabase
         .from('AvioniNadjeno') //ime tablice
         .insert({ model: model(), time: vrijeme, latitude: avionLat(), longitude: avionLng(), altitude: visina(), speed: brzina() })
-      if (error) {
+        pokreniAzuriranje(AzurirajBazu());
+        if (error) {
         console.log(error, "Greška prilikom slanja u BP");
       }
     } else {
