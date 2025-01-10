@@ -206,8 +206,9 @@ export default function KomponentaProgram(props) {
   function kutKor_AV(avionLat, avionLng, lat, lng) {
     const kutY = Math.atan2(avionLat - lat, avionLng - lng) * (180 / Math.PI);
     const kutAvionaX = (90 - kutY + 360) % 360;
+
     setKutAvionaX(kutAvionaX);
-    console.log(kutAvionaX());
+    //console.log(kutAvionaX());
   }
 /*
   // API ELEVACIJA 
@@ -242,10 +243,10 @@ export default function KomponentaProgram(props) {
   }
 
   //IZRAČUN ZRAČNE UDALJENOSTI, KUTA Y AVIONA I MEĐA ZA IDENTIFIKACIJU AVIONA
-  async function skeniranje(lat, lng, avionLat, avionLng, visina, gamma, elevacija) {
+  async function skeniranje(lat, lng, avionLa, avionLn, visina, gamma, elevacija) {
     const R = 6371000;
-    const X1 = avionLat * (Math.PI / 180);
-    const Y1 = avionLng * (Math.PI / 180);
+    const X1 = avionLa * (Math.PI / 180);
+    const Y1 = avionLn * (Math.PI / 180);
     const X2 = lat * (Math.PI / 180);
     const Y2 = lng * (Math.PI / 180);
 
@@ -269,14 +270,14 @@ export default function KomponentaProgram(props) {
     setKutYAvion(kutAvionYValue);
     kutKor_AV(avionLat(), avionLng(), latitude(), longitude());
 
-    gornjaGranicaY = kutYAvion() + 5;
-    donjaGranicaY = kutYAvion() - 5;
-    gornjaGranicaX = kutAvionaX() + 5;
-    donjaGranicaX = kutAvionaX() - 5;
+    const gornjaGranicaY = kutYAvion() + 5;
+    const donjaGranicaY = kutYAvion() - 5;
+    const gornjaGranicaX = kutAvionaX() + 5;
+    const donjaGranicaX = kutAvionaX() - 5;
     console.log("Gornja i donja granica kuta x:", gornjaGranicaX, donjaGranicaX);
     console.log("Gornja i donja granica kuta y:", gornjaGranicaY, donjaGranicaY);
 
-    if (gamma() >= donjaGranicaY && gamma() <= gornjaGranicaY && magHeading() >= donjaGranicaX && magHeading() <= gornjaGranicaX) {
+    if (gamma >= donjaGranicaY && gamma <= gornjaGranicaY && magHeading() >= donjaGranicaX && magHeading() <= gornjaGranicaX) {
       var audio = document.getElementById("audiosuccess");
       audio.play();
 
