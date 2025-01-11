@@ -6,7 +6,9 @@
 //Slozit edge funkciju za flightradar
 
 
-import { createSignal, onCleanup, onMount } from "solid-js";
+import { createSignal, onCleanup, onMount, Show } from "solid-js";
+
+
 import { getFlightPositions } from '../Services/FlightRadarAPI';
 import { getElevationData } from '../Services/ElevacijaAPI';
 
@@ -18,6 +20,10 @@ import supabase from '../Backend/supabaseClient';
 const url = import.meta.env.VITE_SUPABASE_URL;
 const apiKey = import.meta.env.VITE_SUPABASE_API_KEY;
 const flightRadarKey = import.meta.env.FLIGHTRADAR_KEY;
+
+
+export const [AzurirajBazu, setAzurirajBazu] = createSignal(false);
+
 
 const [latitude, setLatitude] = createSignal(null);
 const [longitude, setLongitude] = createSignal(null);
@@ -38,11 +44,10 @@ const [avionLat, setAvionLat] = createSignal(0);
 const [visina, setVisina] = createSignal(0);
 const [brzina, setBrzina] = createSignal(0);
 const [model, setModel] = createSignal(0);
-export const [AzurirajBazu, setAzurirajBazu] = createSignal(false);
+
 
 let cubeRef;
 let mapContainer;
-
 
 /*
 export function konverzijaDatum(vrijeme){
@@ -263,7 +268,6 @@ export default function KomponentaProgram(props) {
     if (gamma >= donjaGranicaY && gamma <= gornjaGranicaY && magHeading() >= donjaGranicaX && magHeading() <= gornjaGranicaX) {
       var audio = document.getElementById("audiosuccess");
       audio.play();
-
       {/*
       let now = new Date();
       let vrijeme = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
@@ -281,7 +285,7 @@ export default function KomponentaProgram(props) {
     } else {
       var audio = document.getElementById("audiofail");
       audio.play();
-      alert("Avion se ne nalazi u traženom zračnom prostoru");
+      alert(["Avion se ne nalazi u traženom zračnom prostoru"]);
     }
   }
 

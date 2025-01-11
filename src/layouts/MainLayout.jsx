@@ -24,7 +24,7 @@ export default function MainLayout(props) {
         <>
             <nav class="bg-white border-gray-200 dark:bg-gray-900">
                 <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-                    <a href="/Pocetna" class="flex items-center space-x-3 rtl:space-x-reverse">
+                    <a href="#/Pocetna" class="flex items-center space-x-3 rtl:space-x-reverse">
                         <img src={Plane} class="h-8" alt="Flowbite Logo" />
                         <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">Plane Spotter</span>
                     </a>
@@ -44,7 +44,7 @@ export default function MainLayout(props) {
                     <div class={`md:flex ${isMobileMenuOpen() ? "block" : "hidden"} w-full md:w-auto`}>
                         <ul class="flex flex-col font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
                             <li>
-                                <a href="/Pocetna" class="block py-2 px-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 md:dark:text-blue-500">Pocetna</a>
+                                <a href="#/Pocetna" class="block py-2 px-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 md:dark:text-blue-500">Pocetna</a>
                             </li>
                             <li class="relative">
                                 <button
@@ -101,43 +101,14 @@ export default function MainLayout(props) {
                             </li>
                             <li><a href="/Onama" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500  dark:hover:text-white">O nama</a></li>
                             <li><a href="/Kontakt" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500  dark:hover:text-white">Kontakt</a></li>
-                        </ul>
-                    </div>
 
-                    {/* User menu */}
-                    <div class="flex items-center md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse relative">
-                        <button
-                            type="button"
-                            class="flex text-sm bg-gray-800 rounded-full md:me-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
-                            id="user-menu-button"
-                            aria-expanded="false"
-                            onClick={toggleUserDropdown}
-                        >
-                            <span class="sr-only">Open user menu</span>
-                            <img class="w-8 h-8 rounded-full" src={Plane} alt="user photo" />
-                        </button>
-                        {isUserDropdownOpen() && (
-                            <div
-                                id="user-dropdown"
-                                class="absolute left-0 top-full mt-2 z-50 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600"
-                            >
-                                <div class="px-4 py-3">
-                                    <span class="block text-sm text-gray-900 dark:text-white">Korisnik</span>
-                                    <span class="block text-sm text-gray-500 truncate dark:text-gray-400">name@flowbite.com</span>
-                                </div>
-                                <ul class="py-2" aria-labelledby="user-menu-button">
-                                    <li><a href="/Pocetna" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Pocetna</a></li>
-                                    <li><a href="/Postavke" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Postavke</a></li>
-                                    <li><a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Odjava</a></li>
-                                </ul>
-                            </div>
-                        )}
+                        </ul>
                     </div>
                 </div>
             </nav>
 
             {/* PRIKAZ ELEMENATA */}
-            <div class="bg-gray-800 text-gray-100 min-h-[75vh]">
+            <div class="bg-gray-800 text-gray-100 min-h-screen">
                 <div class="mx-auto w-full max-w-screen-xl p-4 py-6 lg:py-8">{props.children}</div>
             </div>
 

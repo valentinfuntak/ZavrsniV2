@@ -96,7 +96,7 @@ function Prijava(props) {
                                             />
                                         </div>
                                         <div class="ml-3 text-sm">
-                                            <label for="remember" class="text-gray-500 dark:text-gray-300">Zapamti podatke</label>
+                                            <label for="remember" class=" text-gray-500 dark:text-gray-300">Zapamti podatke</label>
                                         </div>
                                     </div>
                                     <a href="#" class="text-sm font-medium text-primary-600 hover:underline dark:text-primary-500">Zaboravljena lozinka?</a>
