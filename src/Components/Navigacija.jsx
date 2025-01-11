@@ -50,10 +50,10 @@ export function konverzijaDatum(vrijeme){
 }
 */
 
-export async function pokreniAzuriranje(Azuriraj){
-if(Azuriraj === false){
-setAzurirajBazu(true);
-}
+export async function pokreniAzuriranje(Azuriraj) {
+  if (Azuriraj === false) {
+    setAzurirajBazu(true);
+  }
 }
 
 export default function KomponentaProgram(props) {
@@ -109,8 +109,6 @@ export default function KomponentaProgram(props) {
     }
   });
 
-  
-
   //KUT X S OBZIROM NA MAGNETSKI SJEVER KORISNIK RADI
   const magnetometar = () => {
     if ("Magnetometer" in window) {
@@ -160,8 +158,6 @@ export default function KomponentaProgram(props) {
       }
     });
   }
-
-
 
   //ORIJENTACIJA MOBITELA
   const handleOrientation = (event) => {
@@ -275,8 +271,8 @@ export default function KomponentaProgram(props) {
       const { error } = await supabase
         .from('AvioniNadjeno') //ime tablice
         .insert({ model: model(), time: vrijeme, latitude: avionLat(), longitude: avionLng(), altitude: visina(), speed: brzina() })
-        pokreniAzuriranje(AzurirajBazu());
-        if (error) {
+      pokreniAzuriranje(AzurirajBazu());
+      if (error) {
         console.log(error, "Greška prilikom slanja u BP");
       }
     } else {
@@ -293,32 +289,50 @@ export default function KomponentaProgram(props) {
   const fetchFlightData = async () => {
     setLoading(true);
     try {
-      //const bounds = '${udaljenostLatE()},${udaljenostLatW()},${udaljenostLngN()},${udaljenostLngS()}';
       const bounds = '50.682,46.218,14.422,22.243';
       const data = await getFlightPositions("9d64c490-73c1-4abc-b7b7-efe16ecf1a6a|GWNYeAKtJ1cXb1wM4fhW3SPeKTbeGABtWTxnaTEh4f35fc6d", bounds);
-      //setFlights(data);
+  
       if (data !== null) {
-        data.forEach((flight) => {
-          setAvionLat(flight.lat);
-          setAvionLng(flight.lon);
-         let visinaMetri = flight.alt / 3.28;
-         visinaMetri = visinaMetri.toFixed(2);
-          setVisina(visinaMetri);
-          let brzinaA = flight.brz * 1.852;
-          brzinaA = Math.round(brzinaA);
-          setBrzina(brzinaA);
-          setModel(flight.modelA);
-          L.marker([avionLat(), avionLng()]).addTo(map())
+        data.forEach(async (flight) => {
+          const lat = flight.lat;
+          const lon = flight.lon;
+          const alt = (flight.alt / 3.28).toFixed(2); // Visina u metrima
+          const brzina = Math.round(flight.brz * 1.852); // Brzina u km/h
+          const modelA = flight.modelA;
+          const call = flight.call;
+  
+          // Spremanje podataka u Supabase
+          const { error } = await supabase
+            .from('AvioniNadjeno') // Tabela u kojoj spremaš podatke
+            .insert([
+              { latitude: lat, longitude: lon, altitude: alt, speed: brzina, callsign: call, model: modelA }
+            ]);
+  
+          if (error) {
+            console.error('Greška pri spremanju podataka u bazu:', error.message);
+          } else {
+            console.log('Podaci spremljeni u bazu');
+          }
+  
+          // Ažuriranje podataka na mapi
+          setAvionLat(lat);
+          setAvionLng(lon);
+          setVisina(alt);
+          setBrzina(brzina);
+          setModel(modelA);
+  
+          L.marker([lat, lon]).addTo(map())
             .bindPopup(
-              `Let: ${flight.call}, Zrakoplov: ${model()}, Altituda: ${visina()} m`,
+              `Let: ${call}, Zrakoplov: ${modelA}, Altituda: ${alt} m`
             )
             .openPopup();
+  
           skeniranje(
             latitude(),
             longitude(),
-            avionLat(),
-            avionLng(),
-            visina(),
+            lat,
+            lon,
+            alt,
             gamma(),
             elevation()
           );
@@ -331,6 +345,9 @@ export default function KomponentaProgram(props) {
       setLoading(false);
     }
   };
+  
+  
+
 
   //POKRECE SVE RADI
   async function pokretac() {
@@ -342,8 +359,8 @@ export default function KomponentaProgram(props) {
     await fetchFlightData();
 
     console.log("Korisnikova lokacija: ", latitude(), longitude());
-
   }
+
   return (
     <div class="p-6 bg-gray-50 dark:bg-gray-900 min-h-screen rounded-3xl">
       <h1 class="text-3xl font-bold text-center mb-6 text-gray-800 dark:text-white">PROGRAM</h1>
