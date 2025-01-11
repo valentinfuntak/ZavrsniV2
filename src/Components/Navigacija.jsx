@@ -264,6 +264,7 @@ export default function KomponentaProgram(props) {
       var audio = document.getElementById("audiosuccess");
       audio.play();
 
+      {/*
       let now = new Date();
       let vrijeme = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 
@@ -272,6 +273,8 @@ export default function KomponentaProgram(props) {
         .from('AvioniNadjeno') //ime tablice
         .insert({ model: model(), time: vrijeme, latitude: avionLat(), longitude: avionLng(), altitude: visina(), speed: brzina() })
       pokreniAzuriranje(AzurirajBazu());
+      */}
+
       if (error) {
         console.log(error, "Greška prilikom slanja u BP");
       }
@@ -291,7 +294,7 @@ export default function KomponentaProgram(props) {
     try {
       const bounds = '50.682,46.218,14.422,22.243';
       const data = await getFlightPositions("9d64c490-73c1-4abc-b7b7-efe16ecf1a6a|GWNYeAKtJ1cXb1wM4fhW3SPeKTbeGABtWTxnaTEh4f35fc6d", bounds);
-  
+
       if (data !== null) {
         data.forEach(async (flight) => {
           const lat = flight.lat;
@@ -300,33 +303,32 @@ export default function KomponentaProgram(props) {
           const brzina = Math.round(flight.brz * 1.852); // Brzina u km/h
           const modelA = flight.modelA;
           const call = flight.call;
-  
+
           // Spremanje podataka u Supabase
           const { error } = await supabase
             .from('AvioniNadjeno') // Tabela u kojoj spremaš podatke
             .insert([
               { latitude: lat, longitude: lon, altitude: alt, speed: brzina, callsign: call, model: modelA }
             ]);
-  
+          pokreniAzuriranje(AzurirajBazu());
           if (error) {
             console.error('Greška pri spremanju podataka u bazu:', error.message);
           } else {
             console.log('Podaci spremljeni u bazu');
           }
-  
+
           // Ažuriranje podataka na mapi
           setAvionLat(lat);
           setAvionLng(lon);
           setVisina(alt);
           setBrzina(brzina);
           setModel(modelA);
-  
+
           L.marker([lat, lon]).addTo(map())
             .bindPopup(
               `Let: ${call}, Zrakoplov: ${modelA}, Altituda: ${alt} m`
             )
             .openPopup();
-  
           skeniranje(
             latitude(),
             longitude(),
@@ -345,19 +347,13 @@ export default function KomponentaProgram(props) {
       setLoading(false);
     }
   };
-  
-  
-
 
   //POKRECE SVE RADI
   async function pokretac() {
-
     await lokacijaKorisnik();
-
     prozor(latitude(), longitude());
     await getElevation(latitude(), longitude());
     await fetchFlightData();
-
     console.log("Korisnikova lokacija: ", latitude(), longitude());
   }
 
