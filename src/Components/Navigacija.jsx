@@ -279,6 +279,18 @@ export default function KomponentaProgram(props) {
       pokreniAzuriranje(AzurirajBazu());
       */}
 
+      const { error } = await supabase
+        .from('AvioniNadjeno') // Tabela u kojoj spremaš podatke
+        .insert([
+          { latitude: lat, longitude: lon, altitude: alt, speed: brzina, callsign: call, model: modelA }
+        ]);
+      pokreniAzuriranje(AzurirajBazu());
+      if (error) {
+        console.error('Greška pri spremanju podataka u bazu:', error.message);
+      } else {
+        console.log('Podaci spremljeni u bazu');
+      }
+
       if (error) {
         console.log(error, "Greška prilikom slanja u BP");
       }
@@ -309,7 +321,7 @@ export default function KomponentaProgram(props) {
           const call = flight.call;
 
           // Spremanje podataka u Supabase
-          const { error } = await supabase
+          {/*const { error } = await supabase
             .from('AvioniNadjeno') // Tabela u kojoj spremaš podatke
             .insert([
               { latitude: lat, longitude: lon, altitude: alt, speed: brzina, callsign: call, model: modelA }
@@ -319,7 +331,7 @@ export default function KomponentaProgram(props) {
             console.error('Greška pri spremanju podataka u bazu:', error.message);
           } else {
             console.log('Podaci spremljeni u bazu');
-          }
+          }*/}
 
           // Ažuriranje podataka na mapi
           setAvionLat(lat);
