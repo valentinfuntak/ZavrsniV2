@@ -324,6 +324,7 @@ export default function KomponentaProgram(props) {
             console.error('Greška pri spremanju podataka u bazu:', error.message);
           } else {
             console.log('Podaci spremljeni u bazu');
+            showNotification("Podaci su spremljeni u bazu podataka.", "success");
           }
 
           // Ažuriranje podataka na mapi
@@ -383,7 +384,6 @@ export default function KomponentaProgram(props) {
     <>
       <div class="p-6 bg-gray-50 dark:bg-gray-900 rounded-3xl">
       <h1 class="text-3xl font-bold text-center mb-6 text-gray-800 dark:text-white">PROGRAM</h1>
-
         <div class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg p-6">
           <div class="flex justify-center items-center mb-4">
             <div
@@ -441,9 +441,9 @@ export default function KomponentaProgram(props) {
               {notifications().map((notification, index) => (
                 <div
                   key={index}
-                  class={`p-4 rounded ${notification.type === "error" ? "bg-red-500" :
-                    notification.type === "success" ? "bg-green-500" :
-                      notification.type === "info" ? "bg-blue-500" : ""} text-white shadow-md`}
+                  class={`p-4 rounded ${notification.type === "error" ? "bg-red-600" :
+                    notification.type === "success" ? "bg-green-700" :
+                      notification.type === "info" ? "bg-blue-400" : ""} text-white shadow-md`}
                 >
                   <div class="whitespace-normal w-full">
                     {notification.message}
