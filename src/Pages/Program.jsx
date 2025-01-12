@@ -100,7 +100,7 @@ function Program(props) {
                                     <td class="px-6 py-4">{plane.longitude}</td>
                                     <td class="px-6 py-4">{plane.altitude}</td>
                                     <td class="px-6 py-4">{plane.speed}</td>
-                                    {/* <td class="px-6 py-4"><button onClick={() => fetchFlightInfo(plane.model); showNotification('${InformacijeIspis()}', "info");}>Pritisni</button></td> */}
+                                    {/* <td class="px-6 py-4"><button onClick={() => fetchFlightInfo(plane.model); showNotification('${InformacijeIspis()}', "info", 20000);}>Pritisni</button></td> */}
                                 </tr>
                             )}
                         </For>

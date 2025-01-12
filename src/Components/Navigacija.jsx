@@ -76,13 +76,13 @@ export function konverzijaDatum(vrijeme){
   }
     */
 
-export async function showNotification(message, type) {
+export async function showNotification(message, type, trajanje) {
   const newNotification = { message, type };
   setNotifications((prev) => [...prev, newNotification]);
 
   setTimeout(() => {
     setNotifications((prev) => prev.filter((n) => n !== newNotification));
-  }, 15000);
+  }, trajanje);
 }
 
 export async function pokreniAzuriranje(Azuriraj) {
@@ -166,7 +166,7 @@ export default function KomponentaProgram(props) {
         sensor.stop();
       });
     } else {
-      showNotification("Nije podržan magnetometar!", "info");
+      showNotification("Nije podržan magnetometar!", "info", 5000);
     }
   }
 
@@ -207,7 +207,7 @@ export default function KomponentaProgram(props) {
 
   // POKRETANJE MAGNETOMETAR, UCITAVANJE PODATAKA IZ DB, ORIJENTACIJA I MAPA RADI
   onMount(() => {
-    showNotification("Kako bi ste koristili magnetometar, posjetite lokaciju chrome://flags ili edge://flags te dozvolite rad magnetometra!", "info")
+    showNotification("Kako bi ste koristili magnetometar, posjetite lokaciju chrome://flags ili edge://flags te dozvolite rad magnetometra!", "info", 10000);
     magnetometar();
     const mapContainer = document.getElementById("map-container");
     if (mapContainer) {
@@ -313,7 +313,7 @@ export default function KomponentaProgram(props) {
     } else {
       var audio = document.getElementById("audiofail");
       audio.play();
-      showNotification("Avion se ne nalazi u traženom zračnom prostoru", "error");
+      showNotification("Avion se ne nalazi u traženom zračnom prostoru", "error", 5000);
     }
   }
 

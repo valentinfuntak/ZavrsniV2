@@ -19,7 +19,7 @@ export async function insertPlane(lat, lon, alt, brzina, call, modelA) {
     console.error('Greška pri spremanju podataka u bazu:', error.message);
   } else {
     console.log('Podaci spremljeni u bazu');
-    showNotification("Podaci su spremljeni u bazu podataka.", "success");
+    showNotification("Podaci su spremljeni u bazu podataka.", "success", 5000);
   }
 }
 
