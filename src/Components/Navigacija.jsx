@@ -3,6 +3,7 @@ import { createSignal, onCleanup, onMount, Show } from "solid-js";
 
 import { getFlightPositions } from '../Services/FlightRadarAPI';
 import { getElevationData } from '../Services/ElevacijaAPI';
+import { insertPlane } from '../Backend/supabaseClient';
 
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -45,6 +46,16 @@ export function konverzijaDatum(vrijeme){
   const datum = new Date(vrijeme);
 }
 */
+
+export async function showNotification(message, type) {
+  const newNotification = { message, type };
+  setNotifications((prev) => [...prev, newNotification]);
+
+  setTimeout(() => {
+    setNotifications((prev) => prev.filter((n) => n !== newNotification));
+  }, 5000);
+}
+
 export async function pokreniAzuriranje(Azuriraj) {
   if (Azuriraj === false) {
     setAzurirajBazu(true);
@@ -269,14 +280,16 @@ export default function KomponentaProgram(props) {
         .from('AvioniNadjeno') //ime tablice
         .insert({ model: model(), time: vrijeme, latitude: avionLat(), longitude: avionLng(), altitude: visina(), speed: brzina() })
       pokreniAzuriranje(AzurirajBazu());
-      */}
+      
 
       const { error } = await supabase
         .from('AvioniNadjeno') // Tabela u kojoj spremaš podatke
         .insert([
           { latitude: lat, longitude: lon, altitude: alt, speed: brzina, callsign: call, model: modelA }
         ]);
+      
       pokreniAzuriranje(AzurirajBazu());
+      */}
       if (error) {
         console.error('Greška pri spremanju podataka u bazu:', error.message);
       } else {
@@ -296,13 +309,13 @@ export default function KomponentaProgram(props) {
 
   //const [flights, setFlights] = createSignal(null);
   const [loading, setLoading] = createSignal(false);
-  // const apiToken = '${flightRadarKey}';
+  const apiToken = '${flightRadarKey}';
 
   const fetchFlightData = async () => {
     setLoading(true);
     try {
       const bounds = '50.682,46.218,14.422,22.243';
-      const data = await getFlightPositions("9d64c490-73c1-4abc-b7b7-efe16ecf1a6a|GWNYeAKtJ1cXb1wM4fhW3SPeKTbeGABtWTxnaTEh4f35fc6d", bounds);
+      const data = await getFlightPositions(apiToken, bounds);
 
       if (data !== null) {
         data.forEach(async (flight) => {
@@ -314,7 +327,7 @@ export default function KomponentaProgram(props) {
           const call = flight.call;
 
           // Spremanje podataka u Supabase
-          const { error } = await supabase
+          {/*const { error } = await supabase
             .from('AvioniNadjeno') // Tabela u kojoj spremaš podatke
             .insert([
               { latitude: lat, longitude: lon, altitude: alt, speed: brzina, callsign: call, model: modelA }
@@ -325,7 +338,9 @@ export default function KomponentaProgram(props) {
           } else {
             console.log('Podaci spremljeni u bazu');
             showNotification("Podaci su spremljeni u bazu podataka.", "success");
-          }
+          }*/}
+
+          insertPlane(lat, lon, alt, brzina, call, modelA);
 
           // Ažuriranje podataka na mapi
           setAvionLat(lat);
@@ -383,7 +398,7 @@ export default function KomponentaProgram(props) {
   return (
     <>
       <div class="p-6 bg-gray-50 dark:bg-gray-900 rounded-3xl">
-      <h1 class="text-3xl font-bold text-center mb-6 text-gray-800 dark:text-white">PROGRAM</h1>
+        <h1 class="text-3xl font-bold text-center mb-6 text-gray-800 dark:text-white">PROGRAM</h1>
         <div class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg p-6">
           <div class="flex justify-center items-center mb-4">
             <div
@@ -453,13 +468,8 @@ export default function KomponentaProgram(props) {
             </div>
           </div>
 
-
-
-
-
         </div>
       </div>
     </>
   );
-
 }
