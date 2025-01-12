@@ -315,7 +315,7 @@ export default function KomponentaProgram(props) {
 
           // Spremanje podataka u Supabase
           const { error } = await supabase
-            .from('AvioniNadjeno') // Tabela u kojoj spremaš podatke
+            .from('AvioniNadjeno') 
             .insert([
               { latitude: lat, longitude: lon, altitude: alt, speed: brzina, callsign: call, model: modelA }
             ]);
