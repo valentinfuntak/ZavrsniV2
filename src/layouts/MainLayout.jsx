@@ -106,7 +106,6 @@ export default function MainLayout(props) {
                     </div>
                 </div>
             </nav>
-
             {/* PRIKAZ ELEMENATA */}
             <div class="bg-gray-800 text-gray-100 min-h-screen">
                 <div class="mx-auto w-full max-w-screen-xl p-4 py-6 lg:py-8">{props.children}</div>
@@ -184,8 +183,24 @@ export default function MainLayout(props) {
 }
 
 
+{/*
 
-{/*{/*PRIKAZ PODNOŽJE
+//IMPLEMENTIRATI PRIKAZ RACUNA TE MOGUCNOST ODJAVE I PROMJENE PODATAKA
+import { useAuth } from "../components/AuthProvider";
+
+export default function Home(props) {
+    const session = useAuth();
+
+    return (
+        <div>
+            <div>Korisnik: {session() ? "prijavljen" : "nije prijavljen"}</div>
+        </div>
+    );
+}
+*/}
+
+
+{/*PRIKAZ PODNOŽJE
 <footer footer class="bg-white dark:bg-gray-900" >
 <div class="mx-auto w-full max-w-screen-xl p-4 py-6 lg:py-8">
     <div class="md:flex md:justify-between">

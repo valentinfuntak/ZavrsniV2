@@ -1,11 +1,3 @@
-//SLozeno magHeading i magnetometar funkciju --> treba ukljuciti flags sa chrome://flags ili edge://flags
-
-
-//Popravit kocku css
-//Slozit prijavu
-//Slozit edge funkciju za flightradar
-
-
 import { createSignal, onCleanup, onMount, Show } from "solid-js";
 
 
@@ -21,9 +13,8 @@ const url = import.meta.env.VITE_SUPABASE_URL;
 const apiKey = import.meta.env.VITE_SUPABASE_API_KEY;
 const flightRadarKey = import.meta.env.FLIGHTRADAR_KEY;
 
-
 export const [AzurirajBazu, setAzurirajBazu] = createSignal(false);
-
+const [notifications, setNotifications] = createSignal([]);
 
 const [latitude, setLatitude] = createSignal(null);
 const [longitude, setLongitude] = createSignal(null);
@@ -54,7 +45,6 @@ export function konverzijaDatum(vrijeme){
   const datum = new Date(vrijeme);
 }
 */
-
 export async function pokreniAzuriranje(Azuriraj) {
   if (Azuriraj === false) {
     setAzurirajBazu(true);
@@ -136,7 +126,8 @@ export default function KomponentaProgram(props) {
         sensor.stop();
       });
     } else {
-      alert("Nije podržan magnetometar!");
+      //alert("Nije podržan magnetometar!");
+      showNotification("Nije podržan magnetometar!", "info");
     }
   }
 
@@ -177,7 +168,8 @@ export default function KomponentaProgram(props) {
 
   // POKRETANJE MAGNETOMETAR, UCITAVANJE PODATAKA IZ DB, ORIJENTACIJA I MAPA RADI
   onMount(() => {
-    alert("Kako bi ste koristili magnetometar, posjetite lokaciju chrome://flags ili edge://flags te dozvolite rad magnetometra!")
+    //alert("Kako bi ste koristili magnetometar, posjetite lokaciju chrome://flags ili edge://flags te dozvolite rad magnetometra!")
+    showNotification("Kako bi ste koristili magnetometar, posjetite lokaciju chrome://flags ili edge://flags te dozvolite rad magnetometra!", "info")
     magnetometar();
     const mapContainer = document.getElementById("map-container");
     if (mapContainer) {
@@ -297,7 +289,8 @@ export default function KomponentaProgram(props) {
     } else {
       var audio = document.getElementById("audiofail");
       audio.play();
-      alert(["Avion se ne nalazi u traženom zračnom prostoru"]);
+      //alert(["Avion se ne nalazi u traženom zračnom prostoru"]);
+      showNotification("Avion se ne nalazi u traženom zračnom prostoru", "error");
     }
   }
 
@@ -321,7 +314,7 @@ export default function KomponentaProgram(props) {
           const call = flight.call;
 
           // Spremanje podataka u Supabase
-          {/*const { error } = await supabase
+          const { error } = await supabase
             .from('AvioniNadjeno') // Tabela u kojoj spremaš podatke
             .insert([
               { latitude: lat, longitude: lon, altitude: alt, speed: brzina, callsign: call, model: modelA }
@@ -331,7 +324,7 @@ export default function KomponentaProgram(props) {
             console.error('Greška pri spremanju podataka u bazu:', error.message);
           } else {
             console.log('Podaci spremljeni u bazu');
-          }*/}
+          }
 
           // Ažuriranje podataka na mapi
           setAvionLat(lat);
@@ -341,10 +334,14 @@ export default function KomponentaProgram(props) {
           setModel(modelA);
 
           L.marker([lat, lon]).addTo(map())
-            .bindPopup(
-              `Let: ${call}, Zrakoplov: ${modelA}, Altituda: ${alt} m`
-            )
+            .bindPopup(`
+            <div class="text-xs p-2 max-w-xs">
+              <strong>Let:</strong> ${call}<br>
+              <strong>Zrakoplov:</strong> ${modelA}<br>
+              <strong>Altituda:</strong> ${alt} m
+            </div>  `)
             .openPopup();
+
           skeniranje(
             latitude(),
             longitude(),
@@ -364,6 +361,15 @@ export default function KomponentaProgram(props) {
     }
   };
 
+  const showNotification = (message, type) => {
+    const newNotification = { message, type };
+    setNotifications((prev) => [...prev, newNotification]);
+
+    setTimeout(() => {
+      setNotifications((prev) => prev.filter((n) => n !== newNotification));
+    }, 5000); // Obavijest nestaje nakon 3 sekunde
+  };
+
   //POKRECE SVE RADI
   async function pokretac() {
     await lokacijaKorisnik();
@@ -374,60 +380,85 @@ export default function KomponentaProgram(props) {
   }
 
   return (
-    <div class="p-6 bg-gray-50 dark:bg-gray-900  rounded-3xl">
-      <h1 class="text-3xl font-bold text-center mb-6 text-gray-800 dark:text-white">PROGRAM</h1>
-      <div class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg p-6">
-        <div class="flex justify-center items-center mb-4">
-          <div
-            id="map-container"
-            class="w-full h-96 bg-gray-300 dark:bg-gray-700 rounded-lg overflow-hidden border-4 border-gray-500"
-          ></div>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div class="bg-gray-100 dark:bg-gray-600 p-4 rounded-lg shadow-md transition-transform transform hover:scale-105">
-            <h2 class="text-lg font-semibold mb-2 text-gray-800 dark:text-white">Podaci o avionu</h2>
-            <p class="text-gray-700 dark:text-gray-300"><strong>Kut X između korisnika i aviona: {kutAvionaX()}</strong></p>
-            <p class="text-gray-700 dark:text-gray-300"><strong>Kut Y do aviona: {kutYAvion()}</strong></p>
-            <p class="text-gray-700 dark:text-gray-300"><strong>Koordinate aviona: {avionLat()}, {avionLng()}</strong></p>
-            <p class="text-gray-700 dark:text-gray-300"><strong>Visina aviona: {visina()}</strong></p>
-            <p class="text-gray-700 dark:text-gray-300"><strong>Elevacija: {elevation()}</strong></p>
+    <>
+      <div class="p-6 bg-gray-50 dark:bg-gray-900 rounded-3xl">
+        <h1 class="text-3xl font-bold text-center mb-6 text-gray-800 dark:text-white">PROGRAM</h1>
+        <div class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg p-6">
+          <div class="flex justify-center items-center mb-4">
+            <div
+              id="map-container"
+              class="w-full h-96 bg-gray-300 dark:bg-gray-700 rounded-lg overflow-hidden border-4 border-gray-500"
+            ></div>
           </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-gray-100 dark:bg-gray-600 p-4 rounded-lg shadow-md transition-transform transform hover:scale-105">
+              <h2 class="text-lg font-semibold mb-2 text-gray-800 dark:text-white">Podaci o avionu</h2>
+              <p class="text-gray-700 dark:text-gray-300"><strong>Kut X između korisnika i aviona: {kutAvionaX()}</strong></p>
+              <p class="text-gray-700 dark:text-gray-300"><strong>Kut Y do aviona: {kutYAvion()}</strong></p>
+              <p class="text-gray-700 dark:text-gray-300"><strong>Koordinate aviona: {avionLat()}, {avionLng()}</strong></p>
+              <p class="text-gray-700 dark:text-gray-300"><strong>Visina aviona: {visina()}</strong></p>
+              <p class="text-gray-700 dark:text-gray-300"><strong>Elevacija: {elevation()}</strong></p>
+            </div>
 
-          <div class="bg-gray-100 dark:bg-gray-600 p-4 rounded-lg shadow-md transition-transform transform hover:scale-105">
-            <h2 class="text-lg font-semibold mb-2 text-gray-800 dark:text-white">Nagib uređaja</h2>
-            <p class="text-gray-700 dark:text-gray-300"><strong>Alpha (Z os): {gamma().toFixed(2)}</strong></p>
-            <p class="text-gray-700 dark:text-gray-300"><strong>Beta (X os): {alpha().toFixed(2)}</strong></p>
-            <p class="text-gray-700 dark:text-gray-300"><strong>Gamma (Y os): {beta().toFixed(2)}</strong></p>
-            <p class="text-gray-700 dark:text-gray-300"><strong>Kut gledanja: {magHeading()}</strong></p>
-          </div>
+            <div class="bg-gray-100 dark:bg-gray-600 p-4 rounded-lg shadow-md transition-transform transform hover:scale-105">
+              <h2 class="text-lg font-semibold mb-2 text-gray-800 dark:text-white">Nagib uređaja</h2>
+              <p class="text-gray-700 dark:text-gray-300"><strong>Alpha (Z os): {gamma().toFixed(2)}</strong></p>
+              <p class="text-gray-700 dark:text-gray-300"><strong>Beta (X os): {alpha().toFixed(2)}</strong></p>
+              <p class="text-gray-700 dark:text-gray-300"><strong>Gamma (Y os): {beta().toFixed(2)}</strong></p>
+              <p class="text-gray-700 dark:text-gray-300"><strong>Kut gledanja: {magHeading()}</strong></p>
+            </div>
 
-          {/* Proširena kocka unutar forme */}
-          <div class="bg-gray-100 dark:bg-gray-600 p-4 rounded-lg shadow-md transition-transform transform hover:scale-105 col-span-1 md:col-span-2 flex justify-center items-center">
-            <div class="cube-scene pt-16 w-full h-64"> {/* Povećan prostor za kocku */}
-              <div class="cube" ref={el => cubeRef = el}>
-                <div class="cube-face front">Front</div>
-                <div class="cube-face back">Back</div>
-                <div class="cube-face left">Left</div>
-                <div class="cube-face right">Right</div>
-                <div class="cube-face top">Top</div>
-                <div class="cube-face bottom">Bottom</div>
+            {/* Proširena kocka unutar forme */}
+            <div class="bg-gray-100 dark:bg-gray-600 p-4 rounded-lg shadow-md transition-transform transform hover:scale-105 col-span-1 md:col-span-2 flex justify-center items-center">
+              <div class="cube-scene pt-16 w-full h-64"> {/* Povećan prostor za kocku */}
+                <div class="cube" ref={el => cubeRef = el}>
+                  <div class="cube-face front">Front</div>
+                  <div class="cube-face back">Back</div>
+                  <div class="cube-face left">Left</div>
+                  <div class="cube-face right">Right</div>
+                  <div class="cube-face top">Top</div>
+                  <div class="cube-face bottom">Bottom</div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div class="flex justify-center mt-6">
-          <audio id="audiosuccess" src="src\assets\bingo.mp3"></audio>
-          <audio id="audiofail" src="src\assets\fail.mp3"></audio>
+          <div class="flex justify-center mt-6">
+            <audio id="audiosuccess" src="src/assets/bingo.mp3"></audio>
+            <audio id="audiofail" src="src/assets/fail.mp3"></audio>
 
-          <button
-            onClick={pokretac}
-            class="bg-blue-600 text-white font-semibold py-2 px-4 w-full rounded-lg shadow-md hover:bg-blue-700 transition duration-200"
-          >
-            Skeniraj
-          </button>
+            <button
+              onClick={pokretac}
+              class="bg-blue-600 text-white font-semibold py-2 px-4 w-full rounded-lg shadow-md hover:bg-blue-700 transition duration-200"
+            >
+              Skeniraj
+            </button>
+          </div>
+
+          <div class="top-16 mt-2 col-span-1 md:col-span-2 flex justify-start w-full">
+            <div class="space-y-2 w-full">
+              {notifications().map((notification, index) => (
+                <div
+                  key={index}
+                  class={`p-4 rounded ${notification.type === "error" ? "bg-red-500" :
+                    notification.type === "success" ? "bg-green-500" :
+                      notification.type === "info" ? "bg-blue-500" : ""} text-white shadow-md`}
+                >
+                  <div class="whitespace-normal w-full">
+                    {notification.message}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+
+
+
+
         </div>
       </div>
-    </div>
+    </>
   );
+
 }
