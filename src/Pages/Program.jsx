@@ -1,8 +1,11 @@
 import { createResource, For } from "solid-js";
 import { getPlanes } from "../Backend/supabaseClient";
 
+//import { fetchFlightInfo } from "../Components/Navigacija";
 import Navigacija from "../Components/Navigacija"
-//import { konverzijaDatum } from "../Components/Navigacija"
+import { konverzijaDatum } from "../Components/Navigacija"
+import { showNotification } from "../Components/Navigacija"
+import { InformacijeIspis } from "../Components/Navigacija"
 
 
 function Program(props) {
@@ -81,8 +84,9 @@ function Program(props) {
                             <th scope="col" class="px-6 py-3">Vrijeme</th>
                             <th scope="col" class="px-6 py-3">Latituda</th>
                             <th scope="col" class="px-6 py-3">Longituda</th>
-                            <th scope="col" class="px-6 py-3">Altituda</th>
-                            <th scope="col" class="px-6 py-3">Brzina</th>
+                            <th scope="col" class="px-6 py-3">Altituda (m)</th>
+                            <th scope="col" class="px-6 py-3">Brzina (km/h)</th>
+                          {/*<th scope="col" class="px-6 py-3">Više informacija</th>*/}
                         </tr>
                     </thead>
                     <tbody>
@@ -91,11 +95,12 @@ function Program(props) {
                                 <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
                                     <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{plane.id}</td>
                                     <td class="px-6 py-4">{plane.model}</td>
-                                    <td class="px-6 py-4">{/*konverzijaDatum()*/plane.time}</td>
+                                    <td class="px-6 py-4">{konverzijaDatum(plane.time)}</td>
                                     <td class="px-6 py-4">{plane.latitude}</td>
                                     <td class="px-6 py-4">{plane.longitude}</td>
                                     <td class="px-6 py-4">{plane.altitude}</td>
                                     <td class="px-6 py-4">{plane.speed}</td>
+                                    {/* <td class="px-6 py-4"><button onClick={() => fetchFlightInfo(plane.model); showNotification('${InformacijeIspis()}', "info");}>Pritisni</button></td> */}
                                 </tr>
                             )}
                         </For>

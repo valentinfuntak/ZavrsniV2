@@ -9,6 +9,7 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "../styles/kocka.css"
 import supabase from '../Backend/supabaseClient';
+//import { getFlightInfo } from '../Services/OpenAIAPI';
 
 const url = import.meta.env.VITE_SUPABASE_URL;
 const apiKey = import.meta.env.VITE_SUPABASE_API_KEY;
@@ -36,16 +37,44 @@ const [avionLat, setAvionLat] = createSignal(0);
 const [visina, setVisina] = createSignal(0);
 const [brzina, setBrzina] = createSignal(0);
 const [model, setModel] = createSignal(0);
-
+export const [InformacijeIspis, setInformacijeIspis] = createSignal(null);
 
 let cubeRef;
 let mapContainer;
 
-/*
 export function konverzijaDatum(vrijeme){
-  const datum = new Date(vrijeme);
-}
-*/
+  const date = new Date(vrijeme);
+  const formatirano = new Intl.DateTimeFormat('en-GB', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false
+  }).format(date);
+  
+  return formatirano;
+  }
+
+    /*OPEN AI API
+  export const fetchFlightInfo = async () => {
+    try {
+      const informacijeAvion = await getFlightInfo(modelZrakoplova);
+      if (informacijeAvion !== null) {
+        setInformacijeIspis(informacijeAvion);
+
+        //STVORITI NOVI PROZOR U KOJEM SE PRIKAZUJE INFORMACIJA
+
+        
+      } else {
+        console.log("OPEN AI API vratio je null vrijednost");
+      }
+    } catch (error) {
+      console.error("Greška pri pokušaju dohvaćanja informacija: ", error);
+    }
+  }
+    */
 
 export async function showNotification(message, type) {
   const newNotification = { message, type };
@@ -53,7 +82,7 @@ export async function showNotification(message, type) {
 
   setTimeout(() => {
     setNotifications((prev) => prev.filter((n) => n !== newNotification));
-  }, 5000);
+  }, 15000);
 }
 
 export async function pokreniAzuriranje(Azuriraj) {
@@ -137,7 +166,6 @@ export default function KomponentaProgram(props) {
         sensor.stop();
       });
     } else {
-      //alert("Nije podržan magnetometar!");
       showNotification("Nije podržan magnetometar!", "info");
     }
   }
@@ -179,7 +207,6 @@ export default function KomponentaProgram(props) {
 
   // POKRETANJE MAGNETOMETAR, UCITAVANJE PODATAKA IZ DB, ORIJENTACIJA I MAPA RADI
   onMount(() => {
-    //alert("Kako bi ste koristili magnetometar, posjetite lokaciju chrome://flags ili edge://flags te dozvolite rad magnetometra!")
     showNotification("Kako bi ste koristili magnetometar, posjetite lokaciju chrome://flags ili edge://flags te dozvolite rad magnetometra!", "info")
     magnetometar();
     const mapContainer = document.getElementById("map-container");
@@ -213,8 +240,7 @@ export default function KomponentaProgram(props) {
     const kutAvionaX = (90 - kutY + 360) % 360;
 
     setKutAvionaX(kutAvionaX);
-    //console.log(kutAvionaX());
-  }
+      }
 
   // API ELEVACIJA open-meto
   async function getElevation(lat, lng) {
@@ -271,25 +297,10 @@ export default function KomponentaProgram(props) {
     if (gamma >= donjaGranicaY && gamma <= gornjaGranicaY && magHeading() >= donjaGranicaX && magHeading() <= gornjaGranicaX) {
       var audio = document.getElementById("audiosuccess");
       audio.play();
-      {/*
-      let now = new Date();
-      let vrijeme = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-
-      //Dodavanje aviona u bazu (id je samonumeriranje)
-      const { error } = await supabase
-        .from('AvioniNadjeno') //ime tablice
-        .insert({ model: model(), time: vrijeme, latitude: avionLat(), longitude: avionLng(), altitude: visina(), speed: brzina() })
-      pokreniAzuriranje(AzurirajBazu());
       
-
-      const { error } = await supabase
-        .from('AvioniNadjeno') 
-        .insert([
-          { latitude: lat, longitude: lon, altitude: alt, speed: brzina, callsign: call, model: modelA }
-        ]);
+      //OVO ODKOMENTIRAT NAKON KUPNJE API-a
+      //insertPlane(lat, lon, alt, brzina, call, modelA);
       
-      pokreniAzuriranje(AzurirajBazu());
-      */}
       if (error) {
         console.error('Greška pri spremanju podataka u bazu:', error.message);
       } else {
@@ -302,7 +313,6 @@ export default function KomponentaProgram(props) {
     } else {
       var audio = document.getElementById("audiofail");
       audio.play();
-      //alert(["Avion se ne nalazi u traženom zračnom prostoru"]);
       showNotification("Avion se ne nalazi u traženom zračnom prostoru", "error");
     }
   }
@@ -325,20 +335,6 @@ export default function KomponentaProgram(props) {
           const brzina = Math.round(flight.brz * 1.852); // Brzina u km/h
           const modelA = flight.modelA;
           const call = flight.call;
-
-          // Spremanje podataka u Supabase
-          {/*const { error } = await supabase
-            .from('AvioniNadjeno') // Tabela u kojoj spremaš podatke
-            .insert([
-              { latitude: lat, longitude: lon, altitude: alt, speed: brzina, callsign: call, model: modelA }
-            ]);
-          pokreniAzuriranje(AzurirajBazu());
-          if (error) {
-            console.error('Greška pri spremanju podataka u bazu:', error.message);
-          } else {
-            console.log('Podaci spremljeni u bazu');
-            showNotification("Podaci su spremljeni u bazu podataka.", "success");
-          }*/}
 
           insertPlane(lat, lon, alt, brzina, call, modelA);
 
@@ -377,15 +373,7 @@ export default function KomponentaProgram(props) {
     }
   };
 
-  const showNotification = (message, type) => {
-    const newNotification = { message, type };
-    setNotifications((prev) => [...prev, newNotification]);
-
-    setTimeout(() => {
-      setNotifications((prev) => prev.filter((n) => n !== newNotification));
-    }, 5000); // Obavijest nestaje nakon 3 sekunde
-  };
-
+ 
   //POKRECE SVE RADI
   async function pokretac() {
     await lokacijaKorisnik();
