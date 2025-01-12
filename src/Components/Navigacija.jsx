@@ -382,7 +382,8 @@ export default function KomponentaProgram(props) {
   return (
     <>
       <div class="p-6 bg-gray-50 dark:bg-gray-900 rounded-3xl">
-        <h1 class="text-3xl font-bold text-center mb-6 text-gray-800 dark:text-white">PROGRAM</h1>
+      <h1 class="text-3xl font-bold text-center mb-6 text-gray-800 dark:text-white">PROGRAM</h1>
+
         <div class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg p-6">
           <div class="flex justify-center items-center mb-4">
             <div
