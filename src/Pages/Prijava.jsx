@@ -1,5 +1,6 @@
 import { createSignal } from 'solid-js';
-import supabase from '../Backend/supabaseClient'; 
+import { useNavigate } from '@solidjs/router'; 
+import supabase from '../Backend/supabaseClient';
 import Plane from "../assets/planefav.png";
 
 function Prijava(props) {
@@ -8,30 +9,27 @@ function Prijava(props) {
     const [error, setError] = createSignal('');
     const [loading, setLoading] = createSignal(false);
     const [rememberMe, setRememberMe] = createSignal(false);
+    
+    const navigate = useNavigate(); // Inicijaliziraj navigaciju
 
     const handleLogin = async (e) => {
         e.preventDefault();
         setLoading(true);
         setError('');
-        
+
         try {
-            // Provjera postoji li korisnik s tim emailom u tablici 'users' i usporedba lozinke
-            const { data, error } = await supabase
-                .from('users')
-                .select('*')
-                .eq('email', email())  // Provjera emaila
-                .eq('password', password())  // Provjera lozinke
-                .single(); // Očekujemo samo jedan rezultat
-    
-            if (error || !data) {
+            const { error } = await supabase.auth.signInWithPassword({
+                email: email(),
+                password: password()
+            });
+
+            if (error) {
                 setError('Neispravni podaci za prijavu.');
-                console.log(error?.message || 'Incorrect email or password');
-                setLoading(false);
-                return;
+                console.log(error.message);
+            } else {
+                // Ako su podaci ispravni, preusmjerite korisnika na početnu stranicu
+                navigate('/pocetna'); // Preusmjeravanje na početnu
             }
-    
-            // Ako su podaci ispravni, preusmjerite korisnika na početnu stranicu
-            window.location.href = '/#/pocetna';
         } catch (err) {
             setError('Došlo je do pogreške pri prijavi.');
             console.error(err); // Logirajte pogreške
@@ -39,10 +37,7 @@ function Prijava(props) {
             setLoading(false);
         }
     };
-    
-    
-    
-    
+
     return (
         <>
             <section class="bg-gray-50 dark:bg-gray-900">
@@ -124,95 +119,3 @@ function Prijava(props) {
 }
 
 export default Prijava;
-
-
-{/*
-PRIMJENITI
-
-//SIGN IN
-
-import { createSignal, Show } from "solid-js";
-import { supabase } from "../services/supabase";
-import { useNavigate } from "@solidjs/router";
-
-export default function SignIn(props) {
-    const navigate = useNavigate();
-
-    const [result, setResult] = createSignal(null);
-
-    async function formSubmit(event) {
-        event.preventDefault();
-        const formData = new FormData(event.target);
-        const email = formData.get("email");
-        const password = formData.get("password");
-
-        const result = await supabase.auth.signInWithPassword({
-            email: email,
-            password: password
-        });
-
-        console.log(result);
-        if (result.error?.code === "invalid_credentials") {
-            setResult("Pogrešna e-mail adresa i/ili zaporka.");
-        } else if (result.error) {
-            setResult("Dogodila se greška prilikom prijave.");
-        } else {
-            setResult("Prijava je uspjela.");
-            navigate("/", { replace: true });
-        }
-    }
-
-    return (
-        <>
-            <Show when={result()}>
-                <div class="bg-slate-300 p-4 rounded">
-                    {result()}
-                </div>
-            </Show>
-            <form onSubmit={formSubmit}>
-                <div class="p-2 flex flex-col gap-1">
-                    <label>E-mail adresa:</label>
-                    <input type="email" name="email" required="true" />
-                </div>
-
-                <div class="p-2 flex flex-col gap-1">
-                    <label>Zaporka:</label>
-                    <input type="password" name="password" required="true" min="6" />
-                </div>
-
-                <div class="p-2 flex flex-col gap-1">
-                    <input type="submit" value="Pošalji" class="bg-slate-600 text-white p-2 rounded" />
-                </div>
-            </form>
-        </>
-    );
-
-//SIGN OUT
-
-import { createSignal, onMount, Show } from "solid-js";
-import { supabase } from "../services/supabase";
-
-export default function SignOut() {
-    const [result, setResult] = createSignal(null);
-
-    onMount(async () => {
-        const result = supabase.auth.signOut();
-        if (result.error) {
-            setResult("Odjava nije uspjela!");
-        } else {
-            setResult("Odjava je uspjela.");
-        }
-    });
-
-    return (
-        <>
-            <Show when={result()}>
-                <div class="bg-slate-300 p-4 rounded">
-                    {result()}
-                </div>
-            </Show>
-        </>
-    );
-}
-}
-*/}
