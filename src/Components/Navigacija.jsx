@@ -294,6 +294,15 @@ export default function KomponentaProgram(props) {
     console.log("Gornja i donja granica kuta x:", gornjaGranicaX, donjaGranicaX);
     console.log("Gornja i donja granica kuta y:", gornjaGranicaY, donjaGranicaY);
 
+    /* It's alive!
+    if(gamma >= donjaGranicaY && gamma <= gornjaGranicaY){
+      alert("Y OS JE POGOĐENA");
+    }
+
+    if(magHeading() >= donjaGranicaX && magHeading() <= gornjaGranicaX){
+      alert("X OS JE POGOĐENA");
+    }
+*/
     if (gamma >= donjaGranicaY && gamma <= gornjaGranicaY && magHeading() >= donjaGranicaX && magHeading() <= gornjaGranicaX) {
       var audio = document.getElementById("audiosuccess");
       audio.play();
