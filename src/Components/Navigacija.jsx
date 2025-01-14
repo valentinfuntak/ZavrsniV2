@@ -144,7 +144,7 @@ export default function KomponentaProgram(props) {
     }
   });
 
-  //KUT X S OBZIROM NA MAGNETSKI SJEVER KORISNIK RADI
+  //KOMPAS
   const magnetometar = () => {
     if ("Magnetometer" in window) {
       const sensor = new Magnetometer();
@@ -168,6 +168,12 @@ export default function KomponentaProgram(props) {
     } else {
       showNotification("Nije podržan magnetometar!", "info", 5000);
     }
+  }
+
+  async function IzracunajKutX(latKorisnik, lngKorisnik, latAvion, lngAvion){
+    const bearing = Math.atan2(latAvion - latKorisnik, lngAvion-lngKorisnik);
+    bearing = (bearing * (180/Math.PI) + 360) % 360;
+
   }
 
   //DOBIVANJE LAT I LNG KORISNIKA RADI
