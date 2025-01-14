@@ -178,23 +178,24 @@ export default function KomponentaProgram(props) {
         if (event.alpha !== null) {
           let smjer = event.alpha;
           let gore = event.beta;    
-          let koso = event.gamma;
+          let dubina = event.gamma;
+
           if (smjer < 0){
             smjer += 360;
-          } 
-          smjer = smjer.toFixed(2); 
-          if (Math.abs(gore) < 45 && Math.abs(koso) < 45) {
-            setMagHeading(smjer); 
-          } else {
-            console.log(".");
           }
-          setMagHeading(heading);
+          const deklinacija = 5.3; //Vrijedi samo za KC :(
+          smjer = smjer.toFixed(2) + deklinacija; 
+
+          if (Math.abs(gore) < 45 && Math.abs(dubina) < 45) {
+            setMagHeading(smjer); 
+          }
+
         } else {
-          showNotification("Magnetic heading is not available", "error", 5000);
+          showNotification("Nismo u mogućnosti pronaći Vašu orijentaciju.", "error", 5000);
         }
       });
     } else {
-      showNotification("DeviceOrientation is not supported on this device", "error", 5000);
+      showNotification("DeviceOrientation nije podržan.", "error", 5000);
     }
   };
 
@@ -202,6 +203,7 @@ export default function KomponentaProgram(props) {
     let bearing = Math.atan2(latAvion - latKorisnik, lngAvion-lngKorisnik);
     bearing = (bearing * (180/Math.PI) + 360) % 360;
     console.log("bearing je: ", bearing);
+
     setKutAvionaX(bearing);
 
   }
@@ -267,18 +269,7 @@ export default function KomponentaProgram(props) {
     setUdaljenostLngS(lng - konstantaUdaljenostiLng);
 
     console.log("Okvir gledanja", udaljenostLatE(), udaljenostLatW(), udaljenostLngN(), udaljenostLngS());
-  }
-
-  // KUT X IZMEĐU KORISNIKA I AVIONA, KUTY NIJE KUTYAVIONA!!! RADI?
-  //daje vrijednosti od 0-360
-  function kutKor_AV(avionLat, avionLng, lat, lng) {
-    const kutY = Math.atan2(avionLat - lat, avionLng - lng) * (180 / Math.PI);
-    const kutAvionaX = (90 - kutY + 360) % 360;
-
-    setKutAvionaX(kutAvionaX);
-      }
-    
-     
+  }      
 
   // API ELEVACIJA open-meto
   async function getElevation(lat, lng) {
@@ -323,7 +314,6 @@ export default function KomponentaProgram(props) {
     console.log("KUT Y JE", kutAvionYValue);
     console.log("VISINA JE:", visina);
     setKutYAvion(kutAvionYValue);
-   // kutKor_AV(avionLat(), avionLng(), latitude(), longitude());
     IzracunajKutX(latitude(), longitude(), avionLat(), avionLng());
 
     const gornjaGranicaY = kutYAvion() + 5;
@@ -333,15 +323,6 @@ export default function KomponentaProgram(props) {
     console.log("Gornja i donja granica kuta x:", gornjaGranicaX, donjaGranicaX);
     console.log("Gornja i donja granica kuta y:", gornjaGranicaY, donjaGranicaY);
 
-    /* It's alive!
-    if(gamma >= donjaGranicaY && gamma <= gornjaGranicaY){
-      alert("Y OS JE POGOĐENA");
-    }
-
-    if(magHeading() >= donjaGranicaX && magHeading() <= gornjaGranicaX){
-      alert("X OS JE POGOĐENA");
-    }
-*/
     if (gamma >= donjaGranicaY && gamma <= gornjaGranicaY && magHeading() >= donjaGranicaX && magHeading() <= gornjaGranicaX) {
       var audio = document.getElementById("audiosuccess");
       audio.play();
@@ -365,7 +346,6 @@ export default function KomponentaProgram(props) {
     }
   }
 
-  //const [flights, setFlights] = createSignal(null);
   const [loading, setLoading] = createSignal(false);
   const apiToken = '${flightRadarKey}';
 
