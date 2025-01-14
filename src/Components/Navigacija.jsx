@@ -146,33 +146,63 @@ export default function KomponentaProgram(props) {
 
   //KOMPAS
   const magnetometar = () => {
-    if ("Magnetometer" in window) {
-      const sensor = new Magnetometer();
-      sensor.start();
-      sensor.onreading = () => {
-        sensor.onreading = () => {
-          let kut = Math.atan2(sensor.x, sensor.y) * (180 / Math.PI);
-          if (kut < 0) {
-            kut += 360;
+    if (window.DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === "function") {
+      DeviceOrientationEvent.requestPermission()
+        .then((response) => {
+          if (response === "granted") {
+            window.addEventListener("deviceorientationabsolute", (event) => {
+              if (event.alpha !== null) {
+                let heading = event.alpha; 
+                if (heading < 0) heading += 360;
+                heading = heading.toFixed(2);
+                if (Math.abs(beta) < 45 && Math.abs(gamma) < 45) {
+                  setMagHeading(alpha); 
+                } else {
+                  
+                  console.log("Ignoring alpha changes due to significant tilt.");
+                }
+              } else {
+                showNotification("Magnetic heading is not available", "error", 5000);
+              }
+            });
+          } else {
+            showNotification("Permission denied for device orientation", "error", 5000);
           }
-          const declination = 0;
-          kut += declination;
-          if (kut >= 360) kut -= 360;
-          kut = kut.toFixed(2);
-          setMagHeading(kut);
-        };
-      };
-      onCleanup(() => {
-        sensor.stop();
+        })
+        .catch((err) => {
+          console.error("Error requesting device orientation permission:", err);
+          showNotification("Device orientation permission error", "error", 5000);
+        });
+    } else if (window.DeviceOrientationEvent) {
+      window.addEventListener("deviceorientationabsolute", (event) => {
+        if (event.alpha !== null) {
+          let smjer = event.alpha;
+          let gore = event.beta;    
+          let koso = event.gamma;
+          if (smjer < 0){
+            smjer += 360;
+          } 
+          smjer = smjer.toFixed(2); 
+          if (Math.abs(gore) < 45 && Math.abs(koso) < 45) {
+            setMagHeading(smjer); 
+          } else {
+            console.log(".");
+          }
+          setMagHeading(heading);
+        } else {
+          showNotification("Magnetic heading is not available", "error", 5000);
+        }
       });
     } else {
-      showNotification("Nije podržan magnetometar!", "info", 5000);
+      showNotification("DeviceOrientation is not supported on this device", "error", 5000);
     }
-  }
+  };
 
   async function IzracunajKutX(latKorisnik, lngKorisnik, latAvion, lngAvion){
-    const bearing = Math.atan2(latAvion - latKorisnik, lngAvion-lngKorisnik);
+    let bearing = Math.atan2(latAvion - latKorisnik, lngAvion-lngKorisnik);
     bearing = (bearing * (180/Math.PI) + 360) % 360;
+    console.log("bearing je: ", bearing);
+    setKutAvionaX(bearing);
 
   }
 
@@ -247,6 +277,8 @@ export default function KomponentaProgram(props) {
 
     setKutAvionaX(kutAvionaX);
       }
+    
+     
 
   // API ELEVACIJA open-meto
   async function getElevation(lat, lng) {
@@ -291,7 +323,8 @@ export default function KomponentaProgram(props) {
     console.log("KUT Y JE", kutAvionYValue);
     console.log("VISINA JE:", visina);
     setKutYAvion(kutAvionYValue);
-    kutKor_AV(avionLat(), avionLng(), latitude(), longitude());
+   // kutKor_AV(avionLat(), avionLng(), latitude(), longitude());
+    IzracunajKutX(latitude(), longitude(), avionLat(), avionLng());
 
     const gornjaGranicaY = kutYAvion() + 5;
     const donjaGranicaY = kutYAvion() - 5;
