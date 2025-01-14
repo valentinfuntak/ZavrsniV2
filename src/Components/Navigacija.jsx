@@ -1,19 +1,19 @@
 import { createSignal, onCleanup, onMount, Show } from "solid-js";
 
 
-import { getFlightPositions } from '../Services/FlightRadarAPI';
-import { getElevationData } from '../Services/ElevacijaAPI';
-import { insertPlane } from '../Backend/supabaseClient';
+import { getFlightPositions } from '../Services/FlightRadarAPI.js';
+import { getElevationData } from '../Services/ElevacijaAPI.js';
+import { insertPlane } from '../Backend/supabaseClient.js';
 
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "../styles/kocka.css"
-import supabase from '../Backend/supabaseClient';
+import supabase from '../Backend/supabaseClient.js';
 //import { getFlightInfo } from '../Services/OpenAIAPI';
 
-const url = import.meta.env.VITE_SUPABASE_URL;
-const apiKey = import.meta.env.VITE_SUPABASE_API_KEY;
-const flightRadarKey = import.meta.env.FLIGHTRADAR_KEY;
+//const url = import.meta.env.VITE_SUPABASE_URL;
+//const apiKey = import.meta.env.VITE_SUPABASE_API_KEY;
+//const flightRadarKey = import.meta.env.FLIGHTRADAR_KEY;
 
 export const [AzurirajBazu, setAzurirajBazu] = createSignal(false);
 const [notifications, setNotifications] = createSignal([]);

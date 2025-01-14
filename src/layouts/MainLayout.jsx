@@ -1,4 +1,4 @@
-import { AuthProvider, useAuth } from "../Auth/AuthProvider";
+import { useAuth } from "../Auth/AuthProvider.jsx";
 import { createSignal } from "solid-js";
 import Plane from "../assets/planefav.png";
 
@@ -29,7 +29,7 @@ export default function MainLayout(props) {
         <>
             <nav class="bg-white border-gray-200 dark:bg-gray-900">
                 <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-                    <a href="#/Pocetna" class="flex items-center space-x-3 rtl:space-x-reverse">
+                    <a href="/Pocetna" class="flex items-center space-x-3 rtl:space-x-reverse">
                         <img src={Plane} class="h-8" alt="Flowbite Logo" />
                         <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">Plane Spotter</span>
                     </a>
