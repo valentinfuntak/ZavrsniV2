@@ -180,11 +180,20 @@ export default function KomponentaProgram(props) {
           let gore = event.beta;    
           let dubina = event.gamma;
 
+          
+          const deklinacija = 5.3; //Vrijedi samo za KC :( 
+          smjer = (smjer + 360) % 360;
+
           if (smjer < 0){
             smjer += 360;
           }
-          const deklinacija = 5.3; //Vrijedi samo za KC :(
-          smjer = smjer.toFixed(2) + deklinacija; 
+          if(smjer > 0 && smjer < 180){
+            smjer = 360 - smjer;
+          } else if(smjer > 0 && smjer > 180){
+            smjer = 360 - smjer;
+          }
+          
+          smjer = smjer.toFixed(2); 
 
           if (Math.abs(gore) < 45 && Math.abs(dubina) < 45) {
             setMagHeading(smjer); 
@@ -425,19 +434,19 @@ export default function KomponentaProgram(props) {
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="bg-gray-100 dark:bg-gray-600 p-4 rounded-lg shadow-md transition-transform transform hover:scale-105">
               <h2 class="text-lg font-semibold mb-2 text-gray-800 dark:text-white">Podaci o avionu</h2>
-              <p class="text-gray-700 dark:text-gray-300"><strong>Kut X između korisnika i aviona: {kutAvionaX()}</strong></p>
-              <p class="text-gray-700 dark:text-gray-300"><strong>Kut Y do aviona: {kutYAvion()}</strong></p>
-              <p class="text-gray-700 dark:text-gray-300"><strong>Koordinate aviona: {avionLat()}, {avionLng()}</strong></p>
-              <p class="text-gray-700 dark:text-gray-300"><strong>Visina aviona: {visina()}</strong></p>
-              <p class="text-gray-700 dark:text-gray-300"><strong>Elevacija: {elevation()}</strong></p>
+              <p class="text-gray-700 dark:text-gray-300"><strong>Kut X između korisnika i aviona: {kutAvionaX()}°</strong></p>
+              <p class="text-gray-700 dark:text-gray-300"><strong>Kut Y do aviona: {kutYAvion()}°</strong></p>
+              <p class="text-gray-700 dark:text-gray-300"><strong>Koordinate aviona: {avionLat()}°, {avionLng()}°</strong></p>
+              <p class="text-gray-700 dark:text-gray-300"><strong>Visina aviona: {visina()}m</strong></p>
+              <p class="text-gray-700 dark:text-gray-300"><strong>Elevacija: {elevation()}m</strong></p>
             </div>
 
             <div class="bg-gray-100 dark:bg-gray-600 p-4 rounded-lg shadow-md transition-transform transform hover:scale-105">
               <h2 class="text-lg font-semibold mb-2 text-gray-800 dark:text-white">Nagib uređaja</h2>
-              <p class="text-gray-700 dark:text-gray-300"><strong>Alpha (Z os): {gamma().toFixed(2)}</strong></p>
-              <p class="text-gray-700 dark:text-gray-300"><strong>Beta (X os): {alpha().toFixed(2)}</strong></p>
-              <p class="text-gray-700 dark:text-gray-300"><strong>Gamma (Y os): {beta().toFixed(2)}</strong></p>
-              <p class="text-gray-700 dark:text-gray-300"><strong>Kut gledanja: {magHeading()}</strong></p>
+              <p class="text-gray-700 dark:text-gray-300"><strong>Alpha (Z os): {gamma().toFixed(2)}°</strong></p>
+              <p class="text-gray-700 dark:text-gray-300"><strong>Beta (X os): {alpha().toFixed(2)}°</strong></p>
+              <p class="text-gray-700 dark:text-gray-300"><strong>Gamma (Y os): {beta().toFixed(2)}°</strong></p>
+              <p class="text-gray-700 dark:text-gray-300"><strong>Kut gledanja: {magHeading()} + 5.3°</strong></p>
             </div>
 
             {/* Proširena kocka unutar forme */}
