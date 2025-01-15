@@ -244,7 +244,7 @@ export default function KomponentaProgram(props) {
   //ORIJENTACIJA MOBITELA
   const handleOrientation = (event) => {
     setAlpha(event.alpha);
-    setBeta(event.beta);
+    setBeta(event.beta); 
     setGamma(event.gamma);
 
     if (cubeRef) {
@@ -295,7 +295,7 @@ export default function KomponentaProgram(props) {
   }
 
   //IZRAČUN ZRAČNE UDALJENOSTI, KUTA Y AVIONA I MEĐA ZA IDENTIFIKACIJU AVIONA
-  async function skeniranje(lat, lng, avionLa, avionLn, visina, gamma, elevacija) {
+  async function skeniranje(lat, lng, avionLa, avionLn, visina, beta, elevacija, smjer) {
     const R = 6371000;
     const X1 = avionLa * (Math.PI / 180);
     const Y1 = avionLn * (Math.PI / 180);
@@ -332,10 +332,11 @@ export default function KomponentaProgram(props) {
     console.log("Gornja i donja granica kuta x:", gornjaGranicaX, donjaGranicaX);
     console.log("Gornja i donja granica kuta y:", gornjaGranicaY, donjaGranicaY);
 
-    if (gamma >= donjaGranicaY && gamma <= gornjaGranicaY && magHeading() >= donjaGranicaX && magHeading() <= gornjaGranicaX) {
+    if (beta >= donjaGranicaY && beta <= gornjaGranicaY && smjer >= donjaGranicaX && smjer <= gornjaGranicaX) {
       var audio = document.getElementById("audiosuccess");
       audio.play();
       
+    
       //OVO ODKOMENTIRAT NAKON KUPNJE API-a
       //insertPlane(lat, lon, alt, brzina, call, modelA);
       
@@ -352,6 +353,7 @@ export default function KomponentaProgram(props) {
       var audio = document.getElementById("audiofail");
       audio.play();
       showNotification("Avion se ne nalazi u traženom zračnom prostoru", "error", 5000);
+      alert(beta);
     }
   }
 
@@ -397,8 +399,9 @@ export default function KomponentaProgram(props) {
             lat,
             lon,
             alt,
-            gamma(),
-            elevation()
+            beta(),
+            elevation(),
+            magHeading()
           );
           console.log("Podaci o avionu:: ", flight);
         });
