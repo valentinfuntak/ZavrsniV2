@@ -1,3 +1,5 @@
+import { useAuth } from "../auth/AuthProvider";
+
 function Informacije(props) {
   return (
     <div class="p-8">

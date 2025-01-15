@@ -1,3 +1,5 @@
+import { useAuth } from "../auth/AuthProvider";
+
 function Pocetna() {
     return (
         <>

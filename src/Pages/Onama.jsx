@@ -1,4 +1,5 @@
 import Logo from "../assets/logo.png";
+import { useAuth } from "../auth/AuthProvider";
 
 function Onama(props) {
     return (
