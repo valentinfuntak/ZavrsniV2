@@ -1,11 +1,11 @@
 import { useNavigate, A } from "@solidjs/router";
+import { useAuth } from "../auth/AuthProvider";
 import { createSignal } from 'solid-js';
 import supabase from '../Backend/supabaseClient'; 
 
 import Plane from "../assets/planefav.png";
 
 function Registracija(props) {
-  
   const navigate = useNavigate();
 
   // Koristimo jedan signal za spremanje e-maila i lozinke

@@ -1,12 +1,15 @@
-// src/pages/AuthenticationRequired.jsx
+import { useNavigate } from "@solidjs/router"; 
+
 function AuthError() {
+  const navigate = useNavigate(); 
+
   const goToHome = () => {
-    window.location.href = '/';
+    navigate("/Prijava"); 
   };
 
   return (
     <div class="flex items-center justify-center h-screen bg-gray-900 text-gray-100">
-      <div class="text-center p-6  bg-gray-800 shadow-lg rounded-lg">
+      <div class="text-center p-6 bg-gray-800 shadow-lg rounded-lg">
         <h1 class="text-3xl font-bold text-red-500">Autentifikacija potrebna</h1>
         <p class="mt-4 text-gray-300">Morate se prijaviti kako biste pristupili ovoj stranici.</p>
         <button

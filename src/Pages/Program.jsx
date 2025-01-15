@@ -1,4 +1,6 @@
 import { useAuth } from "../auth/AuthProvider";
+import { useNavigate } from "@solidjs/router"; 
+import { createEffect } from "solid-js"; 
 
 import { createResource, For } from "solid-js";
 import { getPlanes } from "../Backend/supabaseClient";
@@ -11,6 +13,14 @@ import { InformacijeIspis } from "../Components/Navigacija"
 
 
 function Program(props) {
+    const session = useAuth();
+    const navigate = useNavigate();
+
+    createEffect(() => {
+        if (session() === null) {
+            navigate("/AuthError");
+        }
+    });
 
     const [planes] = createResource(getPlanes);
 
@@ -88,7 +98,7 @@ function Program(props) {
                             <th scope="col" class="px-6 py-3">Longituda</th>
                             <th scope="col" class="px-6 py-3">Altituda (m)</th>
                             <th scope="col" class="px-6 py-3">Brzina (km/h)</th>
-                          {/*<th scope="col" class="px-6 py-3">Više informacija</th>*/}
+                            {/*<th scope="col" class="px-6 py-3">Više informacija</th>*/}
                         </tr>
                     </thead>
                     <tbody>

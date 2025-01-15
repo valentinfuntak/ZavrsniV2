@@ -1,7 +1,17 @@
 import Logo from "../assets/logo.png";
 import { useAuth } from "../auth/AuthProvider";
+import { useNavigate } from "@solidjs/router";
+import { createEffect } from "solid-js"; 
 
 function Onama(props) {
+    const session = useAuth();
+    const navigate = useNavigate();
+
+    createEffect(() => {
+        if (session() === null) {
+            navigate("/AuthError");
+        }
+    });
     return (
         <div class="p-8">
             <h1 class="font-mono text-4xl mb-6">O NAMA</h1>

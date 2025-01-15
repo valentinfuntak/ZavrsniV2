@@ -24,6 +24,7 @@ export default function App() {
       <Router>
       <Route path="/" component={() => (<RegLogLayout><Registracija /></RegLogLayout>)} />
       <Route path="/*" component={() => (<RegLogLayout><NotFound/></RegLogLayout>)} />
+      <Route path="/AuthError" component={() => (<RegLogLayout><AuthError /></RegLogLayout>)} />
       <Route path="/Prijava" component={() => (<RegLogLayout><Prijava /></RegLogLayout>)} />
       <Route path="/Pocetna" component={() => (<MainLayout><Pocetna /></MainLayout>)} />
       <Route path="/Program" component={() => (<MainLayout><Program /></MainLayout>)} />
