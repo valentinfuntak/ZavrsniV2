@@ -1,3 +1,5 @@
+import { useAuth } from "../auth/AuthProvider";
+
 function Kontakt(props) {
     return (
       <div class="p-8">

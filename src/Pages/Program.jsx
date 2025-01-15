@@ -1,3 +1,5 @@
+import { useAuth } from "../auth/AuthProvider";
+
 import { createResource, For } from "solid-js";
 import { getPlanes } from "../Backend/supabaseClient";
 

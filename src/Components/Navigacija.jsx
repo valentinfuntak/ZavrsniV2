@@ -454,7 +454,7 @@ export default function KomponentaProgram(props) {
 
             {/* Proširena kocka unutar forme */}
             <div class="bg-gray-100 dark:bg-gray-600 p-4 rounded-lg shadow-md transition-transform transform hover:scale-105 col-span-1 md:col-span-2 flex justify-center items-center">
-              <div class="cube-scene pt-16 w-full h-64"> {/* Povećan prostor za kocku */}
+              <div class="cube-scene pt-16 w-full h-64"> 
                 <div class="cube" ref={el => cubeRef = el}>
                   <div class="cube-face front">Front</div>
                   <div class="cube-face back">Back</div>

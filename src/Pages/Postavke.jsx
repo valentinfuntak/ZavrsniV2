@@ -1,3 +1,5 @@
+import { useAuth } from "../auth/AuthProvider";
+
 function Postavke(props) {
     return (
         <div class="max-w-screen-lg mx-auto p-6">

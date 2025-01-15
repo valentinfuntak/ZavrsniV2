@@ -5,6 +5,9 @@ import RegLogLayout from "./layouts/RegLogLayout";
 
 import { AuthProvider } from "./Auth/AuthProvider";
 
+import NotFound from "./Pages/Errors/NotFound";
+import AuthError from "./Pages/Errors/AuthError";
+
 import Registracija from "./Pages/Registracija";
 import Prijava from "./Pages/Prijava";
 import Pocetna from "./Pages/Pocetna";
@@ -20,6 +23,7 @@ export default function App() {
     <AuthProvider>
       <Router>
       <Route path="/" component={() => (<RegLogLayout><Registracija /></RegLogLayout>)} />
+      <Route path="/*" component={() => (<RegLogLayout><NotFound/></RegLogLayout>)} />
       <Route path="/Prijava" component={() => (<RegLogLayout><Prijava /></RegLogLayout>)} />
       <Route path="/Pocetna" component={() => (<MainLayout><Pocetna /></MainLayout>)} />
       <Route path="/Program" component={() => (<MainLayout><Program /></MainLayout>)} />
