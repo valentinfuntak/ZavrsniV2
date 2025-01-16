@@ -15,9 +15,11 @@ import supabase from '../Backend/supabaseClient.js';
 //const apiKey = import.meta.env.VITE_SUPABASE_API_KEY;
 //const flightRadarKey = import.meta.env.FLIGHTRADAR_KEY;
 
+//signali za BP i UI
 export const [AzurirajBazu, setAzurirajBazu] = createSignal(false);
 const [notifications, setNotifications] = createSignal([]);
 
+//Signali za orijentaciju
 const [latitude, setLatitude] = createSignal(null);
 const [longitude, setLongitude] = createSignal(null);
 const [alpha, setAlpha] = createSignal(0);
@@ -28,6 +30,8 @@ const [udaljenostLatE, setUdaljenostLatE] = createSignal(null);
 const [udaljenostLatW, setUdaljenostLatW] = createSignal(null);
 const [udaljenostLngN, setUdaljenostLngN] = createSignal(null);
 const [udaljenostLngS, setUdaljenostLngS] = createSignal(null);
+
+//Signali za kalkulacije
 const [kutAvionaX, setKutAvionaX] = createSignal(0);
 const [kutYAvion, setKutYAvion] = createSignal(0);
 const [UdaljenostZRC, setUdaljenostZRC] = createSignal(0);
@@ -37,10 +41,20 @@ const [avionLat, setAvionLat] = createSignal(0);
 const [visina, setVisina] = createSignal(0);
 const [brzina, setBrzina] = createSignal(0);
 const [model, setModel] = createSignal(0);
+
+//Signali za prikaz u formi
+const [UdaljenosKuteva, setUdaljenostKuteva] = createSignal(0);
+const [kutYPrikaz, setKutYPrikaz] = createSignal(0);
+const [kutXPrikaz, setkutXPrikaz] = createSignal(0);
+const [avionLatPrikaz, setAvionLatPrikaz] = createSignal(0);
+const [avionLngPrikaz, setAvionLngPrikaz] = createSignal(0);
+const [udaljenostPrikaz, setUdaljenostPrikaz] = createSignal(0);
+
 export const [InformacijeIspis, setInformacijeIspis] = createSignal(null);
 
 let cubeRef;
 let mapContainer;
+
 
 export function konverzijaDatum(vrijeme){
   const date = new Date(vrijeme);
@@ -353,8 +367,22 @@ export default function KomponentaProgram(props) {
       var audio = document.getElementById("audiofail");
       audio.play();
       showNotification("Avion se ne nalazi u traženom zračnom prostoru", "error", 5000);
-      alert(beta);
+
+      let razlikaY = Math.min(Math.abs(kutYAvion()-beta), 360 - Math.abs(kutYAvion()-beta));
+      let razlikaX = Math.min(Math.abs(kutAvionaX()-smjer), 360 - Math.abs(kutAvionaX()-smjer));
+      
+      if(UdaljenosKuteva() === 0){
+      setUdaljenostKuteva(razlikaY + razlikaX);
+      } else if (UdaljenosKuteva() < (razlikaY + razlikaX)){
+        setUdaljenostKuteva(razlikaY + razlikaX);
+        setKutYPrikaz(kutYAvion());
+        setkutXPrikaz(kutAvionaX());
+        setAvionLatPrikaz(avionLa);
+        setAvionLngPrikaz(avionLn);
+        setUdaljenostPrikaz(UdaljenostZRC());
+      } 
     }
+    
   }
 
   const [loading, setLoading] = createSignal(false);
@@ -393,7 +421,7 @@ export default function KomponentaProgram(props) {
             </div>  `)
             .openPopup();
 
-          skeniranje(
+        skeniranje(
             latitude(),
             longitude(),
             lat,
@@ -437,11 +465,11 @@ export default function KomponentaProgram(props) {
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="bg-gray-100 dark:bg-gray-600 p-4 rounded-lg shadow-md transition-transform transform hover:scale-105">
               <h2 class="text-lg font-semibold mb-2 text-gray-800 dark:text-white">Podaci o avionu</h2>
-              <p class="text-gray-700 dark:text-gray-300"><strong>Kut X između korisnika i aviona: {kutAvionaX()}°</strong></p>
-              <p class="text-gray-700 dark:text-gray-300"><strong>Kut Y do aviona: {kutYAvion()}°</strong></p>
-              <p class="text-gray-700 dark:text-gray-300"><strong>Koordinate aviona: {avionLat()}°, {avionLng()}°</strong></p>
-              <p class="text-gray-700 dark:text-gray-300"><strong>Visina aviona: {visina()}m</strong></p>
-              <p class="text-gray-700 dark:text-gray-300"><strong>Elevacija: {elevation()}m</strong></p>
+              <p class="text-gray-700 dark:text-gray-300"><strong>Kut X do aviona: {kutXPrikaz()}°</strong></p>
+              <p class="text-gray-700 dark:text-gray-300"><strong>Kut Y do aviona: {kutYPrikaz()}°</strong></p>
+              <p class="text-gray-700 dark:text-gray-300"><strong>Koordinate aviona: {avionLatPrikaz()}°, {avionLngPrikaz()}°</strong></p>
+              <p class="text-gray-700 dark:text-gray-300"><strong>Zračna udaljenost: {udaljenostPrikaz()}m</strong></p>
+              <p class="text-gray-700 dark:text-gray-300"><strong>Vaša Elevacija: {elevation()}m</strong></p>
             </div>
 
             <div class="bg-gray-100 dark:bg-gray-600 p-4 rounded-lg shadow-md transition-transform transform hover:scale-105">
