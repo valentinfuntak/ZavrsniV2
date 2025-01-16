@@ -1,17 +1,24 @@
 import { createSignal } from "solid-js";
-import { useNavigate } from "@solidjs/router";
-import { useAuth } from "../Auth/AuthProvider";
 import { supabase } from "../Backend/supabaseClient";
+import { useAuth } from "../auth/AuthProvider";
+import { useNavigate } from "@solidjs/router";
+import { createEffect } from "solid-js"; 
 
 function Racun(props) {
   const session = useAuth();
   const navigate = useNavigate();
 
-  const [newEmail, setNewEmail] = createSignal(""); // Signal za novu e-mail adresu
-  const [isEmailChanged, setIsEmailChanged] = createSignal(false); // Provjera da li je e-mail promijenjen
-  const [showEmailInput, setShowEmailInput] = createSignal(false); // Signal za prikazivanje inputa za e-mail
+  createEffect(() => {
+      if (session() === null) {
+          navigate("/AuthError");
+      }
+  });
 
-  const [notifications, setNotifications] = createSignal([]); // Signal za obavijesti
+  const [newEmail, setNewEmail] = createSignal(""); 
+  const [isEmailChanged, setIsEmailChanged] = createSignal(false);
+  const [showEmailInput, setShowEmailInput] = createSignal(false); 
+
+  const [notifications, setNotifications] = createSignal([]);
 
   // Funkcija za prikazivanje obavijesti
   const showNotification = (message, type, duration) => {
