@@ -1,6 +1,6 @@
 import { useAuth } from "../auth/AuthProvider";
-import { useNavigate } from "@solidjs/router"; 
-import { createEffect } from "solid-js"; 
+import { useNavigate } from "@solidjs/router";
+import { createEffect, createSignal } from "solid-js";
 
 import { createResource, For } from "solid-js";
 import { getPlanes } from "../Backend/supabaseClient";
@@ -11,10 +11,17 @@ import { konverzijaDatum } from "../Components/Navigacija"
 import { showNotification } from "../Components/Navigacija"
 import { InformacijeIspis } from "../Components/Navigacija"
 
-
 function Program(props) {
     const session = useAuth();
     const navigate = useNavigate();
+
+    const [isMobile, setIsMobile] = createSignal(window.innerWidth < 1024);
+
+    createEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth < 1024);
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    });
 
     createEffect(() => {
         if (session() === null) {
@@ -26,7 +33,7 @@ function Program(props) {
 
     return (
         <>
-            <Navigacija />
+            {isMobile() && <Navigacija />}
             <div class="mt-5 flex flex-column sm:flex-row flex-wrap space-y-4 sm:space-y-0 items-center justify-between pb-4">
                 <div>
                     <button id="dropdownRadioButton" data-dropdown-toggle="dropdownRadio" class="inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700" type="button">
@@ -105,14 +112,18 @@ function Program(props) {
                         <For each={planes()} fallback={<tr><td colspan="7" class="text-center py-4">Trenutno nema aviona</td></tr>}>
                             {(plane) => (
                                 <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
-                                    <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{plane.id}</td>
+                                    <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">{plane.id}</td>
                                     <td class="px-6 py-4">{plane.model}</td>
-                                    <td class="px-6 py-4">{konverzijaDatum(plane.time)}</td>
+                                    <td class="px-6 py-4">{konverzijaDatum(plane.timestamp)}</td>
                                     <td class="px-6 py-4">{plane.latitude}</td>
                                     <td class="px-6 py-4">{plane.longitude}</td>
                                     <td class="px-6 py-4">{plane.altitude}</td>
                                     <td class="px-6 py-4">{plane.speed}</td>
-                                    {/* <td class="px-6 py-4"><button onClick={() => fetchFlightInfo(plane.model); showNotification('${InformacijeIspis()}', "info", 20000);}>Pritisni</button></td> */}
+                                    {/*<td class="px-6 py-4">
+                                        <button class="text-blue-600 hover:text-blue-800 dark:text-blue-500 dark:hover:text-blue-400" onClick={() => showNotification(plane.id)}>
+                                            Više informacija
+                                        </button>
+                                    </td>*/}
                                 </tr>
                             )}
                         </For>
