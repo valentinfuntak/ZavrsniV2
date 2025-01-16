@@ -33,7 +33,7 @@ function Program(props) {
 
     return (
         <>
-            {isMobile() && <Navigacija />}
+            {!isMobile() && <Navigacija />}
             <div class="mt-5 flex flex-column sm:flex-row flex-wrap space-y-4 sm:space-y-0 items-center justify-between pb-4">
                 <div>
                     <button id="dropdownRadioButton" data-dropdown-toggle="dropdownRadio" class="inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700" type="button">
@@ -114,7 +114,7 @@ function Program(props) {
                                 <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
                                     <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">{plane.id}</td>
                                     <td class="px-6 py-4">{plane.model}</td>
-                                    <td class="px-6 py-4">{konverzijaDatum(plane.timestamp)}</td>
+                                    <td class="px-6 py-4">{konverzijaDatum(plane.time)}</td>
                                     <td class="px-6 py-4">{plane.latitude}</td>
                                     <td class="px-6 py-4">{plane.longitude}</td>
                                     <td class="px-6 py-4">{plane.altitude}</td>
