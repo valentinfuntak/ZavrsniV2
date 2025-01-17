@@ -1,4 +1,5 @@
 import Logo from "../assets/logo.png";
+import { supabase } from "../Backend/supabaseClient";
 import { useAuth } from "../auth/AuthProvider";
 import { useNavigate } from "@solidjs/router";
 import { createEffect } from "solid-js"; 
@@ -12,17 +13,30 @@ function Onama(props) {
             navigate("/AuthError");
         }
     });
+
+     const handleLogout =  () => {
+        const { error } = supabase.auth.signOut();
+        navigate("/Prijava");
+
+        if(error){
+            alert("Nažalost Vas nemožemo odjaviti:", error);
+        }
+      };
+
     return (
         <div class="p-8">
             <h1 class="font-mono text-4xl mb-6">O NAMA</h1>
 
             <div class="space-y-6">
                 <div class="flex justify-center mb-10">
-                    <img
+                    <a onClick={handleLogout} href="https://ss-obrtnicka-koprivnica.skole.hr/">
+                    <img 
+                    
                         src={Logo}
                         alt="Logo"
                         class="w-40 h-auto rounded-full shadow-md transform hover:scale-110 transition-transform duration-300"
                     />
+                    </a>
                 </div>
                 <div>
                     <h2 class="text-xl font-semibold">Škola</h2>

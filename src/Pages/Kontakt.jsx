@@ -1,6 +1,7 @@
 import { useAuth } from "../auth/AuthProvider";
 import { useNavigate } from "@solidjs/router";
 import { createEffect } from "solid-js"; 
+import { supabase } from "../Backend/supabaseClient";
 
 function Kontakt(props) {
       const session = useAuth();
@@ -11,6 +12,16 @@ function Kontakt(props) {
             navigate("/AuthError");
         }
     });
+
+     const handleLogout =  () => {
+            const { error } = supabase.auth.signOut();
+            navigate("/Prijava");
+    
+            if(error){
+                alert("Nažalost Vas nemožemo odjaviti:", error);
+            }
+          };
+    
     return (
       <div class="p-8">
         <h1 class="font-mono text-4xl mb-6">KONTAKT</h1>
@@ -19,7 +30,7 @@ function Kontakt(props) {
           <div>
             <h2 class="text-xl font-semibold">Obrtnička škola Koprivnica</h2>
             <p>
-              Posjetite <a href="https://ss-obrtnicka-koprivnica.skole.hr/" class="text-blue-500 hover:underline" target="_blank" rel="noopener noreferrer">službenu stranicu škole</a> za više informacija.
+              Posjetite <a onClick={handleLogout} href="https://ss-obrtnicka-koprivnica.skole.hr/" class="text-blue-500 hover:underline" target="_blank" rel="noopener noreferrer">službenu stranicu škole</a> za više informacija.
             </p>
           </div>
   
@@ -27,7 +38,7 @@ function Kontakt(props) {
             <h2 class="text-xl font-semibold">GitHub računi</h2>
             <ul class="space-y-2">
               <li class="flex items-center">
-                <a
+                <a onClick={handleLogout}
                   href="https://github.com/valentinfuntak"
                   class="text-gray-500 hover:text-gray-900 dark:hover:text-white flex items-center"
                   target="_blank"
@@ -50,7 +61,7 @@ function Kontakt(props) {
                 </a>
               </li>
               <li class="flex items-center">
-                <a
+                <a onClick={handleLogout}
                   href="https://github.com/NoaGolubic"
                   class="text-gray-500 hover:text-gray-900 dark:hover:text-white flex items-center"
                   target="_blank"
@@ -79,7 +90,7 @@ function Kontakt(props) {
             <h2 class="text-xl font-semibold">Repozitorij završnog rada</h2>
             <ul class="space-y-2">
               <li class="flex items-center">
-                <a
+                <a onClick={handleLogout}
                   href="https://github.com/valentinfuntak/ZavrsniV2"
                   class="text-gray-500 hover:text-gray-900 dark:hover:text-white flex items-center"
                   target="_blank"

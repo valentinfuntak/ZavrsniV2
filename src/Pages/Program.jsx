@@ -8,8 +8,10 @@ import { getPlanes } from "../Backend/supabaseClient";
 //import { fetchFlightInfo } from "../Components/Navigacija";
 import Navigacija from "../Components/Navigacija"
 import { konverzijaDatum } from "../Components/Navigacija"
-import { showNotification } from "../Components/Navigacija"
-import { InformacijeIspis } from "../Components/Navigacija"
+
+//import { getFlightInfo } from '../Services/OpenAIAPI';
+import { showNotification } from "../Components/Navigacija.jsx"
+
 
 function Program(props) {
     const session = useAuth();
@@ -28,6 +30,22 @@ function Program(props) {
             navigate("/AuthError");
         }
     });
+
+
+/*OPEN AI API
+    const fetchFlightInfo = async (model) => {
+    try {
+      const informacijeAvion = await getFlightInfo(model);
+      if (informacijeAvion !== null) {
+        showNotification(`${informacijeAvion}`, "info", 20000);
+      } else {
+        console.log("OPEN AI API vratio je null vrijednost");
+      }
+    } catch (error) {
+      console.error("Greška pri pokušaju dohvaćanja informacija: ", error);
+    }
+  }
+*/
 
     const [planes] = createResource(getPlanes);
 
@@ -91,9 +109,9 @@ function Program(props) {
             <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-5 border-2 border-gray-200 dark:border-gray-600">
                 <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                     <caption class="p-5 text-lg font-semibold text-left rtl:text-right text-gray-900 bg-white dark:text-white dark:bg-gray-800">
-                        Prikaz pronađenih aviona
+                        Prikaz pronađenih zrakoplova
                         <p class="mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">
-                            Ovdje možete detaljnije pregledati informacije o avionima koje ste pronašli.
+                            Ovdje možete detaljnije pregledati informacije o zrakoplovima koje ste pronašli.
                         </p>
                     </caption>
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -105,7 +123,7 @@ function Program(props) {
                             <th scope="col" class="px-6 py-3">Longituda</th>
                             <th scope="col" class="px-6 py-3">Altituda (m)</th>
                             <th scope="col" class="px-6 py-3">Brzina (km/h)</th>
-                            {/*<th scope="col" class="px-6 py-3">Više informacija</th>*/}
+                            <th scope="col" class="px-6 py-3">Više informacija</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -119,11 +137,11 @@ function Program(props) {
                                     <td class="px-6 py-4">{plane.longitude}</td>
                                     <td class="px-6 py-4">{plane.altitude}</td>
                                     <td class="px-6 py-4">{plane.speed}</td>
-                                    {/*<td class="px-6 py-4">
-                                        <button class="text-blue-600 hover:text-blue-800 dark:text-blue-500 dark:hover:text-blue-400" onClick={() => showNotification(plane.id)}>
-                                            Više informacija
+                                    {<td class="px-6 py-4">
+                                        <button class="bg-yellow-600 text-white font-semibold py-2 px-4 w-full rounded-lg shadow-md hover:bg-yellow-500 transition duration-200" onClick={() => fetchFlightInfo(plane.model)}>
+                                            Prouči
                                         </button>
-                                    </td>*/}
+                                    </td>}
                                 </tr>
                             )}
                         </For>

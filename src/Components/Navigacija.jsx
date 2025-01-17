@@ -50,8 +50,6 @@ const [avionLatPrikaz, setAvionLatPrikaz] = createSignal(0);
 const [avionLngPrikaz, setAvionLngPrikaz] = createSignal(0);
 const [udaljenostPrikaz, setUdaljenostPrikaz] = createSignal(0);
 
-export const [InformacijeIspis, setInformacijeIspis] = createSignal(null);
-
 let cubeRef;
 let mapContainer;
 
@@ -70,25 +68,6 @@ export function konverzijaDatum(vrijeme){
   
   return formatirano;
   }
-
-    /*OPEN AI API
-  export const fetchFlightInfo = async () => {
-    try {
-      const informacijeAvion = await getFlightInfo(modelZrakoplova);
-      if (informacijeAvion !== null) {
-        setInformacijeIspis(informacijeAvion);
-
-        //STVORITI NOVI PROZOR U KOJEM SE PRIKAZUJE INFORMACIJA
-
-        
-      } else {
-        console.log("OPEN AI API vratio je null vrijednost");
-      }
-    } catch (error) {
-      console.error("Greška pri pokušaju dohvaćanja informacija: ", error);
-    }
-  }
-    */
 
 export async function showNotification(message, type, trajanje) {
   const newNotification = { message, type };
@@ -480,7 +459,7 @@ export default function KomponentaProgram(props) {
               <p class="text-gray-700 dark:text-gray-300"><strong>Kut gledanja: {magHeading()} + 5.3°</strong></p>
             </div>
 
-            {/* Proširena kocka unutar forme 
+             Proširena kocka unutar forme 
             <div class="bg-gray-100 dark:bg-gray-600 p-4 rounded-lg shadow-md transition-transform transform hover:scale-105 col-span-1 md:col-span-2 flex justify-center items-center">
               <div class="cube-scene pt-16 w-full h-64"> 
                 <div class="cube" ref={el => cubeRef = el}>
@@ -492,7 +471,7 @@ export default function KomponentaProgram(props) {
                   <div class="cube-face bottom">Bottom</div>
                 </div>
               </div>
-            </div>*/}
+            </div>
           </div>
 
           <div class="flex justify-center mt-6">

@@ -33,6 +33,10 @@ function Racun(props) {
   const handleLogout = () => {
     const { error } = supabase.auth.signOut();
     navigate("/Prijava");
+
+    if(error){
+      alert("Nažalost Vas nemožemo odjaviti:", error);
+  }
   };
 
   const handleChangePassword = async () => {
