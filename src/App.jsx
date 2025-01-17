@@ -16,6 +16,7 @@ import Informacije from "./Pages/Informacije";
 import Onama from "./Pages/Onama";
 import Kontakt from "./Pages/Kontakt";
 import Racun from "./Pages/Racun";
+import Upute from "./Pages/Upute";
 //import Postavke from './Pages/Postavke';
 
 export default function App() {
@@ -32,6 +33,7 @@ export default function App() {
       <Route path="/Onama" component={() => (<MainLayout><Onama /></MainLayout>)} />
       <Route path="/Kontakt" component={() => (<MainLayout><Kontakt /></MainLayout>)} />
       <Route path="/Racun" component={() => (<MainLayout><Racun /></MainLayout>)} />
+      <Route path="/Upute" component={() => (<MainLayout><Upute /></MainLayout>)} />
       </Router>
     </AuthProvider>
   );
