@@ -15,11 +15,6 @@ export default defineConfig({
       certDir: '/Users/.../.devServer/cert'
     })
   ],
-  resolve: {
-    alias: {
-      '@auth': '/src/auth', // Postavka aliasa za auth direktorij
-    },
-  },
   start: {
     ssr: true,
     server: {
