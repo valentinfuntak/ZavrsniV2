@@ -1,32 +1,44 @@
-name: CI
-
+name: Build package
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
+    tags: [ '*' ]
   pull_request:
-    branches: [ main ]
-
   workflow_dispatch:
-
+permissions:
+  contents: read
+  pages: write
+  id-token: write
 jobs:
   build:
+    name: Build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-
-      - name: install
-        run: npm i --legacy-peer-deps
-
-      - name: build
-        run: npm run build
-        env:
-          BASE_PATH: /my-app/
-
-      - name: create .nojekyll
-        run: touch .output/public/.nojekyll
-
-      - name: deploy pages
-        uses: JamesIves/github-pages-deploy-action@v4.5.0
+      - uses: pnpm/action-setup@v2
         with:
-          branch: gh-pages
-          folder: .output/public
+          version: latest
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20.12.0'
+          cache: 'pnpm'
+      - name: install
+        run: pnpm install --frozen-lockfile
+      - name: build
+        run: pnpm build
+        env:
+          BASE_PATH: '/my-blog'
+      - name: upload artifact
+        uses: actions/upload-pages-artifact@v3.0.1
+        with:
+          path: '.output/public'
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
