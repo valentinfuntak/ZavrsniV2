@@ -1,6 +1,6 @@
 import Logo from "../assets/logo.png";
 import { supabase } from "../Backend/supabaseClient";
-import { useAuth } from "../auth/AuthProvider.jsx";
+import AuthProvider from '@auth/AuthProvider.jsx';
 import { useNavigate } from "@solidjs/router";
 import { createEffect } from "solid-js"; 
 
