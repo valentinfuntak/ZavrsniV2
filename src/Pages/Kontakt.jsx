@@ -1,4 +1,4 @@
-import { useAuth } from "../auth/AuthProvider";
+import { useAuth } from "../auth/AuthProvider.jsx";
 import { useNavigate } from "@solidjs/router";
 import { createEffect } from "solid-js"; 
 import { supabase } from "../Backend/supabaseClient";
