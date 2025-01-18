@@ -1,5 +1,4 @@
 import { useNavigate, A } from "@solidjs/router";
-import { useAuth } from "../auth/AuthProvider.jsx";
 import { createSignal } from 'solid-js';
 import supabase from '../Backend/supabaseClient'; 
 
