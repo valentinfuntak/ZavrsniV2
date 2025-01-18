@@ -349,16 +349,18 @@ export default function KomponentaProgram(props) {
 
       let razlikaY = Math.min(Math.abs(kutYAvion()-beta), 360 - Math.abs(kutYAvion()-beta));
       let razlikaX = Math.min(Math.abs(kutAvionaX()-smjer), 360 - Math.abs(kutAvionaX()-smjer));
+     
+      let zbroj = razlikaY + razlikaX;
       
-      if(UdaljenosKuteva() === 0){
-      setUdaljenostKuteva(razlikaY + razlikaX);
-      } else if (UdaljenosKuteva() < (razlikaY + razlikaX)){
-        setUdaljenostKuteva(razlikaY + razlikaX);
-        setKutYPrikaz(kutYAvion());
-        setkutXPrikaz(kutAvionaX());
-        setAvionLatPrikaz(avionLa);
-        setAvionLngPrikaz(avionLn);
-        setUdaljenostPrikaz(UdaljenostZRC());
+      if(UdaljenosKuteva() === null){
+      setUdaljenostKuteva(zbroj);
+      } else if (UdaljenosKuteva() < (zbroj)){
+        setUdaljenostKuteva(zbroj);
+        setKutYPrikaz(kutYAvion().toFixed(2));
+        setkutXPrikaz(kutAvionaX().toFixed(2));
+        setAvionLatPrikaz(avionLa.toFixed(2));
+        setAvionLngPrikaz(avionLn.toFixed(2));
+        setUdaljenostPrikaz(UdaljenostZRC().toFixed(2));
       } 
     }
     
@@ -459,8 +461,9 @@ export default function KomponentaProgram(props) {
               <p class="text-gray-700 dark:text-gray-300"><strong>Kut gledanja: {magHeading()} + 5.3°</strong></p>
             </div>
 
-             Proširena kocka unutar forme 
-            <div class="bg-gray-100 dark:bg-gray-600 p-4 rounded-lg shadow-md transition-transform transform hover:scale-105 col-span-1 md:col-span-2 flex justify-center items-center">
+ 
+            {/* Proširena kocka unutar forme 
+           <div class="bg-gray-100 dark:bg-gray-600 p-4 rounded-lg shadow-md transition-transform transform hover:scale-105 col-span-1 md:col-span-2 flex justify-center items-center">
               <div class="cube-scene pt-16 w-full h-64"> 
                 <div class="cube" ref={el => cubeRef = el}>
                   <div class="cube-face front">Front</div>
@@ -471,8 +474,8 @@ export default function KomponentaProgram(props) {
                   <div class="cube-face bottom">Bottom</div>
                 </div>
               </div>
-            </div>
-          </div>
+            </div> */}
+          </div> 
 
           <div class="flex justify-center mt-6">
             <audio id="audiosuccess" src="src/assets/bingo.mp3"></audio>
