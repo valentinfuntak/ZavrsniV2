@@ -1,6 +1,5 @@
 import { createSignal } from 'solid-js';
 import { useNavigate } from '@solidjs/router'; 
-import { useAuth } from "../auth/AuthProvider";
 import supabase from '../Backend/supabaseClient';
 import Plane from "../assets/planefav.png";
 
