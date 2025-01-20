@@ -1,28 +1,28 @@
-import { Router, Route } from "@solidjs/router";
+import { HashRouter, Route } from "@solidjs/router";
 
-import MainLayout from "./layouts/MainLayout";
-import RegLogLayout from "./layouts/RegLogLayout";
+import MainLayout from "./layouts/MainLayout.jsx";
+import RegLogLayout from "./layouts/RegLogLayout.jsx";
 
-import { AuthProvider } from "./Auth/AuthProvider";
+import { AuthProvider } from "./Auth/AuthProvider.jsx";
 
-import NotFound from "./Pages/Errors/NotFound";
-import AuthError from "./Pages/Errors/AuthError";
+import NotFound from "./Pages/Errors/NotFound.jsx";
+import AuthError from "./Pages/Errors/AuthError.jsx";
 
-import Registracija from "./Pages/Registracija";
-import Prijava from "./Pages/Prijava";
-import Pocetna from "./Pages/Pocetna";
-import Program from "./Pages/Program";
-import Informacije from "./Pages/Informacije";
-import Onama from "./Pages/Onama";
-import Kontakt from "./Pages/Kontakt";
-import Racun from "./Pages/Racun";
-import Upute from "./Pages/Upute";
+import Registracija from "./Pages/Registracija.jsx";
+import Prijava from "./Pages/Prijava.jsx";
+import Pocetna from "./Pages/Pocetna.jsx";
+import Program from "./Pages/Program.jsx";
+import Informacije from "./Pages/Informacije.jsx";
+import Onama from "./Pages/Onama.jsx";
+import Kontakt from "./Pages/Kontakt.jsx";
+import Racun from "./Pages/Racun.jsx";
+import Upute from "./Pages/Upute.jsx";
 //import Postavke from './Pages/Postavke';
 
 export default function App() {
   return (
     <AuthProvider>
-      <Router>
+      <HashRouter>
       <Route path="/" component={() => (<RegLogLayout><Registracija /></RegLogLayout>)} />
       <Route path="/*" component={() => (<RegLogLayout><NotFound/></RegLogLayout>)} />
       <Route path="/AuthError" component={() => (<RegLogLayout><AuthError /></RegLogLayout>)} />
@@ -34,7 +34,7 @@ export default function App() {
       <Route path="/Kontakt" component={() => (<MainLayout><Kontakt /></MainLayout>)} />
       <Route path="/Racun" component={() => (<MainLayout><Racun /></MainLayout>)} />
       <Route path="/Upute" component={() => (<MainLayout><Upute /></MainLayout>)} />
-      </Router>
+      </HashRouter>
     </AuthProvider>
   );
 }
