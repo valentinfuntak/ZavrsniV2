@@ -70,7 +70,7 @@ function Upute(props) {
                         2) "Avion se ne nalazi u traženom zračnom prostoru":<br></br>
                         Uređaj nije pravilno usmjeren prema zrakoplovu.<br></br>
                         3) "Greška pri slanju e-maila za resetiranje lozinke":<br></br>
-                        Nažalost nismo u mogućnosti proslijediti e-mail, pokušajte ponovo kasnije<br></br>
+                        Nažalost nismo u mogućnosti proslijediti e-mail, pokušajte ponovo kasnije.<br></br>
                     </p>
                 </div>
 

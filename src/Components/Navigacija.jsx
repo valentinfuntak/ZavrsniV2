@@ -30,6 +30,7 @@ const [udaljenostLatE, setUdaljenostLatE] = createSignal(null);
 const [udaljenostLatW, setUdaljenostLatW] = createSignal(null);
 const [udaljenostLngN, setUdaljenostLngN] = createSignal(null);
 const [udaljenostLngS, setUdaljenostLngS] = createSignal(null);
+const [snagaMagPolj, setSnagaMagPolj] = createSignal(0);
 
 //Signali za kalkulacije
 const [kutAvionaX, setKutAvionaX] = createSignal(0);
@@ -39,8 +40,7 @@ const [elevation, setElevation] = createSignal(0);
 const [avionLng, setAvionLng] = createSignal(0);
 const [avionLat, setAvionLat] = createSignal(0);
 const [visina, setVisina] = createSignal(0);
-const [brzina, setBrzina] = createSignal(0);
-const [model, setModel] = createSignal(0);
+
 
 //Signali za prikaz u formi
 const [UdaljenosKuteva, setUdaljenostKuteva] = createSignal(0);
@@ -49,9 +49,12 @@ const [kutXPrikaz, setkutXPrikaz] = createSignal(0);
 const [avionLatPrikaz, setAvionLatPrikaz] = createSignal(0);
 const [avionLngPrikaz, setAvionLngPrikaz] = createSignal(0);
 const [udaljenostPrikaz, setUdaljenostPrikaz] = createSignal(0);
+const [brzina, setBrzina] = createSignal(0);
+const [model, setModel] = createSignal(0);
 
 let cubeRef;
 let mapContainer;
+
 
 
 export function konverzijaDatum(vrijeme){
@@ -138,7 +141,7 @@ export default function KomponentaProgram(props) {
   });
 
   //KOMPAS
-  const magnetometar = () => {
+  const orijentacijaUredjaja = () => {
     if (window.DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === "function") {
       DeviceOrientationEvent.requestPermission()
         .then((response) => {
@@ -173,8 +176,6 @@ export default function KomponentaProgram(props) {
           let gore = event.beta;    
           let dubina = event.gamma;
 
-          
-          const deklinacija = 5.3; //Vrijedi samo za KC :( 
           smjer = (smjer + 360) % 360;
 
           if (smjer < 0){
@@ -247,8 +248,22 @@ export default function KomponentaProgram(props) {
 
   // POKRETANJE MAGNETOMETAR, UCITAVANJE PODATAKA IZ DB, ORIJENTACIJA I MAPA RADI
   onMount(() => {
-    showNotification("Kako bi ste koristili magnetometar, posjetite lokaciju chrome://flags ili edge://flags te dozvolite rad magnetometra!", "info", 10000);
-    magnetometar();
+  let interval;
+  let magSensor = new Magnetometer();
+  magSensor.addEventListener("reading", (e) => {
+  setSnagaMagPolj(Math.sqrt(Math.pow(magSensor.x,2) + Math.pow(magSensor.y,2) + Math.pow(magSensor.z,2)));
+  
+    interval = setInterval(() => {
+    showNotification(
+      `Zbog snage magnetskog polja (${snagaMagPolj().toFixed(2)}µT), očitanja kuteva mogla bi biti neprecizna.`, "info",
+      3000
+    );
+  }, 3100);
+});
+magSensor.start();
+showNotification("Kako bi ste koristili magnetometar, posjetite lokaciju chrome://flags ili edge://flags te dozvolite rad magnetometra!", "info", 10000);
+   
+    orijentacijaUredjaja();
     const mapContainer = document.getElementById("map-container");
     if (mapContainer) {
       initializeMap(mapContainer);
@@ -256,6 +271,8 @@ export default function KomponentaProgram(props) {
     window.addEventListener("deviceorientation", handleOrientation);
     return () => {
       window.removeEventListener("deviceorientation", handleOrientation);
+      magSensor.stop();
+      clearInterval(interval);
     };
   });
 
