@@ -1,13 +1,13 @@
-import { useAuth } from "../auth/AuthProvider.jsx";
+import { useAuth } from "../Auth/AuthProvider.jsx";
 import { useNavigate } from "@solidjs/router";
 import { createEffect, createSignal } from "solid-js";
 
 import { createResource, For } from "solid-js";
-import { getPlanes } from "../Backend/supabaseClient";
+import { getPlanes } from "../Backend/supabaseClient.js";
 
 //import { fetchFlightInfo } from "../Components/Navigacija";
-import Navigacija from "../Components/Navigacija"
-import { konverzijaDatum } from "../Components/Navigacija"
+import Navigacija from "../Components/Navigacija.jsx"
+import { konverzijaDatum } from "../Components/Navigacija.jsx"
 
 //import { getFlightInfo } from '../Services/OpenAIAPI';
 import { showNotification } from "../Components/Navigacija.jsx"

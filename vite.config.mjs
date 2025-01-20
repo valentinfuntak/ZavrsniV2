@@ -15,17 +15,11 @@ export default defineConfig({
       certDir: '/Users/.../.devServer/cert'
     })
   ],
-  start: {
-    ssr: true,
-    server: {
-      baseURL: process.env.BASE_PATH,
-      preset: "static"
-    }
-  },
   server: {
     port: 3000,
   },
   build: {
     target: 'esnext',
   },
-})
+  base: process.env.NODE_ENV === "production" ? "/ZavrsniV2/" : "/"
+});
