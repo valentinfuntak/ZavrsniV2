@@ -1,6 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import { showNotification } from "../Components/Navigacija.jsx";
-import { AzurirajBazu } from "../Components/Navigacija.jsx";
+import { AzurirajBazu, setAzurirajBazu } from "../Components/Navigacija.jsx";
 import { pokreniAzuriranje } from "../Components/Navigacija.jsx";
 
 const url = import.meta.env.VITE_SUPABASE_URL;
@@ -8,13 +8,12 @@ const apiKey = import.meta.env.VITE_SUPABASE_API_KEY;
 
 export const supabase = createClient(url, apiKey);
 
-export async function insertPlane(lat, lon, alt, brzina, call, modelA) {
+export async function insertPlane(lat, lon, alt,brzina, call, modelA) {
   const { error } = await supabase
     .from('AvioniNadjeno')
     .insert([
       { latitude: lat, longitude: lon, altitude: alt, speed: brzina, callsign: call, model: modelA }
     ]);
-  pokreniAzuriranje(AzurirajBazu());
   if (error) {
     console.error('Greška pri spremanju podataka u bazu:', error.message);
   } else {
@@ -37,7 +36,7 @@ export async function getPlanes() {
 }
 
 export async function azurirajTablicu() {
-  await pokreniAzuriranje();
+  await pokreniAzuriranje(AzurirajBazu());
   const { data, error } = await supabase.from("AvioniNadjeno")
     .select("*")
     .order('id', { ascending: false })
@@ -46,7 +45,7 @@ export async function azurirajTablicu() {
     console.error("Greška pri dohvaćanju aviona:", error.message);
     return [];
   }
-  console.log("Dohvaćeni podaci:", data);
+  console.log("Azuriranje je uspjelo:", data);
   setAzurirajBazu(false);
   return data;
 }

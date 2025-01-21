@@ -4,11 +4,15 @@ import { createSignal, onCleanup, onMount, Show } from "solid-js";
 import { getFlightPositions } from '../Services/FlightRadarAPI.js';
 import { getElevationData } from '../Services/ElevacijaAPI.js';
 import { insertPlane } from '../Backend/supabaseClient.js';
+import { azurirajTablicu } from "../Backend/supabaseClient.js";
+import success from '../assets/bingo.mp3';
+import fail from '../assets/fail.mp3';
+
 
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "../styles/kocka.css"
-import supabase from '../Backend/supabaseClient.js';
+
 //import { getFlightInfo } from '../Services/OpenAIAPI';
 
 //const url = import.meta.env.VITE_SUPABASE_URL;
@@ -305,7 +309,7 @@ showNotification("Kako bi ste koristili magnetometar, posjetite lokaciju chrome:
   }
 
   //IZRAČUN ZRAČNE UDALJENOSTI, KUTA Y AVIONA I MEĐA ZA IDENTIFIKACIJU AVIONA
-  async function skeniranje(lat, lng, avionLa, avionLn, visina, beta, elevacija, smjer) {
+  async function skeniranje(lat, lng, avionLa, avionLn, visina, beta, elevacija, smjer, model, brzina) {
     const R = 6371000;
     const X1 = avionLa * (Math.PI / 180);
     const Y1 = avionLn * (Math.PI / 180);
@@ -345,10 +349,9 @@ showNotification("Kako bi ste koristili magnetometar, posjetite lokaciju chrome:
     if (beta >= donjaGranicaY && beta <= gornjaGranicaY && smjer >= donjaGranicaX && smjer <= gornjaGranicaX) {
       var audio = document.getElementById("audiosuccess");
       audio.play();
-      
-    
-      //OVO ODKOMENTIRAT NAKON KUPNJE API-a
-      //insertPlane(lat, lon, alt, brzina, call, modelA);
+  
+      insertPlane(avionLa, avionLn, visina, brzina, call, model);
+      await azurirajTablicu();
       
       if (error) {
         console.error('Greška pri spremanju podataka u bazu:', error.message);
@@ -401,7 +404,7 @@ showNotification("Kako bi ste koristili magnetometar, posjetite lokaciju chrome:
           const modelA = flight.modelA;
           const call = flight.call;
 
-          insertPlane(lat, lon, alt, brzina, call, modelA);
+
 
           // Ažuriranje podataka na mapi
           setAvionLat(lat);
@@ -427,7 +430,10 @@ showNotification("Kako bi ste koristili magnetometar, posjetite lokaciju chrome:
             alt,
             beta(),
             elevation(),
-            magHeading()
+            magHeading(),
+            modelA,
+            brzina,
+            call
           );
           console.log("Podaci o avionu:: ", flight);
         });
@@ -495,8 +501,8 @@ showNotification("Kako bi ste koristili magnetometar, posjetite lokaciju chrome:
           </div> 
 
           <div class="flex justify-center mt-6">
-            <audio id="audiosuccess" src="src/assets/bingo.mp3"></audio>
-            <audio id="audiofail" src="src/assets/fail.mp3"></audio>
+            <audio id="audiosuccess" src={success}></audio>
+            <audio id="audiofail" src={fail}></audio>
 
             <button
               onClick={pokretac}
