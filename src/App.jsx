@@ -17,6 +17,7 @@ import Onama from "./Pages/Onama.jsx";
 import Kontakt from "./Pages/Kontakt.jsx";
 import Racun from "./Pages/Racun.jsx";
 import Upute from "./Pages/Upute.jsx";
+import mojHangar from "./Pages/mojHangar.jsx";
 //import Postavke from './Pages/Postavke';
 
 export default function App() {
@@ -34,6 +35,7 @@ export default function App() {
       <Route path="/Kontakt" component={() => (<MainLayout><Kontakt /></MainLayout>)} />
       <Route path="/Racun" component={() => (<MainLayout><Racun /></MainLayout>)} />
       <Route path="/Upute" component={() => (<MainLayout><Upute /></MainLayout>)} />
+      <Route path="/mojHangar" component={() => (<MainLayout><mojHangar /></MainLayout>)} />
       </HashRouter>
     </AuthProvider>
   );

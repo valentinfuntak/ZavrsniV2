@@ -13,7 +13,7 @@ export async function getFlightInfo(modelAviona){
 const completion = await openai.chat.completions.create({
     model: "gpt-4o-mini",
     messages: [
-        { role: "system", content: "Ti si asistent koji piše 4 rečenice o navedenom zrakoplovu. Neka informacije budu kratke i točne." },
+        { role: "system", content: "Ti si asistent koji piše 4 rečenice o navedenom zrakoplovu. Neka informacije budu kratke i točne, a zadnji dio 4. rečenice neka bude broj proizvedenih modela." },
         {
             role: "user",
             content: `Napiši mi neke važne informacije o zrakoplovu: ${modelAviona}.`,
@@ -29,3 +29,4 @@ const completion = await openai.chat.completions.create({
     const informacije = completion.choices[0].message;
     return informacije;
 }*/
+

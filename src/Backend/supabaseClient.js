@@ -50,5 +50,15 @@ export async function azurirajTablicu() {
   return data;
 }
 
+export async function dohvatiHangar(){
+  const { data, error } = await supabase.from("AvioniNadjeno")
+  .select("*")
+  if (error) {
+    console.error("Greška pri dohvaćanju aviona:", error.message);
+    return [];
+  }
+  return data;
+}
+
 
 export default supabase;

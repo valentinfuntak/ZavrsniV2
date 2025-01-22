@@ -1,5 +1,5 @@
 import { useAuth } from "../Auth/AuthProvider.jsx";
-import { useNavigate } from "@solidjs/router";
+import { useNavigate, A } from "@solidjs/router";
 import { createEffect, createSignal } from "solid-js";
 
 import { createResource, For } from "solid-js";
@@ -147,8 +147,12 @@ function Program(props) {
                         </For>
                     </tbody>
                 </table>
+                
             </div>
+            <A  class="pt-10 mt-10 font-semibold text-xl" href="/mojHangar">Kako bi vidjeli sve pronađene zrakoplove, posjetite Moj Hangar!</A>
+
         </>
+        
     );
 }
 
