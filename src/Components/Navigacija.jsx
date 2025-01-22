@@ -251,35 +251,45 @@ export default function KomponentaProgram(props) {
   };
 
   // POKRETANJE MAGNETOMETAR, UCITAVANJE PODATAKA IZ DB, ORIJENTACIJA I MAPA RADI
+  let notificationShown = false; 
+
   onMount(() => {
-  let interval;
-  let magSensor = new Magnetometer();
-  magSensor.addEventListener("reading", (e) => {
-  setSnagaMagPolj(Math.sqrt(Math.pow(magSensor.x,2) + Math.pow(magSensor.y,2) + Math.pow(magSensor.z,2)));
+    let magSensor = new Magnetometer();
   
-    interval = setInterval(() => {
-    showNotification(
-      `Zbog snage magnetskog polja (${snagaMagPolj().toFixed(2)}µT), očitanja kuteva mogla bi biti neprecizna.`, "info",
-      3000
-    );
-  }, 3100);
-});
-magSensor.start();
-showNotification("Kako bi ste koristili magnetometar, posjetite lokaciju chrome://flags ili edge://flags te dozvolite rad magnetometra!", "info", 10000);
-   
+    magSensor.addEventListener("reading", (e) => {
+
+      setSnagaMagPolj(Math.sqrt(Math.pow(magSensor.x, 2) + Math.pow(magSensor.y, 2) + Math.pow(magSensor.z, 2)));
+
+      if (snagaMagPolj() > 65 || snagaMagPolj() < 20) {
+        if (!notificationShown) {  
+          showNotification(
+            `Zbog snage magnetskog polja (${snagaMagPolj().toFixed(2)}µT), očitanja kuteva mogla bi biti neprecizna.`,
+            "info",
+            5000
+          );
+          notificationShown = true; 
+        }
+      } else {
+        notificationShown = false;
+      }
+    });
+  
+    magSensor.start();
+
+    showNotification("Kako bi ste koristili magnetometar, posjetite lokaciju chrome://flags ili edge://flags te dozvolite rad magnetometra!", "info", 10000);
+  
     orijentacijaUredjaja();
     const mapContainer = document.getElementById("map-container");
     if (mapContainer) {
       initializeMap(mapContainer);
     }
     window.addEventListener("deviceorientation", handleOrientation);
+  
     return () => {
       window.removeEventListener("deviceorientation", handleOrientation);
       magSensor.stop();
-      clearInterval(interval);
     };
   });
-
   //DEFINIRANJE ZRAČNOG PROSTORA U KOJEM SE TRAŽE AVIONI RADI
   //jedan stupanj lat (geo širina) je 111.11km / 60  = 1.85183333333km  u minuti broj 9.72009720099 * 1.85... daje okrug od 36km
   // jedan stupanj lng (geo visine) PRIBLIŽNO je 111*cos(lat)
