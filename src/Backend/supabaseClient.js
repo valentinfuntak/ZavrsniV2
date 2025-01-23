@@ -50,9 +50,22 @@ export async function azurirajTablicu() {
   return data;
 }
 
+export async function DodajDesc(modelAvion, opis, brojProizvedeno){
+  const { data, error } = await supabase.from("AvioniNadjeno")
+  .update({ description: opis, modelNum: brojProizvedeno })
+  .eq("model", modelAvion);
+
+  if (error) {
+    console.error("Greška pri ubacivanju opisa:", error.message);
+    return [];
+  }
+   return data;
+}
+
+//Group by, select, eq, max
 export async function dohvatiHangar(){
   const { data, error } = await supabase.from("AvioniNadjeno")
-  .select("*")
+  .select("*");
   if (error) {
     console.error("Greška pri dohvaćanju aviona:", error.message);
     return [];
