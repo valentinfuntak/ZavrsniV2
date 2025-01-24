@@ -1,6 +1,6 @@
 import { createSignal } from 'solid-js';
 import { useNavigate } from '@solidjs/router'; 
-import supabase from '../Backend/supabaseClient';
+import supabase from '../Backend/supabaseClient.js';
 import Plane from "../assets/planefav.png";
 
 function Prijava(props) {
