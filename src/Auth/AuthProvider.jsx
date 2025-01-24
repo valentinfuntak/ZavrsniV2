@@ -1,5 +1,5 @@
 import { createContext, createSignal, useContext, Show } from "solid-js";
-import { supabase } from "../Backend/supabaseClient";
+import { supabase } from "../Backend/supabaseClient.js";
 
 // context
 const AuthContext = createContext();
