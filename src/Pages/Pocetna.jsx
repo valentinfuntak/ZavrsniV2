@@ -6,7 +6,7 @@ function Pocetna() {
     const session = useAuth();
     const navigate = useNavigate();
 
-    console.log(session());
+    //console.log(session());
 
     createEffect(() => {
         if (session() === null) {

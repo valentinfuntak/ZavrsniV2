@@ -2,25 +2,26 @@ import { createSignal } from "solid-js";
 import { supabase } from "../Backend/supabaseClient.js";
 import { useAuth } from "../Auth/AuthProvider.jsx";
 import { useNavigate } from "@solidjs/router";
-import { createEffect } from "solid-js"; 
+import { createEffect } from "solid-js";
 
 function Racun(props) {
   const session = useAuth();
   const navigate = useNavigate();
 
+  //console.log(session());
+
   createEffect(() => {
-      if (session() === null) {
-          navigate("/AuthError");
-      }
+    if (session() === null) {
+      navigate("/AuthError");
+    }
   });
 
-  const [newEmail, setNewEmail] = createSignal(""); 
+  const [newEmail, setNewEmail] = createSignal("");
   const [isEmailChanged, setIsEmailChanged] = createSignal(false);
-  const [showEmailInput, setShowEmailInput] = createSignal(false); 
+  const [showEmailInput, setShowEmailInput] = createSignal(false);
 
   const [notifications, setNotifications] = createSignal([]);
 
-  // Funkcija za prikazivanje obavijesti
   const showNotification = (message, type, duration) => {
     const newNotification = { message, type };
     setNotifications((prev) => [...prev, newNotification]);
@@ -34,9 +35,9 @@ function Racun(props) {
     const { error } = supabase.auth.signOut();
     navigate("/Prijava");
 
-    if(error){
+    if (error) {
       alert("Nažalost Vas nemožemo odjaviti:", error);
-  }
+    }
   };
 
   const handleChangePassword = async () => {
@@ -139,10 +140,10 @@ function Racun(props) {
               key={index}
               class={`p-4 mt-3 rounded ${notification.type === "error" ? "bg-red-600" :
                 notification.type === "success" ? "bg-green-700" :
-                notification.type === "info" ? "bg-blue-400" : ""} text-white shadow-md`}
+                  notification.type === "info" ? "bg-blue-400" : ""} text-white shadow-md`}
             >
               <div class="whitespace-normal w-full">
-                {notification.message} 
+                {notification.message}
               </div>
             </div>
           ))}

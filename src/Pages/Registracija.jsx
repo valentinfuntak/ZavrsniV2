@@ -1,6 +1,6 @@
 import { useNavigate, A } from "@solidjs/router";
 import { createSignal } from 'solid-js';
-import supabase from '../Backend/supabaseClient'; 
+import supabase from '../Backend/supabaseClient';
 
 import Plane from "../assets/planefav.png";
 
@@ -27,7 +27,6 @@ function Registracija(props) {
     }
 
     try {
-      // Kreiranje korisničkog računa putem Supabase
       const { user, error: signupError } = await supabase.auth.signUp({
         email: result().email,
         password: result().password,
@@ -38,8 +37,7 @@ function Registracija(props) {
       } else {
         setResult({ ...result(), success: true, loading: false });
         console.log('Korisnik uspješno registriran:', user);
-        
-        // Preusmjeravanje na prijavu
+
         navigate('/prijava');
       }
     } catch (err) {
@@ -137,7 +135,7 @@ function Registracija(props) {
                 </button>
                 <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                   Već imate račun?{" "}
-                  <A 
+                  <A
                     href="/prijava"
                     className="font-medium text-primary-600 hover:underline dark:text-primary-500"
                   >

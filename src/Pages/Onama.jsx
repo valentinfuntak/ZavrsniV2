@@ -2,11 +2,13 @@ import Logo from "../assets/logo.png";
 import { supabase } from "../Backend/supabaseClient.js";
 import { useAuth } from "../Auth/AuthProvider.jsx";
 import { useNavigate } from "@solidjs/router";
-import { createEffect } from "solid-js"; 
+import { createEffect } from "solid-js";
 
 function Onama(props) {
     const session = useAuth();
     const navigate = useNavigate();
+
+    //console.log(session());
 
     createEffect(() => {
         if (session() === null) {
@@ -14,14 +16,14 @@ function Onama(props) {
         }
     });
 
-     const handleLogout =  () => {
+    const handleLogout = () => {
         const { error } = supabase.auth.signOut();
         navigate("/Prijava");
 
-        if(error){
+        if (error) {
             alert("Nažalost Vas nemožemo odjaviti:", error);
         }
-      };
+    };
 
     return (
         <div class="p-8">
@@ -30,12 +32,12 @@ function Onama(props) {
             <div class="space-y-6">
                 <div class="flex justify-center mb-10">
                     <a onClick={handleLogout} href="https://ss-obrtnicka-koprivnica.skole.hr/">
-                    <img 
-                    
-                        src={Logo}
-                        alt="Logo"
-                        class="w-40 h-auto rounded-full shadow-md transform hover:scale-110 transition-transform duration-300"
-                    />
+                        <img
+
+                            src={Logo}
+                            alt="Logo"
+                            class="w-40 h-auto rounded-full shadow-md transform hover:scale-110 transition-transform duration-300"
+                        />
                     </a>
                 </div>
                 <div>
