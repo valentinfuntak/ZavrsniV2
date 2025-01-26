@@ -1,6 +1,6 @@
 import { createSignal } from 'solid-js';
 import { useNavigate } from '@solidjs/router'; 
-import supabase from '../Backend/supabaseClient';
+import supabase from '../Backend/supabaseClient.js';
 import Plane from "../assets/planefav.png";
 
 function Prijava(props) {
@@ -10,7 +10,7 @@ function Prijava(props) {
     const [loading, setLoading] = createSignal(false);
     const [rememberMe, setRememberMe] = createSignal(false);
     
-    const navigate = useNavigate(); // Inicijaliziraj navigaciju
+    const navigate = useNavigate();
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -27,12 +27,11 @@ function Prijava(props) {
                 setError('Neispravni podaci za prijavu.');
                 console.log(error.message);
             } else {
-                // Ako su podaci ispravni, preusmjerite korisnika na početnu stranicu
                 navigate('/pocetna'); // Preusmjeravanje na početnu
             }
         } catch (err) {
             setError('Došlo je do pogreške pri prijavi.');
-            console.error(err); // Logirajte pogreške
+            console.error(err);
         } finally {
             setLoading(false);
         }

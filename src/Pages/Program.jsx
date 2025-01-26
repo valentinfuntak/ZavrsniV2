@@ -17,6 +17,14 @@ function Program(props) {
     const session = useAuth();
     const navigate = useNavigate();
 
+    //console.log(session());
+
+    createEffect(() => {
+        if (session() === null) {
+            navigate("/AuthError");
+        }
+    });
+
     const [isMobile, setIsMobile] = createSignal(window.innerWidth < 1024);
 
     createEffect(() => {
@@ -25,27 +33,20 @@ function Program(props) {
         return () => window.removeEventListener("resize", handleResize);
     });
 
-    createEffect(() => {
-        if (session() === null) {
-            navigate("/AuthError");
+    /*OPEN AI API
+        const fetchFlightInfo = async (model) => {
+        try {
+          const informacijeAvion = await getFlightInfo(model);
+          if (informacijeAvion !== null) {
+            showNotification(`${informacijeAvion}`, "info", 20000);
+          } else {
+            console.log("OPEN AI API vratio je null vrijednost");
+          }
+        } catch (error) {
+          console.error("Greška pri pokušaju dohvaćanja informacija: ", error);
         }
-    });
-
-
-/*OPEN AI API
-    const fetchFlightInfo = async (model) => {
-    try {
-      const informacijeAvion = await getFlightInfo(model);
-      if (informacijeAvion !== null) {
-        showNotification(`${informacijeAvion}`, "info", 20000);
-      } else {
-        console.log("OPEN AI API vratio je null vrijednost");
       }
-    } catch (error) {
-      console.error("Greška pri pokušaju dohvaćanja informacija: ", error);
-    }
-  }
-*/
+    */
 
     const [planes] = createResource(getPlanes);
 
@@ -148,13 +149,14 @@ function Program(props) {
                         </For>
                     </tbody>
                 </table>
-                
+
             </div>
             <div class="pt-8 mt-10 font-semibold text-xl hover:text-yellow-500">
             <A href="/mojHangar">Kako bi vidjeli sve pronađene zrakoplove, posjetite Moj Hangar!</A>
             </div>
+
         </>
-        
+
     );
 }
 

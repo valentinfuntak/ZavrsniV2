@@ -1,16 +1,19 @@
 import { useAuth } from "../Auth/AuthProvider.jsx";
 import { useNavigate } from "@solidjs/router";
-import { createEffect } from "solid-js"; 
+import { createEffect } from "solid-js";
 
 function Informacije(props) {
   const session = useAuth();
   const navigate = useNavigate();
 
+  //console.log(session());
+
   createEffect(() => {
-      if (session() === null) {
-          navigate("/AuthError");
-      }
+    if (session() === null) {
+      navigate("/AuthError");
+    }
   });
+  
   return (
     <div class="p-8">
       <h1 class="font-mono text-4xl mb-6">INFORMACIJE O APLIKACIJI</h1>

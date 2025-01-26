@@ -23,8 +23,6 @@ export default function MainLayout(props) {
         setMobileMenuOpen(!isMobileMenuOpen());
     };
 
-    const session = useAuth();
-
     return (
         <>
             <nav class="bg-white border-gray-200 dark:bg-gray-900">
