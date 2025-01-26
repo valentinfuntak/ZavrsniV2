@@ -52,7 +52,7 @@ export async function azurirajTablicu() {
 
 export async function DodajDesc(modelAvion, opis, brojProizvedeno){
   const { data, error } = await supabase.from("AvioniNadjeno")
-  .update({ description: opis, modelNum: brojProizvedeno })
+  .update({ description: opis, modelnum: brojProizvedeno })
   .eq("model", modelAvion);
 
   if (error) {
@@ -61,17 +61,25 @@ export async function DodajDesc(modelAvion, opis, brojProizvedeno){
   }
    return data;
 }
+/*
+async function StvoriTablicuModelUniq(){
+  let { data, error } = await supabase
+  .rpc('ModeliMaxDatum');
+if (error) console.error(error);
+else console.log(data);
+}
+*/
 
-//Group by, select, eq, max
-export async function dohvatiHangar(){
-  const { data, error } = await supabase.from("AvioniNadjeno")
-  .select("*");
+export async function dohvatiSve(){
+  //await StvoriTablicuModelUniq();
+  const { data, error } = await supabase.from("modelifiltrirano")
+  .select("*")
   if (error) {
-    console.error("Greška pri dohvaćanju aviona:", error.message);
+    console.error("Greška pri dohvaćanju filtrirane tablice:", error.message);
     return [];
   }
+  console.log(data);
   return data;
 }
-
 
 export default supabase;

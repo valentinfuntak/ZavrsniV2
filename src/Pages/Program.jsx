@@ -49,6 +49,7 @@ function Program(props) {
 
     const [planes] = createResource(getPlanes);
 
+    console.log("PLANES", planes);
     return (
         <>
             {isMobile() && <Navigacija />}
@@ -149,8 +150,9 @@ function Program(props) {
                 </table>
                 
             </div>
-            <A  class="pt-10 mt-10 font-semibold text-xl" href="/mojHangar">Kako bi vidjeli sve pronađene zrakoplove, posjetite Moj Hangar!</A>
-
+            <div class="pt-8 mt-10 font-semibold text-xl hover:text-yellow-500">
+            <A href="/mojHangar">Kako bi vidjeli sve pronađene zrakoplove, posjetite Moj Hangar!</A>
+            </div>
         </>
         
     );
