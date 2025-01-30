@@ -55,14 +55,14 @@ function Onama(props) {
 
                 <div>
                     <h2 class="text-xl font-semibold">Učenici</h2>
-                    <p class="text-lg text-gray-700 dark:text-gray-300">
+                    <p class="text-lg text-gray-300">
                         Valentin Funtak <br />
                         Noa Golubić
                     </p>
                 </div>
 
                 <div>
-                    <p class="text-lg text-gray-700 dark:text-gray-300">
+                    <p class="text-lg text-gray-300">
 
                     </p>
                 </div>

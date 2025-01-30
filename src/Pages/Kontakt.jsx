@@ -42,7 +42,7 @@ function Kontakt(props) {
             <li class="flex items-center">
               <a onClick={handleLogout}
                 href="https://github.com/valentinfuntak"
-                class="text-gray-500 hover:text-gray-900 dark:hover:text-white flex items-center"
+                class="text-gray-500 hover:text-white flex items-center"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -65,7 +65,7 @@ function Kontakt(props) {
             <li class="flex items-center">
               <a onClick={handleLogout}
                 href="https://github.com/NoaGolubic"
-                class="text-gray-500 hover:text-gray-900 dark:hover:text-white flex items-center"
+                class="text-gray-500 hover:text-white flex items-center"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -94,7 +94,7 @@ function Kontakt(props) {
             <li class="flex items-center">
               <a onClick={handleLogout}
                 href="https://github.com/valentinfuntak/ZavrsniV2"
-                class="text-gray-500 hover:text-gray-900 dark:hover:text-white flex items-center"
+                class="text-gray-500 hover:text-white flex items-center"
                 target="_blank"
                 rel="noopener noreferrer"
               >

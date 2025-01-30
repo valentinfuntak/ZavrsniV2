@@ -467,36 +467,36 @@ export default function KomponentaProgram(props) {
 
   return (
     <>
-      <div class="p-6 bg-gray-50 dark:bg-gray-900 rounded-3xl">
-        <h1 class="text-3xl font-bold text-center mb-6 text-gray-800 dark:text-white">PROGRAM</h1>
-        <div class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg p-6">
+      <div class="p-6  bg-gray-900 rounded-3xl">
+        <h1 class="text-3xl font-bold text-center mb-6  text-white">PROGRAM</h1>
+        <div class=" bg-gray-800 border  border-gray-700 rounded-lg shadow-lg p-6">
           <div class="flex justify-center items-center mb-4">
             <div
               id="map-container"
-              class="w-full h-96 bg-gray-300 dark:bg-gray-700 rounded-lg overflow-hidden border-4 border-gray-500"
+              class="w-full h-96  bg-gray-700 rounded-lg overflow-hidden border-4 border-gray-500"
             ></div>
           </div>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="bg-gray-100 dark:bg-gray-600 p-4 rounded-lg shadow-md transition-transform transform hover:scale-105">
-              <h2 class="text-lg font-semibold mb-2 text-gray-800 dark:text-white">Podaci o avionu</h2>
-              <p class="text-gray-700 dark:text-gray-300"><strong>Kut X do aviona: {kutXPrikaz()}°</strong></p>
-              <p class="text-gray-700 dark:text-gray-300"><strong>Kut Y do aviona: {kutYPrikaz()}°</strong></p>
-              <p class="text-gray-700 dark:text-gray-300"><strong>Koordinate aviona: {avionLatPrikaz()}°, {avionLngPrikaz()}°</strong></p>
-              <p class="text-gray-700 dark:text-gray-300"><strong>Zračna udaljenost: {udaljenostPrikaz()}m</strong></p>
-              <p class="text-gray-700 dark:text-gray-300"><strong>Vaša Elevacija: {elevation()}m</strong></p>
+            <div class=" bg-gray-600 p-4 rounded-lg shadow-md transition-transform transform hover:scale-105">
+              <h2 class="text-lg font-semibold mb-2 text-white">Podaci o avionu</h2>
+              <p class=" text-gray-300"><strong>Kut X do aviona: {kutXPrikaz()}°</strong></p>
+              <p class="text-gray-300"><strong>Kut Y do aviona: {kutYPrikaz()}°</strong></p>
+              <p class=" text-gray-300"><strong>Koordinate aviona: {avionLatPrikaz()}°, {avionLngPrikaz()}°</strong></p>
+              <p class="text-gray-300"><strong>Zračna udaljenost: {udaljenostPrikaz()}m</strong></p>
+              <p class="text-gray-300"><strong>Vaša Elevacija: {elevation()}m</strong></p>
             </div>
 
-            <div class="bg-gray-100 dark:bg-gray-600 p-4 rounded-lg shadow-md transition-transform transform hover:scale-105">
-              <h2 class="text-lg font-semibold mb-2 text-gray-800 dark:text-white">Nagib uređaja</h2>
-              <p class="text-gray-700 dark:text-gray-300"><strong>Alpha (Z os): {gamma().toFixed(2)}°</strong></p>
-              <p class="text-gray-700 dark:text-gray-300"><strong>Beta (X os): {alpha().toFixed(2)}°</strong></p>
-              <p class="text-gray-700 dark:text-gray-300"><strong>Gamma (Y os): {beta().toFixed(2)}°</strong></p>
-              <p class="text-gray-700 dark:text-gray-300"><strong>Kut gledanja: {magHeading()} + 5.3°</strong></p>
+            <div class=" bg-gray-600 p-4 rounded-lg shadow-md transition-transform transform hover:scale-105">
+              <h2 class="text-lg font-semibold mb-2 text-white">Nagib uređaja</h2>
+              <p class="text-gray-300"><strong>Alpha (Z os): {gamma().toFixed(2)}°</strong></p>
+              <p class="text-gray-300"><strong>Beta (X os): {alpha().toFixed(2)}°</strong></p>
+              <p class="text-gray-300"><strong>Gamma (Y os): {beta().toFixed(2)}°</strong></p>
+              <p class="text-gray-300"><strong>Kut gledanja: {magHeading()} + 5.3°</strong></p>
             </div>
 
  
             {/* Proširena kocka unutar forme 
-           <div class="bg-gray-100 dark:bg-gray-600 p-4 rounded-lg shadow-md transition-transform transform hover:scale-105 col-span-1 md:col-span-2 flex justify-center items-center">
+           <div class="bg-gray-600 p-4 rounded-lg shadow-md transition-transform transform hover:scale-105 col-span-1 md:col-span-2 flex justify-center items-center">
               <div class="cube-scene pt-16 w-full h-64"> 
                 <div class="cube" ref={el => cubeRef = el}>
                   <div class="cube-face front">Front</div>

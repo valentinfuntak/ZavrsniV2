@@ -32,13 +32,13 @@ function Informacije(props) {
         </div>
 
         <div>
-          <p class="text-lg text-gray-700 dark:text-gray-300">
+          <p class="text-lg text-gray-300">
             Flightradar24 je jedan od najpoznatijih globalnih servisa za praćenje letova, a kroz našu aplikaciju, korisnici mogu uživati u brzom pristupu podacima o avionima koji lete u njihovoj blizini. Informacije o svakom letu uključuju podatke o tipu aviona, visini, poziciji, brzini leta i drugim detaljima.
           </p>
         </div>
 
         <div>
-          <p class="text-lg text-gray-700 dark:text-gray-300">
+          <p class="text-lg text-gray-300">
             Aplikacija je dizajnirana uz pomoć SolidJS-a za optimalne performanse, dok su za dizajn korišteni TailwindCSS i Flowbite, što omogućava moderni izgled i jednostavno korisničko iskustvo.
           </p>
         </div>

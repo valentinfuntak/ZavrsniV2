@@ -20,12 +20,12 @@ function MojHangar(props) {
        if (kartica.modelnum === null) {
             return (
                 <div class="content-center pb-8 pt-9 flex items-center justify-center">
-                <div class="bg-gradient-to-r from-slate-200 to-stone-400 block max-w-sm p-6 bg-white border border-white-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-                    <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{kartica.model}, ???</h5>
-                    <p class="pt-5 font-bold text-black dark:text-black">Pronađen: {konverzijaDatum(kartica.time)}h</p>
-                    <p class="pt-5 font-bold text-black dark:text-black">Brzina i visina: {kartica.speed}km/h, {kartica.altitude}m</p>
-                    <p class="pt-5 font-bold text-black dark:text-black">Opis: Nije istraženo!</p>
-                    <p class="pt-7 font-bold text-black dark:text-black">Broj proizvedenih modela: Nije istraženo!</p>
+                <div class="bg-gradient-to-r from-slate-200 to-stone-400 block max-w-sm p-6 bg-gray-700 border border-white-200 rounded-lg shadow hover:bg-gray-100 ">
+                    <h5 class="mb-2 text-2xl font-bold tracking-tight text-white">{kartica.model}, ???</h5>
+                    <p class="pt-5 font-bold text-black ">Pronađen: {konverzijaDatum(kartica.time)}h</p>
+                    <p class="pt-5 font-bold text-black ">Brzina i visina: {kartica.speed}km/h, {kartica.altitude}m</p>
+                    <p class="pt-5 font-bold text-black ">Opis: Nije istraženo!</p>
+                    <p class="pt-7 font-bold text-black ">Broj proizvedenih modela: Nije istraženo!</p>
                 </div>
                 </div>
             );
@@ -33,7 +33,7 @@ function MojHangar(props) {
             return (
                 <div class="content-center pb-8 pt-9 flex items-center justify-center">
                 <div class="bg-gradient-to-r from-red-200 via-fushia-300 to-rose-500 block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-                    <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{kartica.model}, COMMON</h5>
+                    <h5 class="mb-2 text-2xl font-bold tracking-tight text-white">{kartica.model}, COMMON</h5>
                     <p class="pt-5 font-bold text-black dark:text-black">Pronađen: {konverzijaDatum(kartica.time)}h</p>
                     <p class="pt-5 font-bold text-black dark:text-black">Brzina i visina: {kartica.speed}km/h, {kartica.altitude}m</p>
                     <p class="pt-5 font-bold text-black dark:text-black">Opis: {kartica.description}</p>
