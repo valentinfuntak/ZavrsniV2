@@ -1,12 +1,11 @@
 export async function getFlightPositions(apiToken, bounds) {
     const BASE_URL = 'https://fr24api.flightradar24.com/api';
-    const ENDPOINT = '/sandbox/live/flight-positions/full';
+    const ENDPOINT = '/live/flight-positions/full';
     const url = `${BASE_URL}${ENDPOINT}`;
-    const flightRadarKey = import.meta.env.FLIGHTRADAR_KEY;
-
+    
     const headers = {
         'Accept': 'application/json',
-        'Authorization': `Bearer 9d64c490-73c1-4abc-b7b7-efe16ecf1a6a|GWNYeAKtJ1cXb1wM4fhW3SPeKTbeGABtWTxnaTEh4f35fc6d`,
+        'Authorization': `Bearer ${apiToken}`,
         'Accept-Version': 'v1'
     };
 

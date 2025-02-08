@@ -402,7 +402,7 @@ export default function KomponentaProgram(props) {
   const fetchFlightData = async () => {
     setLoading(true);
     try {
-      const bounds = '50.682,46.218,14.422,22.243';
+      const bounds = '${udaljenostLngN()},${udaljenostLngS()},${udaljenostLatW()},${udaljenostLatE()}';
       const data = await getFlightPositions(apiToken, bounds);
 
       if (data !== null) {
