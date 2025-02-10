@@ -57,9 +57,6 @@ const [brzina, setBrzina] = createSignal(0);
 const [model, setModel] = createSignal(0);
 
 let cubeRef;
-let mapContainer;
-
-
 
 export function konverzijaDatum(vrijeme){
   const date = new Date(vrijeme);
