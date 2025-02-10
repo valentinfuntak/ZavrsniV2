@@ -50,7 +50,7 @@ function Program(props) {
 
     const [planes] = createResource(getPlanes);
 
-    console.log("PLANES", planes);
+    //console.log("PLANES", planes);
     return (
         <>
             {isMobile() && <Navigacija />}
