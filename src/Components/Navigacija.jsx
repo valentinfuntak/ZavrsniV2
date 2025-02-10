@@ -293,11 +293,11 @@ export default function KomponentaProgram(props) {
   //DEFINIRANJE ZRAČNOG PROSTORA U KOJEM SE TRAŽE AVIONI RADI
   //jedan stupanj lat (geo širina) je 111.11km / 60  = 1.85183333333km  u minuti broj 9.72009720099 * 1.85... daje okrug od 36km
   // jedan stupanj lng (geo visine) PRIBLIŽNO je 111*cos(lat)
-  function prozor(lat, lng) {
-    setUdaljenostLatE(lat + 9.72009720099 / 60);
-    setUdaljenostLatW(lat - 9.72009720099 / 60);
+ async function prozor(lat, lng) {
+    setUdaljenostLatE(lat + 2.2 / 60);
+    setUdaljenostLatW(lat - 2.2 / 60);
 
-    const konstantaUdaljenostiLng = 9.72009720099 / 60 * Math.cos(lat * Math.PI / 180)
+    const konstantaUdaljenostiLng = 2.2 / 60 * Math.cos(lat * Math.PI / 180)
     setUdaljenostLngN(lng + konstantaUdaljenostiLng);
     setUdaljenostLngS(lng - konstantaUdaljenostiLng);
 
@@ -349,10 +349,10 @@ export default function KomponentaProgram(props) {
     setKutYAvion(kutAvionYValue);
     IzracunajKutX(latitude(), longitude(), avionLat(), avionLng());
 
-    const gornjaGranicaY = kutYAvion() + 5;
-    const donjaGranicaY = kutYAvion() - 5;
-    const gornjaGranicaX = kutAvionaX() + 5;
-    const donjaGranicaX = kutAvionaX() - 5;
+    const gornjaGranicaY = kutYAvion() + 10;
+    const donjaGranicaY = kutYAvion() - 10;
+    const gornjaGranicaX = kutAvionaX() + 10;
+    const donjaGranicaX = kutAvionaX() - 10;
     console.log("Gornja i donja granica kuta x:", gornjaGranicaX, donjaGranicaX);
     console.log("Gornja i donja granica kuta y:", gornjaGranicaY, donjaGranicaY);
 
@@ -397,15 +397,14 @@ export default function KomponentaProgram(props) {
   }
 
   const [loading, setLoading] = createSignal(false);
-  const apiToken = '${flightRadarKey}';
 
   const fetchFlightData = async () => {
     setLoading(true);
     try {
-      const bounds = '${udaljenostLngN()},${udaljenostLngS()},${udaljenostLatW()},${udaljenostLatE()}';
-      const data = await getFlightPositions(apiToken, bounds);
+    const bounds = `${udaljenostLngN()},${udaljenostLngS()},${udaljenostLatW()},${udaljenostLatE()}`;
+    const data = await getFlightPositions(bounds);
 
-      if (data !== null) {
+     if (data !== undefined) { 
         data.forEach(async (flight) => {
           const lat = flight.lat;
           const lon = flight.lon;
@@ -447,6 +446,8 @@ export default function KomponentaProgram(props) {
           );
           console.log("Podaci o avionu:: ", flight);
         });
+      }else{
+        showNotification("Nema aviona u zračnom prostoru!", "error", 5000);
       }
     } catch (error) {
       console.error('Failed to fetch flight data:', error);
@@ -459,7 +460,7 @@ export default function KomponentaProgram(props) {
   //POKRECE SVE RADI
   async function pokretac() {
     await lokacijaKorisnik();
-    prozor(latitude(), longitude());
+    await prozor(latitude(), longitude());
     await getElevation(latitude(), longitude());
     await fetchFlightData();
     console.log("Korisnikova lokacija: ", latitude(), longitude());
