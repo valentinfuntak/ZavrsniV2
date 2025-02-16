@@ -92,11 +92,11 @@ export async function pokreniAzuriranje(Azuriraj) {
 }
 
 const customMarker = new L.Icon({
-  iconUrl: markerIcon,// Putanja do ikone u repozitoriju
+  iconUrl: markerIcon,
   shadowUrl: markerShadow,
-  iconSize: [25, 41], // Veličina originalne ikone
-  iconAnchor: [12, 41], // Točka na ikoni koja se postavlja na lokaciju
-  popupAnchor: [1, -34], // Gdje će se pojaviti popup
+  iconSize: [25, 41], 
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
   shadowSize: [41, 41],
 });
 
