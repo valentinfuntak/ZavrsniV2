@@ -104,13 +104,11 @@ function MojHangar(props) {
           
          }
     const [kartice] =  createResource(dohvatiSve);
-    console.log("karticas:",kartice);
-
     return(
         <>
-      <div class="flex items-center space-x-8">
-  <h1 class="font-mono text-4xl leading-tight flex items-center">Moj hangar</h1>
-  <input type="text" class="form-control text-black bg-slate-200 rounded w-80 h-8 mt-3 pl-3" autocomplete="off" id="search-input" placeholder="Pretraži..."></input>
+     <div class="flex flex-row  justify-center items-center  space-x-8 flex-col md:flex-row">
+  <h1 class="font-mono text-4xl leading-tight flex items-center min-w-20">Moj hangar</h1>
+  <input type="text" class="form-control text-black bg-slate-200 rounded  md:w-60 w-60 h-8 mt-3 pl-3" autocomplete="off" id="search-input" placeholder="Pretraži..."/>
 </div>
 
 
@@ -123,4 +121,5 @@ function MojHangar(props) {
     );
 
 }
+
 export default MojHangar;

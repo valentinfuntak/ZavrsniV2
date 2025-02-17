@@ -16,7 +16,6 @@ export async function getElevationData(lat, lng) {
   
       const data = await response.json();
       if (data !== null) {
-        console.log("Prikupljena elevacija:", data.elevation);
         return data.elevation; 
       } else {
         console.log("API nije pronašao podatke za elevaciju.");

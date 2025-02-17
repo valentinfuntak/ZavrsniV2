@@ -3,14 +3,13 @@ import { useNavigate, A } from "@solidjs/router";
 import { createEffect, createSignal } from "solid-js";
 
 import { createResource, For } from "solid-js";
-import { getPlanes } from "../Backend/supabaseClient.js";
+import { getPlanes, planes} from "../Backend/supabaseClient.js";
 
 //import { fetchFlightInfo } from "../Components/Navigacija";
 import Navigacija from "../Components/Navigacija.jsx"
 import { konverzijaDatum } from "../Components/Navigacija.jsx"
 
 //import { getFlightInfo } from '../Services/OpenAIAPI';
-import { showNotification } from "../Components/Navigacija.jsx"
 
 
 function Program(props) {
@@ -19,10 +18,11 @@ function Program(props) {
 
     //console.log(session());
 
-    createEffect(() => {
+    createEffect( async() => {
         if (session() === null) {
             navigate("/AuthError");
         }
+        await getPlanes();
     });
 
     const [isMobile, setIsMobile] = createSignal(window.innerWidth < 1024);
@@ -48,9 +48,8 @@ function Program(props) {
       }
     */
 
-    const [planes] = createResource(getPlanes);
+    //const [planes] = createResource(getPlanes);
 
-    console.log("PLANES", planes);
     return (
         <>
             {isMobile() && <Navigacija />}

@@ -1,16 +1,18 @@
 import { createClient } from "@supabase/supabase-js";
-import { showNotification } from "../Components/Navigacija.jsx";
-import { AzurirajBazu, setAzurirajBazu } from "../Components/Navigacija.jsx";
-import { pokreniAzuriranje } from "../Components/Navigacija.jsx";
+import { showNotification} from "../Components/Navigacija.jsx";
+import { createSignal } from "solid-js";
 
 const url = import.meta.env.VITE_SUPABASE_URL;
 const apiKey = import.meta.env.VITE_SUPABASE_API_KEY;
 
 export const supabase = createClient(url, apiKey);
 
+export const [planes, setPlanes] = createSignal(null);
+
+
 export async function insertPlane(lat, lon, alt,brzina, call, modelA) {
   const { error } = await supabase
-    .from('AvioniNadjeno')
+    .from('"avioninadjeno"')
     .insert([
       { latitude: lat, longitude: lon, altitude: alt, speed: brzina, callsign: call, model: modelA }
     ]);
@@ -23,7 +25,7 @@ export async function insertPlane(lat, lon, alt,brzina, call, modelA) {
 }
 
 export async function getPlanes() {
-  const { data, error } = await supabase.from("AvioniNadjeno")
+  const { data, error } = await supabase.from("avioninadjeno")
     .select("*")
     .order('id', { ascending: false })
     .limit(5);
@@ -32,26 +34,11 @@ export async function getPlanes() {
     return [];
   }
   console.log("Dohvaćeni podaci:", data);
-  return data;
-}
-
-export async function azurirajTablicu() {
-  await pokreniAzuriranje(AzurirajBazu());
-  const { data, error } = await supabase.from("AvioniNadjeno")
-    .select("*")
-    .order('id', { ascending: false })
-    .limit(5);
-  if (error) {
-    console.error("Greška pri dohvaćanju aviona:", error.message);
-    return [];
-  }
-  console.log("Azuriranje je uspjelo:", data);
-  setAzurirajBazu(false);
-  return data;
+  setPlanes(data);
 }
 
 export async function DodajDesc(modelAvion, opis, brojProizvedeno){
-  const { data, error } = await supabase.from("AvioniNadjeno")
+  const { data, error } = await supabase.from("avioninadjeno")
   .update({ description: opis, modelnum: brojProizvedeno })
   .eq("model", modelAvion);
 
@@ -61,24 +48,23 @@ export async function DodajDesc(modelAvion, opis, brojProizvedeno){
   }
    return data;
 }
-/*
+
 async function StvoriTablicuModelUniq(){
   let { data, error } = await supabase
-  .rpc('ModeliMaxDatum');
+  .rpc('create_modeli_filtrirano');
 if (error) console.error(error);
-else console.log(data);
 }
-*/
+
+
 
 export async function dohvatiSve(){
-  //await StvoriTablicuModelUniq();
+  await StvoriTablicuModelUniq();
   const { data, error } = await supabase.from("modelifiltrirano")
   .select("*")
   if (error) {
     console.error("Greška pri dohvaćanju filtrirane tablice:", error.message);
     return [];
   }
-  console.log(data);
   return data;
 }
 

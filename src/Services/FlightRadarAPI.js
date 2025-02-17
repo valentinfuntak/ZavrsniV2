@@ -4,8 +4,7 @@ export async function getFlightPositions(bounds) {
     const ENDPOINT = '/live/flight-positions/full';
     const url = `${BASE_URL}${ENDPOINT}`;
  
-    const apiToken = import.meta.env.VITE_FLIGHTRADAR_KEY
-   
+    const apiToken = import.meta.env.VITE_FLIGHTRADAR_KEY;
     
     const headers = {
         'Accept': 'application/json',
@@ -27,7 +26,6 @@ export async function getFlightPositions(bounds) {
             }
 
             const data = await response.json();
-            console.log(data); 
             if (data.length !== 0) { 
                 const flights = data.data.map((flight) => ({
                     lat: flight.lat,
@@ -37,13 +35,8 @@ export async function getFlightPositions(bounds) {
                     brz: flight.gspeed,
                     modelA: flight.type
                 }));
-                console.log(data.data);
-                console.log(flights);
                 return flights;
-            } else{
-                console.log("NEMA AVION");
-                
-            }
+            } 
         }
     } catch (error) {
         console.error('Greška pri dohvaćanju podataka o letovima:', error);

@@ -1,10 +1,10 @@
-import { createSignal, onCleanup, onMount, Show } from "solid-js";
-
+//PROBLEM SA AUTHOM, INSERTPLANEOM I IZRACUNOM NAJBLIZEG
+import { createSignal, onCleanup, onMount } from "solid-js";
+import * as geolib from 'geolib';
 
 import { getFlightPositions } from '../Services/FlightRadarAPI.js';
 import { getElevationData } from '../Services/ElevacijaAPI.js';
-import { insertPlane } from '../Backend/supabaseClient.js';
-import { azurirajTablicu } from "../Backend/supabaseClient.js";
+import { insertPlane/*, NajblizaZRLuka */} from '../Backend/supabaseClient.js';
 import success from '../assets/bingo.mp3';
 import fail from '../assets/fail.mp3';
 
@@ -20,7 +20,6 @@ import "../styles/kocka.css"
 //const flightRadarKey = import.meta.env.FLIGHTRADAR_KEY;
 
 //signali za BP i UI
-export const [AzurirajBazu, setAzurirajBazu] = createSignal(false);
 const [notifications, setNotifications] = createSignal([]);
 
 //Signali za orijentaciju
@@ -47,7 +46,7 @@ const [visina, setVisina] = createSignal(0);
 
 
 //Signali za prikaz u formi
-const [UdaljenosKuteva, setUdaljenostKuteva] = createSignal(0);
+const [UdaljenostKuteva, setUdaljenostKuteva] = createSignal(undefined);
 const [kutYPrikaz, setKutYPrikaz] = createSignal(0);
 const [kutXPrikaz, setkutXPrikaz] = createSignal(0);
 const [avionLatPrikaz, setAvionLatPrikaz] = createSignal(0);
@@ -58,8 +57,6 @@ const [model, setModel] = createSignal(0);
 
 let cubeRef;
 let mapContainer;
-
-
 
 export function konverzijaDatum(vrijeme){
   const date = new Date(vrijeme);
@@ -146,34 +143,7 @@ export default function KomponentaProgram(props) {
 
   //KOMPAS
   const orijentacijaUredjaja = () => {
-    if (window.DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === "function") {
-      DeviceOrientationEvent.requestPermission()
-        .then((response) => {
-          if (response === "granted") {
-            window.addEventListener("deviceorientationabsolute", (event) => {
-              if (event.alpha !== null) {
-                let heading = event.alpha; 
-                if (heading < 0) heading += 360;
-                heading = heading.toFixed(2);
-                if (Math.abs(beta) < 45 && Math.abs(gamma) < 45) {
-                  setMagHeading(alpha); 
-                } else {
-                  
-                  console.log("Ignoring alpha changes due to significant tilt.");
-                }
-              } else {
-                showNotification("Magnetic heading is not available", "error", 5000);
-              }
-            });
-          } else {
-            showNotification("Permission denied for device orientation", "error", 5000);
-          }
-        })
-        .catch((err) => {
-          console.error("Error requesting device orientation permission:", err);
-          showNotification("Device orientation permission error", "error", 5000);
-        });
-    } else if (window.DeviceOrientationEvent) {
+    if (window.DeviceOrientationEvent) {
       window.addEventListener("deviceorientationabsolute", (event) => {
         if (event.alpha !== null) {
           let smjer = event.alpha;
@@ -207,11 +177,13 @@ export default function KomponentaProgram(props) {
   };
 
   async function IzracunajKutX(latKorisnik, lngKorisnik, latAvion, lngAvion){
-    let bearing = Math.atan2(latAvion - latKorisnik, lngAvion-lngKorisnik);
-    bearing = (bearing * (180/Math.PI) + 360) % 360;
-    console.log("bearing je: ", bearing);
 
-    setKutAvionaX(bearing);
+let izracunanKutX = geolib.getGreatCircleBearing(
+  { latitude: latKorisnik, longitude: lngKorisnik },
+  { latitude: latAvion, longitude: lngAvion }
+);
+izracunanKutX = izracunanKutX - 5.3;
+setKutAvionaX(izracunanKutX);
 
   }
 
@@ -225,7 +197,6 @@ export default function KomponentaProgram(props) {
             const lng = position.coords.longitude;
             setLatitude(lat);
             setLongitude(lng);
-            console.log("LATITUDA I LONGITUDA KORISNIK: ", latitude(), longitude());
             resolve();
           },
           (error) => {
@@ -233,9 +204,7 @@ export default function KomponentaProgram(props) {
             reject(error);
           }
         );
-      } else {
-        console.log("Geolocation is not supported");
-      }
+      } 
     });
   }
 
@@ -255,7 +224,6 @@ export default function KomponentaProgram(props) {
 
   onMount(() => {
     let magSensor = new Magnetometer();
-  
     magSensor.addEventListener("reading", (e) => {
 
       setSnagaMagPolj(Math.sqrt(Math.pow(magSensor.x, 2) + Math.pow(magSensor.y, 2) + Math.pow(magSensor.z, 2)));
@@ -293,16 +261,15 @@ export default function KomponentaProgram(props) {
   //DEFINIRANJE ZRAČNOG PROSTORA U KOJEM SE TRAŽE AVIONI RADI
   //jedan stupanj lat (geo širina) je 111.11km / 60  = 1.85183333333km  u minuti broj 9.72009720099 * 1.85... daje okrug od 36km
   // jedan stupanj lng (geo visine) PRIBLIŽNO je 111*cos(lat)
- async function prozor(lat, lng) {
-    setUdaljenostLatE(lat + 2.2 / 60);
-    setUdaljenostLatW(lat - 2.2 / 60);
-
-    const konstantaUdaljenostiLng = 2.2 / 60 * Math.cos(lat * Math.PI / 180)
+  async function prozor(lat, lng) {
+    setUdaljenostLatE(lat + 13 / 60);
+    setUdaljenostLatW(lat - 13 / 60);
+  
+    // FIX: Divide by cos(lat) instead of multiplying
+    const konstantaUdaljenostiLng = (13 / 60) / Math.cos(lat * Math.PI / 180);
     setUdaljenostLngN(lng + konstantaUdaljenostiLng);
     setUdaljenostLngS(lng - konstantaUdaljenostiLng);
-
-    console.log("Okvir gledanja", udaljenostLatE(), udaljenostLatW(), udaljenostLngN(), udaljenostLngS());
-  }      
+  }   
 
   // API ELEVACIJA open-meto
   async function getElevation(lat, lng) {
@@ -310,9 +277,7 @@ export default function KomponentaProgram(props) {
       const elevationData = await getElevationData(lat, lng);
       if (elevationData !== null) {
         setElevation(elevationData);
-      } else {
-        console.log("API za elevaciju vratio je null vrijednost");
-      }
+      } 
     } catch (error) {
       console.error("Greška pri pokušaju dohvaćanja elevacije: ", error);
     }
@@ -335,56 +300,52 @@ export default function KomponentaProgram(props) {
 
     if (UdaljenostZRCVal != 0) {
       setUdaljenostZRC(UdaljenostZRCVal);
-    } else if (UdaljenostZRCVal === null) {
-      console.log("UdaljenostZRC je null, provjeriti funkciju skeniranje")
-    } else {
+    }  else {
       setUdaljenostZRC(visina);
     }
     const VisinaDelta = visina - elevacija;
 
-    const kutAvionYValue = Math.atan(UdaljenostZRC() / VisinaDelta) * (180 / Math.PI);
-    console.log("ZRACNA UDALJENOST JE:", UdaljenostZRC());
-    console.log("KUT Y JE", kutAvionYValue);
-    console.log("VISINA JE:", visina);
+    //PROVJERIT
+    const kutAvionYValue =Math.atan(VisinaDelta / UdaljenostZRC()) * (180 / Math.PI) + 90;
     setKutYAvion(kutAvionYValue);
     IzracunajKutX(latitude(), longitude(), avionLat(), avionLng());
 
-    const gornjaGranicaY = kutYAvion() + 10;
-    const donjaGranicaY = kutYAvion() - 10;
-    const gornjaGranicaX = kutAvionaX() + 10;
-    const donjaGranicaX = kutAvionaX() - 10;
-    console.log("Gornja i donja granica kuta x:", gornjaGranicaX, donjaGranicaX);
-    console.log("Gornja i donja granica kuta y:", gornjaGranicaY, donjaGranicaY);
+    const gornjaGranicaY = kutYAvion() + 20;
+    const donjaGranicaY = kutYAvion() - 20;
+    const gornjaGranicaX = kutAvionaX() + 20;
+    const donjaGranicaX = kutAvionaX() - 20;
 
     if (beta >= donjaGranicaY && beta <= gornjaGranicaY && smjer >= donjaGranicaX && smjer <= gornjaGranicaX) {
       var audio = document.getElementById("audiosuccess");
       audio.play();
   
-      insertPlane(avionLa, avionLn, visina, brzina, call, model);
-      await azurirajTablicu();
+     insertPlane(avionLa, avionLn, visina, brzina, call, model);
       
       if (error) {
         console.error('Greška pri spremanju podataka u bazu:', error.message);
+        alert(error);
       } else {
         console.log('Podaci spremljeni u bazu');
-      }
-
-      if (error) {
-        console.log(error, "Greška prilikom slanja u BP");
       }
     } else {
       var audio = document.getElementById("audiofail");
       audio.play();
-      showNotification("Avion se ne nalazi u traženom zračnom prostoru", "error", 5000);
+      
 
+
+
+      //PROBLEM JE TU
       let razlikaY = Math.min(Math.abs(kutYAvion()-beta), 360 - Math.abs(kutYAvion()-beta));
       let razlikaX = Math.min(Math.abs(kutAvionaX()-smjer), 360 - Math.abs(kutAvionaX()-smjer));
      
       let zbroj = razlikaY + razlikaX;
+
+      console.log("UDALJENOST KUTEVA", UdaljenostKuteva());
       
-      if(UdaljenosKuteva() === null){
+      if(UdaljenostKuteva() === undefined){
       setUdaljenostKuteva(zbroj);
-      } else if (UdaljenosKuteva() < (zbroj)){
+      showNotification("Niste usmjereni prema avionu!", "error", 5000);
+      } else if (UdaljenostKuteva() > zbroj){
         setUdaljenostKuteva(zbroj);
         setKutYPrikaz(kutYAvion().toFixed(2));
         setkutXPrikaz(kutAvionaX().toFixed(2));
@@ -398,11 +359,13 @@ export default function KomponentaProgram(props) {
 
   const [loading, setLoading] = createSignal(false);
 
+
   const fetchFlightData = async () => {
     setLoading(true);
     try {
-    const bounds = `${udaljenostLngN()},${udaljenostLngS()},${udaljenostLatW()},${udaljenostLatE()}`;
-    const data = await getFlightPositions(bounds);
+ const bounds = `${udaljenostLatE()},${udaljenostLatW()},${udaljenostLngS()},${udaljenostLngN()}`;
+      
+      const data = await getFlightPositions(bounds);
 
      if (data !== undefined) { 
         data.forEach(async (flight) => {
@@ -444,7 +407,6 @@ export default function KomponentaProgram(props) {
             brzina,
             call
           );
-          console.log("Podaci o avionu:: ", flight);
         });
       }else{
         showNotification("Nema aviona u zračnom prostoru!", "error", 5000);
@@ -459,13 +421,12 @@ export default function KomponentaProgram(props) {
  
   //POKRECE SVE RADI
   async function pokretac() {
+    setUdaljenostKuteva(undefined);
     await lokacijaKorisnik();
     await prozor(latitude(), longitude());
     await getElevation(latitude(), longitude());
     await fetchFlightData();
-    console.log("Korisnikova lokacija: ", latitude(), longitude());
   }
-
   return (
     <>
       <div class="p-6  bg-gray-900 rounded-3xl">
@@ -492,7 +453,7 @@ export default function KomponentaProgram(props) {
               <p class="text-gray-300"><strong>Alpha (Z os): {gamma().toFixed(2)}°</strong></p>
               <p class="text-gray-300"><strong>Beta (X os): {alpha().toFixed(2)}°</strong></p>
               <p class="text-gray-300"><strong>Gamma (Y os): {beta().toFixed(2)}°</strong></p>
-              <p class="text-gray-300"><strong>Kut gledanja: {magHeading()} + 5.3°</strong></p>
+              <p class="text-gray-300"><strong>Kut gledanja: {magHeading()}°</strong></p>
             </div>
 
  

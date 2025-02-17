@@ -26,7 +26,9 @@
     "@solidjs/router": "^0.15.1",
     "@supabase/supabase-js": "^2.47.10",
     "flowbite": "^2.5.2",
+    "geolib": "^3.3.4",
     "leaflet": "^1.9.4",
+    "leaflet.markercluster": "^1.5.3",
     "solid-js": "^1.8.11"
   }
 }
