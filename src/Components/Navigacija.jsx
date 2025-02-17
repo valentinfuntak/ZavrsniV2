@@ -8,8 +8,11 @@ import { insertPlane/*, NajblizaZRLuka */} from '../Backend/supabaseClient.js';
 import success from '../assets/bingo.mp3';
 import fail from '../assets/fail.mp3';
 
+import markerIcon from "../assets/marker-icon.png";
+import markerShadow from "../assets/marker-shadow.png";
 
 import L from "leaflet";
+
 import "leaflet/dist/leaflet.css";
 import "../styles/kocka.css"
 
@@ -58,6 +61,8 @@ const [model, setModel] = createSignal(0);
 let cubeRef;
 let mapContainer;
 
+
+
 export function konverzijaDatum(vrijeme){
   const date = new Date(vrijeme);
   const formatirano = new Intl.DateTimeFormat('en-GB', {
@@ -88,6 +93,15 @@ export async function pokreniAzuriranje(Azuriraj) {
   }
 }
 
+const customMarker = new L.Icon({
+  iconUrl: markerIcon,
+  shadowUrl: markerShadow,
+  iconSize: [25, 41], 
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41],
+});
+
 export default function KomponentaProgram(props) {
   const [map, setMap] = createSignal(null);
 
@@ -101,7 +115,7 @@ export default function KomponentaProgram(props) {
 
     // MAKNUTI
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(mapInstance);
-
+ 
     // Provjera da li preglednik podržava geolokaciju
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -109,10 +123,10 @@ export default function KomponentaProgram(props) {
           const { latitude, longitude } = position.coords;
 
           // Centriranje mape na trenutnu lokaciju
-          mapInstance.setView([latitude, longitude], 13);
+          mapInstance.setView([ latitude, longitude], 13);
 
           // Dodavanje markera za trenutnu lokaciju
-          L.marker([latitude, longitude])
+          L.marker([latitude, longitude], { icon: customMarker })
             .addTo(mapInstance)
             .bindPopup("Vaša trenutna lokacija")
             .openPopup();
@@ -385,7 +399,7 @@ setKutAvionaX(izracunanKutX);
           setBrzina(brzina);
           setModel(modelA);
 
-          L.marker([lat, lon]).addTo(map())
+          L.marker([lat, lon], { icon: customMarker }).addTo(map())
             .bindPopup(`
             <div class="text-xs p-2 max-w-xs">
               <strong>Let:</strong> ${call}<br>
