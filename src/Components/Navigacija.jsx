@@ -58,6 +58,7 @@ const [avionLngPrikaz, setAvionLngPrikaz] = createSignal(0);
 const [udaljenostPrikaz, setUdaljenostPrikaz] = createSignal(0);
 const [brzina, setBrzina] = createSignal(0);
 const [model, setModel] = createSignal(0);
+const [userID, setUserID] = createSignal(0);
 
 let cubeRef;
 let mapContainer;
@@ -239,6 +240,8 @@ export default function KomponentaProgram(props) {
   const session = useAuth();
 
   onMount(() => {
+    setUserID(session().user.id);
+    alert("NOVA VERZIJA3");
     let magSensor = new Magnetometer();
     magSensor.addEventListener("reading", (e) => {
 
@@ -335,7 +338,7 @@ export default function KomponentaProgram(props) {
       var audio = document.getElementById("audiosuccess");
       audio.play();
 
-      insertPlane(avionLa, avionLn, visina, brzina, call, model);
+      insertPlane(avionLa, avionLn, visina, brzina, call, model, userID());
 
       if (error) {
         console.error('Greška pri spremanju podataka u bazu:', error.message);
@@ -346,8 +349,6 @@ export default function KomponentaProgram(props) {
     } else {
       var audio = document.getElementById("audiofail");
       audio.play();
-
-
 
 
       //PROBLEM JE TU
@@ -361,25 +362,30 @@ export default function KomponentaProgram(props) {
       if (!UdaljenostKuteva()) {
         setUdaljenostKuteva(zbroj);
         showNotification("Niste usmjereni prema avionu!", "error", 5000);
+        setKutYPrikaz(kutYAvion().toFixed(2));
+        setkutXPrikaz(kutAvionaX().toFixed(2));
+        setAvionLatPrikaz(avionLa.toFixed(2));
+        setAvionLngPrikaz(avionLn.toFixed(2));
+        setUdaljenostPrikaz(UdaljenostZRC().toFixed(2));
+        alert("Skeniran je Početni i njegove vrijednosti su:",kutYPrikaz(), kutXPrikaz());
       } else {
         setUdaljenostKuteva(old => {
           if (zbroj < old) {
-            return zbroj;
+            setKutYPrikaz(kutYAvion().toFixed(2));
+            setkutXPrikaz(kutAvionaX().toFixed(2));
+            setAvionLatPrikaz(avionLa.toFixed(2));
+            setAvionLngPrikaz(avionLn.toFixed(2));
+            setUdaljenostPrikaz(UdaljenostZRC().toFixed(2));
+            alert("Skeniran je manji i njegove vrijednosti su:",kutYPrikaz(), kutXPrikaz());
           } else {
             return old;
           }
         });
       }
 
-      console.log("POSLIJE UDALJENOST KUTEVA", UdaljenostKuteva());
-      /*} else if (UdaljenostKuteva() > zbroj) {
-        setUdaljenostKuteva(zbroj);
-        setKutYPrikaz(kutYAvion().toFixed(2));
-        setkutXPrikaz(kutAvionaX().toFixed(2));
-        setAvionLatPrikaz(avionLa.toFixed(2));
-        setAvionLngPrikaz(avionLn.toFixed(2));
-        setUdaljenostPrikaz(UdaljenostZRC().toFixed(2));
-      }*/
+      //console.log("POSLIJE UDALJENOST KUTEVA", UdaljenostKuteva());
+      //else if (UdaljenostKuteva() > zbroj) {
+      //setUdaljenostKuteva(zbroj);
     }
 
   }
