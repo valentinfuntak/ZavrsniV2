@@ -2,12 +2,13 @@ import { useAuth } from "../Auth/AuthProvider.jsx";
 import { useNavigate, A } from "@solidjs/router";
 import { createEffect, createSignal } from "solid-js";
 
-import { createResource, For } from "solid-js";
+import {  For } from "solid-js";
 import { getPlanes, planes} from "../Backend/supabaseClient.js";
 
 //import { fetchFlightInfo } from "../Components/Navigacija";
-import Navigacija from "../Components/Navigacija.jsx"
-import { konverzijaDatum } from "../Components/Navigacija.jsx"
+import Navigacija from "../Components/Navigacija.jsx";
+import { konverzijaDatum } from "../Components/Navigacija.jsx";
+import { userID } from "../Components/Navigacija.jsx";
 
 //import { getFlightInfo } from '../Services/OpenAIAPI';
 
@@ -22,7 +23,7 @@ function Program(props) {
         if (session() === null) {
             navigate("/AuthError");
         }
-        await getPlanes();
+        await getPlanes(userID());
     });
 
     const [isMobile, setIsMobile] = createSignal(window.innerWidth < 1024);
@@ -47,8 +48,6 @@ function Program(props) {
         }
       }
     */
-
-    //const [planes] = createResource(getPlanes);
 
     return (
         <>

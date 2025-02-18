@@ -24,11 +24,12 @@ export async function insertPlane(lat, lon, alt,brzina, call, modelA, userID) {
   }
 }
 
-export async function getPlanes() {
+export async function getPlanes(userID) {
   const { data, error } = await supabase.from("avioninadjeno")
     .select("*")
     .order('id', { ascending: false })
-    .limit(5);
+    .limit(5)
+    .eq('owner_id', userID);
   if (error) {
     console.error("Greška pri dohvaćanju aviona:", error.message);
     return [];
@@ -57,10 +58,11 @@ if (error) console.error(error);
 
 
 
-export async function dohvatiSve(){
+export async function dohvatiSve(userID){
   await StvoriTablicuModelUniq();
   const { data, error } = await supabase.from("modelifiltrirano")
   .select("*")
+  .eq('owner_id', userID);
   if (error) {
     console.error("Greška pri dohvaćanju filtrirane tablice:", error.message);
     return [];

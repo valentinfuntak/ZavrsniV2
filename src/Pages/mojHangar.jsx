@@ -2,7 +2,7 @@ import { useAuth } from "../Auth/AuthProvider.jsx";
 import { useNavigate } from "@solidjs/router";
 import { createEffect, createResource, onMount } from "solid-js";
 import { dohvatiSve } from "../Backend/supabaseClient.js";
-import { konverzijaDatum } from "../Components/Navigacija.jsx";
+import { konverzijaDatum, userID } from "../Components/Navigacija.jsx";
 
 function MojHangar(props) {
     const session = useAuth();
@@ -103,7 +103,7 @@ function MojHangar(props) {
              }
           
          }
-    const [kartice] =  createResource(dohvatiSve);
+    const [kartice] =  createResource(userID, dohvatiSve);
     return(
         <>
      <div class="flex flex-row  justify-center items-center  space-x-8 flex-col md:flex-row">

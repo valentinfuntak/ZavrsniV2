@@ -46,7 +46,6 @@ const [UdaljenostZRC, setUdaljenostZRC] = createSignal(0);
 const [elevation, setElevation] = createSignal(0);
 const [avionLng, setAvionLng] = createSignal(0);
 const [avionLat, setAvionLat] = createSignal(0);
-const [visina, setVisina] = createSignal(0);
 
 
 //Signali za prikaz u formi
@@ -56,9 +55,7 @@ const [kutXPrikaz, setkutXPrikaz] = createSignal(0);
 const [avionLatPrikaz, setAvionLatPrikaz] = createSignal(0);
 const [avionLngPrikaz, setAvionLngPrikaz] = createSignal(0);
 const [udaljenostPrikaz, setUdaljenostPrikaz] = createSignal(0);
-const [brzina, setBrzina] = createSignal(0);
-const [model, setModel] = createSignal(0);
-const [userID, setUserID] = createSignal(0);
+export const [userID, setUserID] = createSignal(0);
 
 let cubeRef;
 let mapContainer;
@@ -238,11 +235,11 @@ export default function KomponentaProgram(props) {
   // POKRETANJE MAGNETOMETAR, UCITAVANJE PODATAKA IZ DB, ORIJENTACIJA I MAPA RADI
   let notificationShown = false;
   const session = useAuth();
-
+  setUserID(session().user.id);
+    console.log("SESSION::",userID);
   onMount(() => {
-    setUserID(session().user.id);
-    alert("NOVA VERZIJA3");
     let magSensor = new Magnetometer();
+
     magSensor.addEventListener("reading", (e) => {
 
       setSnagaMagPolj(Math.sqrt(Math.pow(magSensor.x, 2) + Math.pow(magSensor.y, 2) + Math.pow(magSensor.z, 2)));
@@ -414,9 +411,6 @@ export default function KomponentaProgram(props) {
           // Ažuriranje podataka na mapi
           setAvionLat(lat);
           setAvionLng(lon);
-          setVisina(alt);
-          setBrzina(brzina);
-          setModel(modelA);
 
           L.marker([lat, lon], { icon: customMarker }).addTo(map())
             .bindPopup(`
