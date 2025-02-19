@@ -281,8 +281,9 @@ export default function KomponentaProgram(props) {
     setUdaljenostLatE(lat + 13 / 60);
     setUdaljenostLatW(lat - 13 / 60);
 
+
     // FIX: Divide by cos(lat) instead of multiplying
-    const konstantaUdaljenostiLng = (13 / 60) / Math.cos(lat * Math.PI / 180);
+    const konstantaUdaljenostiLng = (25 / 60) / Math.cos(lat * Math.PI / 180);
     setUdaljenostLngN(lng + konstantaUdaljenostiLng);
     setUdaljenostLngS(lng - konstantaUdaljenostiLng);
   }
@@ -300,7 +301,7 @@ export default function KomponentaProgram(props) {
   }
 
   //IZRAČUN ZRAČNE UDALJENOSTI, KUTA Y AVIONA I MEĐA ZA IDENTIFIKACIJU AVIONA
-  async function skeniranje(lat, lng, avionLa, avionLn, visina, beta, elevacija, smjer, model, brzina) {
+  async function skeniranje(lat, lng, avionLa, avionLn, visina, beta, elevacija, smjer, model, brzina, callA) {
     const R = 6371000;
     const X1 = avionLa * (Math.PI / 180);
     const Y1 = avionLn * (Math.PI / 180);
@@ -320,7 +321,6 @@ export default function KomponentaProgram(props) {
       setUdaljenostZRC(visina);
     }
     const VisinaDelta = visina - elevacija;
-
     //PROVJERIT
     const kutAvionYValue = Math.atan(VisinaDelta / UdaljenostZRC()) * (180 / Math.PI) + 90;
     setKutYAvion(kutAvionYValue);
@@ -335,7 +335,7 @@ export default function KomponentaProgram(props) {
       var audio = document.getElementById("audiosuccess");
       audio.play();
 
-      insertPlane(avionLa, avionLn, visina, brzina, call, model, userID());
+      insertPlane(avionLa, avionLn, visina, brzina, callA, model, userID());
 
       if (error) {
         console.error('Greška pri spremanju podataka u bazu:', error.message);

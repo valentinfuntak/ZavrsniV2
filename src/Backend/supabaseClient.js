@@ -10,9 +10,9 @@ export const supabase = createClient(url, apiKey);
 export const [planes, setPlanes] = createSignal(null);
 
 
-export async function insertPlane(lat, lon, alt,brzina, call, modelA, userID) {
+export async function insertPlane(lat, lon, alt, brzina, call, modelA, userID) {
   const { error } = await supabase
-    .from('"avioninadjeno"')
+    .from("avioninadjeno")
     .insert([
       { latitude: lat, longitude: lon, altitude: alt, speed: brzina, callsign: call, model: modelA, owner_id: userID }
     ]);
