@@ -1,11 +1,11 @@
-//PROBLEM SA AUTHOM, INSERTPLANEOM I IZRACUNOM NAJBLIZEG
 import { createSignal, onCleanup, onMount } from "solid-js";
 import { useAuth } from "../Auth/AuthProvider.jsx";
 import * as geolib from 'geolib';
 
 import { getFlightPositions } from '../Services/FlightRadarAPI.js';
 import { getElevationData } from '../Services/ElevacijaAPI.js';
-import { insertPlane/*, NajblizaZRLuka */ } from '../Backend/supabaseClient.js';
+import { getFlightInfo } from '../Services/OpenAIAPI';
+import { insertPlane} from '../Backend/supabaseClient.js';
 import success from '../assets/bingo.mp3';
 import fail from '../assets/fail.mp3';
 
@@ -16,8 +16,6 @@ import L from "leaflet";
 
 import "leaflet/dist/leaflet.css";
 import "../styles/kocka.css"
-
-//import { getFlightInfo } from '../Services/OpenAIAPI';
 
 //const url = import.meta.env.VITE_SUPABASE_URL;
 //const apiKey = import.meta.env.VITE_SUPABASE_API_KEY;
@@ -243,9 +241,9 @@ export default function KomponentaProgram(props) {
     magSensor.addEventListener("reading", (e) => {
 
       setSnagaMagPolj(Math.sqrt(Math.pow(magSensor.x, 2) + Math.pow(magSensor.y, 2) + Math.pow(magSensor.z, 2)));
-
       if (snagaMagPolj() > 65 || snagaMagPolj() < 20) {
-        if (!notificationShown) {
+        const prikazano = document.getElementById("notifikacija");
+        if (prikazano === null) {
           showNotification(
             `Zbog snage magnetskog polja (${snagaMagPolj().toFixed(2)}µT), očitanja kuteva mogla bi biti neprecizna.`,
             "info",
@@ -278,12 +276,12 @@ export default function KomponentaProgram(props) {
   //jedan stupanj lat (geo širina) je 111.11km / 60  = 1.85183333333km  u minuti broj 9.72009720099 * 1.85... daje okrug od 36km
   // jedan stupanj lng (geo visine) PRIBLIŽNO je 111*cos(lat)
   async function prozor(lat, lng) {
-    setUdaljenostLatE(lat + 13 / 60);
-    setUdaljenostLatW(lat - 13 / 60);
+    setUdaljenostLatE(lat + 11.5 / 60);
+    setUdaljenostLatW(lat - 11.5 / 60);
 
 
     // FIX: Divide by cos(lat) instead of multiplying
-    const konstantaUdaljenostiLng = (25 / 60) / Math.cos(lat * Math.PI / 180);
+    const konstantaUdaljenostiLng = (11.5 / 60) / Math.cos(lat * Math.PI / 180);
     setUdaljenostLngN(lng + konstantaUdaljenostiLng);
     setUdaljenostLngS(lng - konstantaUdaljenostiLng);
   }
@@ -339,7 +337,6 @@ export default function KomponentaProgram(props) {
 
       if (error) {
         console.error('Greška pri spremanju podataka u bazu:', error.message);
-        alert(error);
       } else {
         console.log('Podaci spremljeni u bazu');
       }
@@ -348,7 +345,6 @@ export default function KomponentaProgram(props) {
       audio.play();
 
 
-      //PROBLEM JE TU
       let razlikaY = Math.min(Math.abs(kutYAvion() - beta), 360 - Math.abs(kutYAvion() - beta));
       let razlikaX = Math.min(Math.abs(kutAvionaX() - smjer), 360 - Math.abs(kutAvionaX() - smjer));
 
@@ -364,7 +360,6 @@ export default function KomponentaProgram(props) {
         setAvionLatPrikaz(avionLa.toFixed(2));
         setAvionLngPrikaz(avionLn.toFixed(2));
         setUdaljenostPrikaz(UdaljenostZRC().toFixed(2));
-        alert("Skeniran je Početni i njegove vrijednosti su:",kutYPrikaz(), kutXPrikaz());
       } else {
         setUdaljenostKuteva(old => {
           if (zbroj < old) {
@@ -373,7 +368,6 @@ export default function KomponentaProgram(props) {
             setAvionLatPrikaz(avionLa.toFixed(2));
             setAvionLngPrikaz(avionLn.toFixed(2));
             setUdaljenostPrikaz(UdaljenostZRC().toFixed(2));
-            alert("Skeniran je manji i njegove vrijednosti su:",kutYPrikaz(), kutXPrikaz());
           } else {
             return old;
           }
@@ -516,6 +510,7 @@ export default function KomponentaProgram(props) {
               {notifications().map((notification, index) => (
                 <div
                   key={index}
+                  id="notifikacija"
                   class={`p-4 rounded ${notification.type === "error" ? "bg-red-600" :
                     notification.type === "success" ? "bg-green-700" :
                       notification.type === "info" ? "bg-blue-400" : ""} text-white shadow-md`}

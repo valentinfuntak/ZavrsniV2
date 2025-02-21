@@ -9,15 +9,14 @@ import { getPlanes, planes} from "../Backend/supabaseClient.js";
 import Navigacija from "../Components/Navigacija.jsx";
 import { konverzijaDatum } from "../Components/Navigacija.jsx";
 import { userID } from "../Components/Navigacija.jsx";
+import { showNotification } from "../Components/Navigacija.jsx";
 
-//import { getFlightInfo } from '../Services/OpenAIAPI';
+import { getFlightInfo } from '../Services/OpenAIAPI';
 
 
 function Program(props) {
     const session = useAuth();
     const navigate = useNavigate();
-
-    //console.log(session());
 
     createEffect( async() => {
         if (session() === null) {
@@ -34,7 +33,7 @@ function Program(props) {
         return () => window.removeEventListener("resize", handleResize);
     });
 
-    /*OPEN AI API
+
         const fetchFlightInfo = async (model) => {
         try {
           const informacijeAvion = await getFlightInfo(model);
@@ -47,7 +46,6 @@ function Program(props) {
           console.error("Greška pri pokušaju dohvaćanja informacija: ", error);
         }
       }
-    */
 
     return (
         <>

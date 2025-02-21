@@ -8,7 +8,6 @@ function Racun(props) {
   const session = useAuth();
   const navigate = useNavigate();
 
-  //console.log(session());
 
   createEffect(() => {
     if (session() === null) {

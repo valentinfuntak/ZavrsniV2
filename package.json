@@ -29,6 +29,7 @@
     "geolib": "^3.3.4",
     "leaflet": "^1.9.4",
     "leaflet.markercluster": "^1.5.3",
+    "openai": "^4.85.3",
     "solid-js": "^1.8.11"
   }
 }

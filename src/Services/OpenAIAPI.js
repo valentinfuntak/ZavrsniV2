@@ -1,8 +1,8 @@
-/*import OpenAI from "openai";
-import { DodajDesc } from ../src/Backend/supabaseClient.js;
-const OpenAikey = import.meta.env.OPENAI_KEY;
+import OpenAI from "openai";
+import { DodajDesc } from "../Backend/supabaseClient.js";
 const openai = new OpenAI({
-    apiKey: OpenAikey
+    apiKey: import.meta.env.VITE_OPENAI_KEY,
+    dangerouslyAllowBrowser: true
 });
 
 export async function getFlightInfo(modelAviona){
@@ -12,33 +12,31 @@ export async function getFlightInfo(modelAviona){
           return null;
         }
 const completion = await openai.chat.completions.create({
-    model: "gpt-4o-mini",
+    model: "gpt-3.5-turbo",
     messages: [
-        { role: "system", content: "Ti si asistent koji piše 4 rečenice o navedenom zrakoplovu. Neka informacije budu kratke i točne, a zadnja rečenica neka bude: "Ukupna peoizvodnja modela je (točan broj proizvedenih aviona bez . ili ,)"." },
+        { role: "developer", content: "Ti si asistent koji piše 4 rečenice o navedenom zrakoplovu. Neka informacije budu kratke i točne, a zadnja rečenica neka bude: 'Ukupna peoizvodnja modela je (točan broj proizvedenih aviona bez . ili , u notaciji)'." },
         {
             role: "user",
             content: `Napiši mi neke važne informacije o zrakoplovu: ${modelAviona}.`,
         },
     ],
 });
+const informacije = completion.choices[0].message.content;
+let Lista = [];
+Lista = informacije.split(" ");
+let duljina = Lista.length;
+let brojString = Lista[duljina - 1];
+brojString = brojString.replace(".", "");
 
+let brojModela = parseInt(brojString, 10);
 
-    }catch (error) {
+await DodajDesc(modelAviona, informacije, brojModela);
+alert("AVION JE DODAN");    
+
+return informacije;
+
+ } catch (error) {
         console.error("Greška pri dohvaćanju podataka o modelu aviona:", error);
         throw error;
       }
-    const informacije = completion.choices[0].message;
-
-    let Lista = [];
-    lista = informacije.split(" ");
-    let duljina = lista.length;
-    let brojString = lista[duljina - 1];
-    brojString = brojString.replace(".", "");
-
-    let brojModela = parseInt(brojString, 10);
-
-    await DodajDesc(modelAviona, informacije, brojModela);
-
-    return informacije;
-}*/
-
+}
