@@ -110,12 +110,12 @@ export default function MainLayout(props) {
                                     </div>
                                 )}
                             </li>
-                            <li><a href="/Onama" class="block py-2 px-3 text-white rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-500 md:p-0 md:w-auto">O nama</a></li>
+                            <li><a href="/Onama" class="block py-2 px-3 text-white rounded hover:bg-gray-600 md:hover:bg-transparent md:border-0 md:hover:text-blue-500 md:p-0 md:w-auto">O nama</a></li>
 
-                            <li><a href="/Kontakt" class="block py-2 px-3 text-white rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-500 md:p-0 md:w-auto
+                            <li><a href="/Kontakt" class="block py-2 px-3 text-white rounded hover:bg-gray-600 md:hover:bg-transparent md:border-0 md:hover:text-blue-500 md:p-0 md:w-auto
                             ">Kontakt</a></li>
 
-                            <li><a href="/Racun" class="block py-2 px-3 text-white rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-500 md:p-0 md:w-auto ">Račun</a></li>
+                            <li><a href="/Racun" class="block py-2 px-3 text-white rounded hover:bg-gray-600 md:hover:bg-transparent md:border-0 md:hover:text-blue-500 md:p-0 md:w-auto ">Račun</a></li>
                         </ul>
                     </div>
                 </div>

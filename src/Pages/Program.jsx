@@ -13,7 +13,6 @@ import { showNotification } from "../Components/Navigacija.jsx";
 
 import { getFlightInfo } from '../Services/OpenAIAPI';
 
-
 function Program(props) {
     const session = useAuth();
     const navigate = useNavigate();

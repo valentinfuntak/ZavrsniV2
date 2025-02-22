@@ -2,7 +2,7 @@ import { useAuth } from "../Auth/AuthProvider.jsx";
 import { useNavigate } from "@solidjs/router";
 import { createEffect, createResource, onMount } from "solid-js";
 import { dohvatiSve } from "../Backend/supabaseClient.js";
-import { konverzijaDatum, userID } from "../Components/Navigacija.jsx";
+import { konverzijaDatum } from "../Components/Navigacija.jsx";
 
 function MojHangar(props) {
     const session = useAuth();
@@ -101,16 +101,16 @@ function MojHangar(props) {
              }
           
          }
-    const [kartice] =  createResource(userID, dohvatiSve);
+    const [kartice] =  createResource(session().user.id, dohvatiSve);
     return(
         <>
-     <div class="flex flex-row  justify-center items-center  space-x-8 flex-col md:flex-row">
+     <div class="flex flex-row  justify-center items-center  space-x-2 flex-col md:flex-row">
   <h1 class="font-mono text-4xl leading-tight flex items-center min-w-20">Moj hangar</h1>
-  <input type="text" class="form-control text-black bg-slate-200 rounded  md:w-60 w-60 h-8 mt-3 pl-3" autocomplete="off" id="search-input" placeholder="Pretraži..."/>
+  <input type="text" class="form-control mt-10 text-black bg-slate-200 rounded  md:w-55 w-55 h-8 mt-3 pl-3" autocomplete="off" id="search-input" placeholder="Pretraži..."/>
 </div>
 
 
-    <For each={kartice()} fallback={<tr><td colspan="7" class="text-center py-4">Trenutno nema aviona</td></tr>}>
+    <For each={kartice()} fallback={<tr class="flex flex-row text-3xl text-yellow-300 justify-center items-center  space-x-8 flex-col md:flex-row pt-20"><td colspan="7" class="text-center py-4">Trenutno nema aviona...</td></tr>}>
         {(kartica) => (
       GenerirajKarticu(kartica)
            )}

@@ -63,6 +63,16 @@ function Upute(props) {
             </div>
 
             <div>
+                <h2 class="text-2xl text-yellow-600 font-semibold mb-8">Moj hangar</h2>
+                <p class="font-semibold mb-10">
+                   Pritiskom na "Kako bi vidjeli sve pronađene zrakoplove, posjetite Moj Hangar!"<br></br>
+                   otvorit ćete svoju personaliziranu kolekciju svih pronađenih zrakoplova.<br></br>
+                   Svaki zrakoplov koji proučite pritiskom na gumb "prouči"<br></br>
+                   biti će svrstan prema rijetkosti.<br></br>
+                </p>
+            </div>
+
+            <div>
                 <h2 class="text-2xl text-yellow-600 font-semibold mb-8">Česte notifikacije</h2>
                 <p class="font-semibold mb-10">
                     1) "Nismo u mogućnosti pronaći Vašu orijentaciju" ili "DeviceOrientation nije podržan":<br></br>
@@ -76,7 +86,7 @@ function Upute(props) {
 
             <h2 class="text-xl text-yellow-600 font-semibold mb-5">Želite nam postaviti pitanje?</h2>
             <p class="font-semibold mb-10">
-                Posjetite stranicu "kontakt" i kontaktirajte nas kako bi odgovorili na Vaše pitanje!<br></br>
+                Posjetite stranicu <a href="\Kontakt" class="hover:text-blue-400">"kontakt"</a> i kontaktirajte nas kako bi odgovorili na Vaše pitanje!<br></br>
                 Kontaktirati nas možete putem naših mail adresa.<br></br>
                 Unaprijed zahvaljujemo na strpljenju!<br></br>
             </p>
