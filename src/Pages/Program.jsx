@@ -1,8 +1,7 @@
 import { useAuth } from "../Auth/AuthProvider.jsx";
 import { useNavigate, A } from "@solidjs/router";
-import { createEffect, createSignal } from "solid-js";
+import { createEffect, createSignal, Show, For } from "solid-js";
 
-import {  For } from "solid-js";
 import { getPlanes, planes} from "../Backend/supabaseClient.js";
 
 //import { fetchFlightInfo } from "../Components/Navigacija";
@@ -135,9 +134,16 @@ function Program(props) {
                                     <td class="px-6 py-4">{plane.altitude}</td>
                                     <td class="px-6 py-4">{plane.speed}</td>
                                     {<td class="px-6 py-4">
+                                        <Show when={plane.description === null} fallback={<div class="flex justify-center items-center"> <a href="/MojHangar"><svg class="w-6 h-6 text-yellow-400 dark:text-yellow-400 hover:text-yellow-300" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+  <path fill-rule="evenodd" d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm13.707-1.293a1 1 0 0 0-1.414-1.414L11 12.586l-1.793-1.793a1 1 0 0 0-1.414 1.414l2.5 2.5a1 1 0 0 0 1.414 0l4-4Z" clip-rule="evenodd"/>
+</svg>
+</a>
+</div>
+}>
                                         <button class="bg-yellow-600 text-white font-semibold py-2 px-4 w-full rounded-lg shadow-md hover:bg-yellow-500 transition duration-200" onClick={() => fetchFlightInfo(plane.model)}>
                                             Prouči
                                         </button>
+                                        </Show>
                                     </td>}
                                 </tr>
                             )}

@@ -373,10 +373,6 @@ export default function KomponentaProgram(props) {
           }
         });
       }
-
-      //console.log("POSLIJE UDALJENOST KUTEVA", UdaljenostKuteva());
-      //else if (UdaljenostKuteva() > zbroj) {
-      //setUdaljenostKuteva(zbroj);
     }
 
   }

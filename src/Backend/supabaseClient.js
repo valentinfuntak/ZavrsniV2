@@ -40,7 +40,7 @@ export async function getPlanes(userID) {
 
 export async function DodajDesc(modelAvion, opis, brojProizvedeno){
   const { data, error } = await supabase.from("avioninadjeno")
-  .update({ description: opis, modelnum: brojProizvedeno })
+  .update({ description: opis, modelnum: brojProizvedeno})
   .eq("model", modelAvion);
 
   if (error) {

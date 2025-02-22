@@ -69,16 +69,16 @@ function Racun(props) {
   };
 
   return (
-    <div class="max-w-screen-lg mx-auto p-6 bg-white shadow-md rounded-lg">
+    <div class="max-w-screen-lg mx-auto p-6 bg-gray-600 shadow-md rounded-lg">
       <div class="flex flex-col sm:flex-row justify-between items-start space-y-6 sm:space-y-0 sm:space-x-4 mb-0">
         {/* Div za podatke o računu */}
         <div class="flex-1">
-          <h1 class="font-sans text-3xl sm:text-4xl mb-3 text-blue-600">Račun</h1>
-          <p class="text-lg font-semibold text-gray-700">
+          <h1 class="font-sans text-3xl sm:text-4xl mb-3 text-yellow-400">Račun</h1>
+          <p class="text-lg font-semibold text-gray-300">
             Korisnik: {session() ? "Prijavljen" : "Nije prijavljen"}
           </p>
           {session() && (
-            <p class="text-lg mt-2 text-gray-700">
+            <p class="text-lg mt-2 text-gray-300">
               <strong>Email:</strong> {session().user?.email || "Nema emaila"}
             </p>
           )}
