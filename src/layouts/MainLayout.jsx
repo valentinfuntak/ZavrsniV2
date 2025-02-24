@@ -47,7 +47,7 @@ export default function MainLayout(props) {
                     <div class={`md:flex ${isMobileMenuOpen() ? "block" : "hidden"} w-full md:w-auto`}>
                         <ul class="flex flex-col font-medium p-4 md:p-0 mt-4 border rounded-lg md:bg-gray-900 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0  bg-gray-800  border-gray-700">
                             <li>
-                                <a href="/Pocetna" class="block py-2 px-3 text-white  rounded md:bg-transparent md:p-0 md:text-blue-500">Pocetna</a>
+                                <a href="/Pocetna" class="block py-2 px-3 text-white  rounded md:bg-transparent md:p-0 md:text-blue-500 hover:bg-gray-700 md:hover:bg-transparent">Pocetna</a>
                             </li>
                             <li class="relative">
                                 <button
