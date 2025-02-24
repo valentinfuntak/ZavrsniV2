@@ -276,12 +276,12 @@ export default function KomponentaProgram(props) {
   //jedan stupanj lat (geo širina) je 111.11km / 60  = 1.85183333333km  u minuti broj 9.72009720099 * 1.85... daje okrug od 36km
   // jedan stupanj lng (geo visine) PRIBLIŽNO je 111*cos(lat)
   async function prozor(lat, lng) {
-    setUdaljenostLatE(lat + 12 / 60);
-    setUdaljenostLatW(lat - 12 / 60);
+    setUdaljenostLatE(lat + 13 / 60);
+    setUdaljenostLatW(lat - 13 / 60);
 
 
     // FIX: Divide by cos(lat) instead of multiplying
-    const konstantaUdaljenostiLng = (12 / 60) / Math.cos(lat * Math.PI / 180);
+    const konstantaUdaljenostiLng = (13 / 60) / Math.cos(lat * Math.PI / 180);
     setUdaljenostLngN(lng + konstantaUdaljenostiLng);
     setUdaljenostLngS(lng - konstantaUdaljenostiLng);
   }
