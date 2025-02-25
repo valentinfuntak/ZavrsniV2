@@ -299,7 +299,7 @@ export default function KomponentaProgram(props) {
   }
 
   //IZRAČUN ZRAČNE UDALJENOSTI, KUTA Y AVIONA I MEĐA ZA IDENTIFIKACIJU AVIONA
-  async function skeniranje(lat, lng, avionLa, avionLn, visina, beta, elevacija, smjer, model, brzina, callA) {
+  async function skeniranje(lat, lng, avionLa, avionLn, visina, beta, elevacija, smjer, model, brzina, callA, liveryA) {
     const R = 6371000;
     const X1 = avionLa * (Math.PI / 180);
     const Y1 = avionLn * (Math.PI / 180);
@@ -333,7 +333,7 @@ export default function KomponentaProgram(props) {
       var audio = document.getElementById("audiosuccess");
       audio.play();
 
-      insertPlane(avionLa, avionLn, visina, brzina, callA, model, userID());
+      insertPlane(avionLa, avionLn, visina, brzina, callA, model, userID(), liveryA);
 
       if (error) {
         console.error('Greška pri spremanju podataka u bazu:', error.message);
@@ -347,14 +347,11 @@ export default function KomponentaProgram(props) {
 
       let razlikaY = Math.min(Math.abs(kutYAvion() - beta), 360 - Math.abs(kutYAvion() - beta));
       let razlikaX = Math.min(Math.abs(kutAvionaX() - smjer), 360 - Math.abs(kutAvionaX() - smjer));
-
       let zbroj = razlikaY + razlikaX;
-
-      console.log("PRIJE UDALJENOST KUTEVA", UdaljenostKuteva());
 
       if (!UdaljenostKuteva()) {
         setUdaljenostKuteva(zbroj);
-        showNotification("Niste usmjereni prema avionu!", "error", 5000);
+        showNotification("Niste usmjereni prema avionu ",callA," !", "error", 5000);
         setKutYPrikaz(kutYAvion().toFixed(2));
         setkutXPrikaz(kutAvionaX().toFixed(2));
         setAvionLatPrikaz(avionLa.toFixed(2));
@@ -395,6 +392,7 @@ export default function KomponentaProgram(props) {
           const brzina = Math.round(flight.brz * 1.852); // Brzina u km/h
           const modelA = flight.modelA;
           const call = flight.call;
+          const livery = flight.livery;
 
 
 
@@ -422,7 +420,8 @@ export default function KomponentaProgram(props) {
             magHeading(),
             modelA,
             brzina,
-            call
+            call,
+            livery
           );
         });
       } else {
@@ -457,12 +456,11 @@ export default function KomponentaProgram(props) {
           </div>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class=" bg-gray-600 p-4 rounded-lg shadow-md transition-transform transform hover:scale-105">
-              <h2 class="text-lg font-semibold mb-2 text-white">Podaci o avionu</h2>
+              <h2 class="text-lg font-semibold mb-2 text-white">Podaci o najbližem avionu</h2>
               <p class=" text-gray-300"><strong>Kut X do aviona: {kutXPrikaz()}°</strong></p>
               <p class="text-gray-300"><strong>Kut Y do aviona: {kutYPrikaz()}°</strong></p>
               <p class=" text-gray-300"><strong>Koordinate aviona: {avionLatPrikaz()}°, {avionLngPrikaz()}°</strong></p>
               <p class="text-gray-300"><strong>Zračna udaljenost: {udaljenostPrikaz()}m</strong></p>
-              <p class="text-gray-300"><strong>Vaša Elevacija: {elevation()}m</strong></p>
             </div>
 
             <div class=" bg-gray-600 p-4 rounded-lg shadow-md transition-transform transform hover:scale-105">
@@ -471,6 +469,7 @@ export default function KomponentaProgram(props) {
               <p class="text-gray-300"><strong>Beta (X os): {alpha().toFixed(2)}°</strong></p>
               <p class="text-gray-300"><strong>Gamma (Y os): {beta().toFixed(2)}°</strong></p>
               <p class="text-gray-300"><strong>Kut gledanja: {magHeading()}°</strong></p>
+              <p class="text-gray-300"><strong>Vaša Elevacija: {elevation()}m</strong></p>
             </div>
 
 

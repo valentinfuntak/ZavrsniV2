@@ -33,7 +33,8 @@ export async function getFlightPositions(bounds) {
                     alt: flight.alt,
                     call: flight.callsign,
                     brz: flight.gspeed,
-                    modelA: flight.type
+                    modelA: flight.type,
+                    livery: flight.painted_as
                 }));
                 return flights;
             } 

@@ -47,10 +47,11 @@ function MojHangar(props) {
                          <p class="pt-5 font-bold text-black dark:text-black">Brzina i visina: {kartica.speed}km/h, {kartica.altitude}m</p>
                          <p class="pt-5 font-bold text-black dark:text-black">Opis: Nije istraženo!</p>
                          <p class="pt-7 font-bold text-black dark:text-black">Broj proizvedenih modela: Nije istraženo!</p>
+                       <Show when={kartica.livery !== null} fallback={null}>  <p class="pt-7 font-bold text-black dark:text-black">Livreja: {kartica.livery}</p> </Show>
                      </div>
                      </div>
                  );
-             } else if (kartica.modelnum > 9000) {
+             } else if (kartica.modelnum > 2000) {
                  return (
                      <div class="custom-card content-center pb-8 pt-9 flex items-center justify-center">
                      <div class="bg-gradient-to-r from-red-200 via-fushia-300 to-rose-500 block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
@@ -59,10 +60,12 @@ function MojHangar(props) {
                          <p class="pt-5 font-bold text-black dark:text-black">Brzina i visina: {kartica.speed}km/h, {kartica.altitude}m</p>
                          <p class="pt-5 font-bold text-black dark:text-black">Opis: {kartica.description}</p>
                          <p class="pt-7 font-bold text-black dark:text-black">Broj proizvedenih modela: {kartica.modelnum}</p>
+                         <Show when={kartica.livery !== null} fallback={null}>  <p class="pt-7 font-bold text-black dark:text-black">Livreja: {kartica.livery}</p> </Show>
                      </div>
                    </div>
                  );
-             }else if (kartica.modelnum > 1000 && kartica.modelnum <= 9000) {
+             }else if (kartica.modelnum > 1000 && kartica.modelnum <= 2000) {
+                console.log(kartica.livery);
                  return (
                      <div class="custom-card content-center pb-8 pt-9 flex items-center justify-center">
                      <div class="bg-gradient-to-r from-indigo-300 via-sky-500 to-emerald-500 block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
@@ -71,6 +74,7 @@ function MojHangar(props) {
                          <p class="pt-5 font-bold text-black dark:text-black">Brzina i visina: {kartica.speed}km/h, {kartica.altitude}m</p>
                          <p class="pt-5 font-bold text-black dark:text-black">Opis: {kartica.description}</p>
                          <p class="pt-7 font-bold text-black dark:text-black">Broj proizvedenih modela: {kartica.modelnum}</p>
+                         <Show when={kartica.livery !== null} fallback={null}>  <p class="pt-7 font-bold text-black dark:text-black">Livreja: {kartica.livery}</p> </Show>
                      </div>
                      </div>
                  );
@@ -83,6 +87,7 @@ function MojHangar(props) {
                          <p class="pt-5 font-bold text-black dark:text-black">Brzina i visina: {kartica.speed}km/h, {kartica.altitude}m</p>
                          <p class="pt-5 font-bold text-black dark:text-black">Opis: {kartica.description}</p>
                          <p class="pt-7 font-bold text-black dark:text-black">Broj proizvedenih modela: {kartica.modelnum}</p>
+                         <Show when={kartica.livery !== null} fallback={null}>  <p class="pt-7 font-bold text-black dark:text-black">Livreja: {kartica.livery}</p> </Show>
                      </div>
                      </div>
                  );
@@ -95,6 +100,7 @@ function MojHangar(props) {
                          <p class="pt-5  font-bold text-black dark:text-black">Brzina i visina: {kartica.speed}km/h, {kartica.altitude}m</p>
                          <p  class="pt-5  font-bold text-black dark:text-black">Opis: {kartica.description}</p>
                          <p class="pt-7  font-bold text-black dark:text-black">Broj proizvedenih modela: {kartica.modelnum}</p>
+                         <Show when={kartica.livery !== null} fallback={null}>  <p class="pt-7 font-bold text-black dark:text-black">Livreja: {kartica.livery}</p> </Show>
                      </div>
                      </div>
                  );

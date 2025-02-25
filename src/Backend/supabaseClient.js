@@ -10,11 +10,11 @@ export const supabase = createClient(url, apiKey);
 export const [planes, setPlanes] = createSignal(null);
 
 
-export async function insertPlane(lat, lon, alt, brzina, call, modelA, userID) {
+export async function insertPlane(lat, lon, alt, brzina, call, modelA, userID, Livery) {
   const { error } = await supabase
     .from("avioninadjeno")
     .insert([
-      { latitude: lat, longitude: lon, altitude: alt, speed: brzina, callsign: call, model: modelA, owner_id: userID }
+      { latitude: lat, longitude: lon, altitude: alt, speed: brzina, callsign: call, model: modelA, owner_id: userID, livery: Livery }
     ]);
   if (error) {
     console.error('Greška pri spremanju podataka u bazu:', error.message);
