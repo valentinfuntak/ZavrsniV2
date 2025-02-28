@@ -32,12 +32,11 @@ function Program(props) {
         return () => window.removeEventListener("resize", handleResize);
     });
 
-
         const fetchFlightInfo = async (model, AVreg) => {
         try {
           const informacijeAvion = await getFlightInfo(model);
           const slikaAvion = await getImgUrl(AVreg);
-          await spremiSliku(model, slikaAvion);
+          await spremiSliku(model, slikaAvion, session().user.id);
           if (informacijeAvion !== null) {
             showNotification(`${informacijeAvion}`, "info", 20000);
           } else {

@@ -70,7 +70,7 @@ export async function dohvatiSve(userID){
   return data;
 }
 
-export async function spremiSliku(modelAV, urlAviona){
+export async function spremiSliku(modelAV, urlAviona, userID){
 const { data, error } = await supabase.from("avioninadjeno")
 .select("url")
 .eq('model', modelAV);
@@ -82,7 +82,8 @@ if(error){
 if(!data.length){
   const { data, error } = await supabase.from("avioninadjeno")
   .update({url: urlAviona})
-  .eq('model', modelAV);
+  .eq('model', modelAV)
+  .eq('owner_id', userID);
   if (error) {
     console.error("Greška pri spremanju slike", error.message);
   }
