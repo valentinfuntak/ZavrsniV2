@@ -56,8 +56,8 @@ function MojHangar(props) {
                  return (
                      <div class="custom-card content-center pb-8 pt-9 flex items-center justify-center">
                      <div class="bg-gradient-to-r from-red-200 via-fushia-300 to-rose-500 block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+                     <h5 id="naslov" class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{kartica.model}, COMMON</h5>
                           <Show when={kartica.url !== null} fallback={null}> <img class="pr-2 mb-2 mt-5 rounded-2xl" src={kartica.url}></img></Show>
-                         <h5 id="naslov" class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{kartica.model}, COMMON</h5>
                          <p class="pt-5 font-bold text-black dark:text-black">Pronađen: {konverzijaDatum(kartica.time)}h</p>
                          <p class="pt-5 font-bold text-black dark:text-black">Registracija: {kartica.registration}</p>
                          <p class="pt-5 font-bold text-black dark:text-black">Brzina i visina: {kartica.speed}km/h, {kartica.altitude}m</p>
@@ -88,8 +88,8 @@ function MojHangar(props) {
                  return (
                      <div class="custom-card content-center pb-8 pt-9 flex items-center justify-center">
                      <div class="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-                      <Show when={kartica.url !== null} fallback={null}> <img class="pr-2 mb-2 mt-5 rounded-2xl" src={kartica.url}></img></Show>
                          <h5 id="naslov" class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{kartica.model}, EPIC</h5>
+                         <Show when={kartica.url !== null} fallback={null}> <img class="pr-2 mb-2 mt-5 rounded-2xl" src={kartica.url}></img></Show>
                          <p class="pt-5 font-bold text-black dark:text-black">Pronađen: {konverzijaDatum(kartica.time)}h</p>
                          <p class="pt-5 font-bold text-black dark:text-black">Registracija: {kartica.registration}</p>
                          <p class="pt-5 font-bold text-black dark:text-black">Brzina i visina: {kartica.speed}km/h, {kartica.altitude}m</p>
@@ -103,8 +103,8 @@ function MojHangar(props) {
                  return (
                      <div class="custom-card content-center pb-8 pt-9 flex items-center justify-center">
                      <div class="bg-gradient-to-r from-orange-400 via-amber-500 to-yellow-400 block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-                      <Show when={kartica.url !== null} fallback={null}> <img class="pr-2 mb-2 mt-5 rounded-2xl" src={kartica.url}></img></Show>
                          <h5 id="naslov" class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{kartica.model}, LEGENDARY</h5>
+                         <Show when={kartica.url !== null} fallback={null}> <img class="pr-2 mb-2 mt-5 rounded-2xl" src={kartica.url}></img></Show>
                          <p class="pt-5  font-bold text-black dark:text-black">Pronađen: {konverzijaDatum(kartica.time)}h</p>
                          <p class="pt-5 font-bold text-black dark:text-black">Registracija: {kartica.registration}</p>
                          <p class="pt-5  font-bold text-black dark:text-black">Brzina i visina: {kartica.speed}km/h, {kartica.altitude}m</p>
