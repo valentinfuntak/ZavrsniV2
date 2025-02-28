@@ -10,11 +10,11 @@ export const supabase = createClient(url, apiKey);
 export const [planes, setPlanes] = createSignal(null);
 
 
-export async function insertPlane(lat, lon, alt, brzina, call, modelA, userID, Livery) {
+export async function insertPlane(lat, lon, alt, brzina, call, modelA, userID, Livery, registrationA) {
   const { error } = await supabase
     .from("avioninadjeno")
     .insert([
-      { latitude: lat, longitude: lon, altitude: alt, speed: brzina, callsign: call, model: modelA, owner_id: userID, livery: Livery }
+      { latitude: lat, longitude: lon, altitude: alt, speed: brzina, callsign: call, model: modelA, owner_id: userID, livery: Livery, registration: registrationA }
     ]);
   if (error) {
     console.error('Greška pri spremanju podataka u bazu:', error.message);
@@ -52,7 +52,7 @@ export async function DodajDesc(modelAvion, opis, brojProizvedeno){
 
 async function StvoriTablicuModelUniq(){
   let { data, error } = await supabase
-  .rpc('create_modeli_filtrirano');
+  .rpc('create_modeli_filtrirani');
 if (error) console.error(error);
 }
 
@@ -60,7 +60,7 @@ if (error) console.error(error);
 
 export async function dohvatiSve(userID){
   await StvoriTablicuModelUniq();
-  const { data, error } = await supabase.from("modelifiltrirano")
+  const { data, error } = await supabase.from("modelifiltrirani")
   .select("*")
   .eq('owner_id', userID);
   if (error) {
@@ -68,6 +68,28 @@ export async function dohvatiSve(userID){
     return [];
   }
   return data;
+}
+
+export async function spremiSliku(modelAV, urlAviona){
+const { data, error } = await supabase.from("avioninadjeno")
+.select("url")
+.eq('model', modelAV);
+
+if(error){
+  console.log(error);
+}
+
+if(!data.length){
+  const { data, error } = await supabase.from("avioninadjeno")
+  .update({url: urlAviona})
+  .eq('model', modelAV);
+  if (error) {
+    console.error("Greška pri spremanju slike", error.message);
+  }
+  return data;
+}else{
+  console.log("ovaj model zrakoplova već ima sliku");
+}
 }
 
 export default supabase;

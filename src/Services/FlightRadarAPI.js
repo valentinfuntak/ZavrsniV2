@@ -1,4 +1,3 @@
-
 export async function getFlightPositions(bounds) {
     const BASE_URL = 'https://fr24api.flightradar24.com/api';
     const ENDPOINT = '/live/flight-positions/full';
@@ -34,7 +33,8 @@ export async function getFlightPositions(bounds) {
                     call: flight.callsign,
                     brz: flight.gspeed,
                     modelA: flight.type,
-                    livery: flight.painted_as
+                    livery: flight.painted_as,
+                    registration: flight.reg
                 }));
                 return flights;
             } 

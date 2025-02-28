@@ -13,6 +13,8 @@ import { konverzijaDatum } from "../Components/Navigacija.jsx";
 import { showNotification } from "../Components/Navigacija.jsx";
 
 import { getFlightInfo } from '../Services/OpenAIAPI';
+import { getImgUrl } from "../Services/ImageScraperADSBDB.js";
+import { spremiSliku } from "../Backend/supabaseClient";
 
 function Program(props) {
     const session = useAuth();
@@ -24,7 +26,6 @@ function Program(props) {
         if (session() === null) {
             navigate("/AuthError");
         }
-        //IZMJENA
         await getPlanes(session().user.id);
         const handleResize = () => setIsMobile(window.innerWidth < 1024);
         window.addEventListener("resize", handleResize);
@@ -32,9 +33,11 @@ function Program(props) {
     });
 
 
-        const fetchFlightInfo = async (model) => {
+        const fetchFlightInfo = async (model, AVreg) => {
         try {
           const informacijeAvion = await getFlightInfo(model);
+          const slikaAvion = await getImgUrl(AVreg);
+          await spremiSliku(model, slikaAvion);
           if (informacijeAvion !== null) {
             showNotification(`${informacijeAvion}`, "info", 20000);
           } else {
@@ -140,7 +143,7 @@ function Program(props) {
 </a>
 </div>
 }>
-                                        <button class="bg-yellow-600 text-white font-semibold py-2 px-4 w-full rounded-lg shadow-md hover:bg-yellow-500 transition duration-200" onClick={() => fetchFlightInfo(plane.model)}>
+                                        <button class="bg-yellow-600 text-white font-semibold py-2 px-4 w-full rounded-lg shadow-md hover:bg-yellow-500 transition duration-200" onClick={() => fetchFlightInfo(plane.model, String(plane.registration))}>
                                             Prouči
                                         </button>
                                         </Show>

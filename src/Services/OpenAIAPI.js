@@ -14,7 +14,7 @@ export async function getFlightInfo(modelAviona){
 const completion = await openai.chat.completions.create({
     model: "gpt-3.5-turbo",
     messages: [
-        { role: "developer", content: "Ti si asistent koji piše 4 rečenice o navedenom zrakoplovu. Neka informacije budu kratke i točne, a zadnja rečenica neka bude: 'Ukupna peoizvodnja modela je (točan broj proizvedenih aviona bez . ili , u notaciji)'." },
+        { role: "developer", content: "Ti si asistent koji piše 4 rečenice o navedenom zrakoplovu. Neka informacije budu kratke i točne, a zadnja rečenica neka bude: 'Ukupna peoizvodnja modela je (točan broj proizvedenih modela, brojeve ne razdvajaj s . ili ,)'." },
         {
             role: "user",
             content: `Napiši mi neke važne informacije o zrakoplovu: ${modelAviona}.`,
@@ -27,6 +27,7 @@ Lista = informacije.split(" ");
 let duljina = Lista.length;
 let brojString = Lista[duljina - 1];
 brojString = brojString.replace(".", "");
+brojString = brojString.replace(",", "");
 
 let brojModela = parseInt(brojString, 10);
 

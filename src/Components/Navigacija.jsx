@@ -299,7 +299,7 @@ export default function KomponentaProgram(props) {
   }
 
   //IZRAČUN ZRAČNE UDALJENOSTI, KUTA Y AVIONA I MEĐA ZA IDENTIFIKACIJU AVIONA
-  async function skeniranje(lat, lng, avionLa, avionLn, visina, beta, elevacija, smjer, model, brzina, callA, liveryA) {
+  async function skeniranje(lat, lng, avionLa, avionLn, visina, beta, elevacija, smjer, model, brzina, callA, liveryA, reg) {
     const R = 6371000;
     const X1 = avionLa * (Math.PI / 180);
     const Y1 = avionLn * (Math.PI / 180);
@@ -333,7 +333,7 @@ export default function KomponentaProgram(props) {
       var audio = document.getElementById("audiosuccess");
       audio.play();
 
-      insertPlane(avionLa, avionLn, visina, brzina, callA, model, userID(), liveryA);
+      insertPlane(avionLa, avionLn, visina, brzina, callA, model, userID(), liveryA, reg);
 
       if (error) {
         console.error('Greška pri spremanju podataka u bazu:', error.message);
@@ -343,7 +343,6 @@ export default function KomponentaProgram(props) {
     } else {
       var audio = document.getElementById("audiofail");
       audio.play();
-
 
       let razlikaY = Math.min(Math.abs(kutYAvion() - beta), 360 - Math.abs(kutYAvion() - beta));
       let razlikaX = Math.min(Math.abs(kutAvionaX() - smjer), 360 - Math.abs(kutAvionaX() - smjer));
@@ -393,6 +392,7 @@ export default function KomponentaProgram(props) {
           const modelA = flight.modelA;
           const call = flight.call;
           const livery = flight.livery;
+          const registration = flight.registration;
 
 
 
@@ -421,7 +421,8 @@ export default function KomponentaProgram(props) {
             modelA,
             brzina,
             call,
-            livery
+            livery,
+            registration
           );
         });
       } else {
