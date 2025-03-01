@@ -112,7 +112,7 @@ function Program(props) {
                             Ovdje možete detaljnije pregledati informacije o zrakoplovima koje ste pronašli.
                         </p>
                     </caption>
-                    <thead class="text-xs uppercase bg-gray-700 text-gray-400">
+                    <thead class="text-xs uppercase bg-gray-700 text-white">
                         <tr>
                             <th scope="col" class="px-6 py-3">ID</th>
                             <th scope="col" class="px-6 py-3">Model</th>

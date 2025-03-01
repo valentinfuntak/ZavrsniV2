@@ -31,8 +31,7 @@ brojString = brojString.replace(",", "");
 
 let brojModela = parseInt(brojString, 10);
 
-await DodajDesc(modelAviona, informacije, brojModela);
-alert("AVION JE DODAN");    
+await DodajDesc(modelAviona, informacije, brojModela);    
 
 return informacije;
 

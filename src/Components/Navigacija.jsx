@@ -507,9 +507,9 @@ export default function KomponentaProgram(props) {
                 <div
                   key={index}
                   id="notifikacija"
-                  class={`p-4 rounded ${notification.type === "error" ? "bg-red-600" :
-                    notification.type === "success" ? "bg-green-700" :
-                      notification.type === "info" ? "bg-blue-400" : ""} text-white shadow-md`}
+                  class={`p-4 m-5 rounded  ${notification.type === "error" ? "bg-red-600 animate-glow" :
+                    notification.type === "success" ? "bg-green-700 animate-glow5" :
+                      notification.type === "info" ? "bg-blue-400 animate-glow2" : ""} text-white shadow-md`}
                 >
                   <div class="whitespace-normal w-full">
                     {notification.message}

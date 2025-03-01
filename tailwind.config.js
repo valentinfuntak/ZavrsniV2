@@ -8,6 +8,7 @@ module.exports = {
       glow2: 'glow2 1.5s infinite',
       glow3: 'glow3 1.5s infinite',
       glow4: 'glow4 1.5s infinite',
+      glow5: 'glow5 1.5s infinite',
     },
     keyframes: {
       glow: {
@@ -25,6 +26,10 @@ module.exports = {
       glow4: {
         '0%, 100%': { boxShadow: '0 0 10px #ffbf00' },
         '50%': { boxShadow: '0 0 20px #ffbf00' },
+      },
+      glow5: {
+        '0%, 100%': { boxShadow: '0 0 10px #50C878' },
+        '50%': { boxShadow: '0 0 20px #50C878' },
       },
     },
       colors: {

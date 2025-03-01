@@ -55,7 +55,7 @@ function MojHangar(props) {
              } else if (kartica.modelnum > 2000) {
                  return (
                      <div class="custom-card content-center pb-8 pt-9 flex items-center justify-center">
-                     <div class="content-center p-5 flex items-center justify-center bg-red-400 rounded-md bg-clip-padding backdrop-filter backdrop-blur-md bg-opacity-20 border border-fushia-100 hover:animate-glow duration-1000 delay-200">
+                     <div class="content-center p-5 flex items-center justify-center bg-red-400 rounded-md bg-clip-padding backdrop-filter backdrop-blur-md bg-opacity-20 border border-fushia-100 animate-glow duration-1000 delay-200">
                      <div class="bg-gradient-to-r from-red-200 via-fushia-300 to-rose-500 block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
                      <h5 id="naslov" class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{kartica.model}, COMMON</h5>
                           <Show when={kartica.url !== null} fallback={null}> <img class="pr-2 mb-2 mt-5 rounded-2xl" src={kartica.url}></img></Show>
@@ -75,7 +75,7 @@ function MojHangar(props) {
                  return (
                     
                      <div class="custom-card content-center pb-8 pt-9 flex items-center justify-center">
-                     <div class="content-center p-5 flex items-center justify-center bg-indigo-400 rounded-md bg-clip-padding backdrop-filter backdrop-blur-md bg-opacity-20 border border-gray-100 hover:animate-glow2 duration-1000 delay-200">
+                     <div class="content-center p-5 flex items-center justify-center bg-indigo-400 rounded-md bg-clip-padding backdrop-filter backdrop-blur-md bg-opacity-20 border border-gray-100 animate-glow2 duration-1000 delay-200">
                      <div class="bg-gradient-to-r from-indigo-300 via-sky-500 to-emerald-500 block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
                          <h5 id="naslov" class="mb-2 text-2xl font-bold tracking-tight  text-gray-900 dark:text-white">{kartica.model}, RARE</h5>
                          <Show when={kartica.url !== null} fallback={null}> <img class="pr-2 mb-2 mt-5 rounded-2xl" src={kartica.url}></img></Show>
@@ -92,7 +92,7 @@ function MojHangar(props) {
              } else if (kartica.modelnum <= 1000 && kartica.modelnum > 100) {
                  return (
                      <div class="custom-card content-center pb-8 pt-9 flex items-center justify-center">
-                    <div class="content-center p-5 flex items-center justify-center bg-purple-500 rounded-md bg-clip-padding backdrop-filter backdrop-blur-md bg-opacity-20 border border-gray-100 hover:animate-glow3 duration-1000 delay-200">
+                    <div class="content-center p-5 flex items-center justify-center bg-purple-500 rounded-md bg-clip-padding backdrop-filter backdrop-blur-md bg-opacity-20 border border-gray-100 animate-glow3 duration-1000 delay-200">
                      <div class="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
                          <h5 id="naslov" class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{kartica.model}, EPIC</h5>
                          <Show when={kartica.url !== null} fallback={null}> <img class="pr-2 mb-2 mt-5 rounded-2xl" src={kartica.url}></img></Show>
@@ -109,7 +109,7 @@ function MojHangar(props) {
              } else if (kartica.modelnum <= 100) {
                  return (
                      <div class="custom-card content-center pb-8 pt-9 flex items-center justify-center">
-                       <div class="content-center p-5 flex items-center justify-center  bg-yellow-300 rounded-md bg-clip-padding backdrop-filter backdrop-blur-md bg-opacity-20 border border-gray-100 hover:animate-glow4 duration-1000 delay-200">
+                       <div class="content-center p-5 flex items-center justify-center  bg-yellow-300 rounded-md bg-clip-padding backdrop-filter backdrop-blur-md bg-opacity-20 border border-gray-100 animate-glow4 duration-1000 delay-200">
                      <div class="bg-gradient-to-r from-orange-400 via-amber-500 to-yellow-400 block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
                          <h5 id="naslov" class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{kartica.model}, LEGENDARY</h5>
                          <Show when={kartica.url !== null} fallback={null}> <img class="pr-2 mb-2 mt-5 rounded-2xl" src={kartica.url}></img></Show>
