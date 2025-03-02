@@ -18,7 +18,6 @@ import Kontakt from "./Pages/Kontakt.jsx";
 import Racun from "./Pages/Racun.jsx";
 import Upute from "./Pages/Upute.jsx";
 import MojHangar from "./Pages/mojHangar.jsx";
-//import Postavke from './Pages/Postavke';
 
 export default function App() {
   return (

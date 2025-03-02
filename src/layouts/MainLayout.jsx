@@ -106,6 +106,14 @@ export default function MainLayout(props) {
                                                     Upute
                                                 </a>
                                             </li>
+                                            <li>
+                                                <a
+                                                    href="/MojHangar"
+                                                    class="block px-4 py-2 hover:bg-gray-600"
+                                                >
+                                                    Moj hangar
+                                                </a>
+                                            </li>
                                         </ul>
                                     </div>
                                 )}
