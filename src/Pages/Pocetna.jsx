@@ -1,6 +1,6 @@
 import { useAuth } from "../Auth/AuthProvider.jsx";
 import { useNavigate } from "@solidjs/router";
-import { createEffect } from "solid-js"; 
+import { createEffect } from "solid-js";
 
 function Pocetna() {
     const session = useAuth();
@@ -8,7 +8,7 @@ function Pocetna() {
 
     createEffect(() => {
         if (session() === null) {
-            navigate("/AuthError"); 
+            navigate("/AuthError");
         }
     });
 
@@ -20,6 +20,12 @@ function Pocetna() {
                     Ova aplikacija omogućava skeniranje neba i praćenje aviona u stvarnom vremenu.
                     Saznajte više o letovima u vašem području!
                 </p>
+                <button
+                    class="bg-blue-600 text-white py-2 px-6 rounded-lg text-xl"
+                    onClick={() => navigate("/Funkcija")}
+                >
+                    Saznaj više
+                </button>
             </div>
         </div>
     );

@@ -18,6 +18,7 @@ import Kontakt from "./Pages/Kontakt.jsx";
 import Racun from "./Pages/Racun.jsx";
 import Upute from "./Pages/Upute.jsx";
 import MojHangar from "./Pages/mojHangar.jsx";
+import Funkcija from "./Pages/Funkcija.jsx";
 
 export default function App() {
   return (
@@ -35,6 +36,7 @@ export default function App() {
       <Route path="/Racun" component={() => (<MainLayout><Racun /></MainLayout>)} />
       <Route path="/Upute" component={() => (<MainLayout><Upute /></MainLayout>)} />
       <Route path="/MojHangar" component={() => (<MainLayout><MojHangar /></MainLayout>)} />
+      <Route path="/Funkcija" component={() => (<MainLayout><Funkcija /></MainLayout>)} />
       </HashRouter>
     </AuthProvider>
   );
