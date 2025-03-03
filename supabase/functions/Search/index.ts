@@ -13,6 +13,7 @@ const supabase = createClient(
 );
 
 console.log("Hello from Functions!");
+
 const openai = new OpenAI({
   apiKey: Deno.env.get("VITE_OPENAI_KEY"),
 });

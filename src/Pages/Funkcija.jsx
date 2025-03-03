@@ -1,40 +1,44 @@
 import { createSignal } from "solid-js";
 import { createClient } from "@supabase/supabase-js";
 
-const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_API_KEY);
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseKey = import.meta.env.VITE_SUPABASE_API_KEY;
+
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 const Funkcija = () => {
-  const [message, setMessage] = createSignal("");
+  const [message, setMessage] = createSignal("Klikni na gumb za dohvaćanje!");
 
-  const handleClick = async () => {
+  const fetchMessage = async () => {
+    setMessage("Učitavanje...");
     try {
-      const { data, error } = await supabase.functions.invoke("Search", {
-        body: { name: "Functions" },
+      const response = await fetch(`${supabaseUrl}/functions/v1/hello-world`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${supabaseKey}`,
+        },
+        body: JSON.stringify({ name: "SolidJS" }),
       });
 
-      if (error) {
-        console.error("Greška pri pozivu funkcije:", error.message);
-        setMessage("Došlo je do greške pri pozivu funkcije.");
-      } else {
-        setMessage(data.message);
-        console.log("Odgovor funkcije:", data.message);
-      }
-    } catch (err) {
-      console.error("Greška u pozivu funkcije:", err);
-      setMessage("Došlo je do nepredviđene greške.");
+      const data = await response.json();
+      setMessage(data.message);
+    } catch (error) {
+      console.error("Greška prilikom dohvaćanja:", error);
+      setMessage("Neuspjelo dohvaćanje poruke.");
     }
   };
 
   return (
-    <div>
-      <h1>Supabase Edge Funkcija</h1>
+    <div class="text-center mt-4">
+      <h1 class="text-2xl font-semibold">Supabase Edge Function</h1>
+      <p class="mt-2 text-gray-600">{message()}</p>
       <button
-        onClick={handleClick}
-        class="bg-blue-500 text-white p-2 rounded-md"
+        class="mt-4 px-6 py-3 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 transition duration-200"
+        onClick={fetchMessage}
       >
-        Pozovi funkciju
+        Pozovi hello-world funkciju
       </button>
-      <p>{message()}</p>
     </div>
   );
 };
