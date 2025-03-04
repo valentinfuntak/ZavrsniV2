@@ -20,12 +20,12 @@ function Pocetna() {
                     Ova aplikacija omogućava skeniranje neba i praćenje aviona u stvarnom vremenu.
                     Saznajte više o letovima u vašem području!
                 </p>
-                <button
+                {/* <p class="text-lg mb-8">Ova aplikacija omogućava skeniranje neba i praćenje aviona u stvarnom vremenu. Saznajte više o letovima u vašem području!</p>
                     class="bg-blue-600 text-white py-2 px-6 rounded-lg text-xl"
                     onClick={() => navigate("/Funkcija")}
                 >
                     Saznaj više
-                </button>
+                </button> */}
             </div>
         </div>
     );
