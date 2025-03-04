@@ -3,44 +3,35 @@
 // This enables autocomplete, go to definition, etc.
 
 // Setup type definitions for built-in Supabase Runtime APIs
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
-import OpenAI from "https://deno.land/x/openai@v4.24.0/mod.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-
-const supabase = createClient(
-  Deno.env.get("SUPABASE_URL") ?? "",
-  Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
-);
-
-console.log("Hello from Functions!");
+import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
+import OpenAI from "https://esm.sh/openai@4.86.1";
+//import { corsHeaders } from '../_shared/cors.ts'
+//import { DodajDesc } from "../Backend/supabaseClient.js";
 
 const openai = new OpenAI({
   apiKey: Deno.env.get("VITE_OPENAI_KEY"),
 });
 
-Deno.serve(async (req) => {
+console.log(Deno.env.get("VITE_OPENAI_KEY"));
+
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  Authorization: `Bearer ${Deno.env.get("VITE_OPENAI_KEY")}`,
+  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
+};
+
+const urlS = Deno.env.get("VITE_SUPABASE_URL");
+const apiKey = Deno.env.get("VITE_SUPABASE_API_KEY");
+console.log(urlS, apiKey);
+
+const supabase = createClient(urlS!, apiKey!);
+
+async function getFlightInfo(modelAviona: string) {
   try {
-    const url = new URL(req.url);
-    const modelAviona = url.searchParams.get("model");
-
-    if (!modelAviona) {
-      return new Response("Model se nije dohvatio", { status: 400 });
-    }
-
-    const informacije = await getFlightInfo(modelAviona);
-
-    return new Response(JSON.stringify({ informacije }), {
-      headers: { "Content-Type": "application/json" },
-    });
-  } catch (error) {
-    console.error("Error:", error);
-    return new Response("Internal Server Error", { status: 500 });
-  }
-});
-
-async function getFlightInfo(modelAviona: string): Promise<string | null> {
-  try {
-    if (!modelAviona) {
+    if (modelAviona === null) {
       console.log("API nije uspio dohvatiti model aviona");
       return null;
     }
@@ -59,12 +50,17 @@ async function getFlightInfo(modelAviona: string): Promise<string | null> {
       ],
     });
     const informacije = completion.choices[0].message.content;
-    const lista = informacije.split(" ");
-    const duljina = lista.length;
-    let brojString = lista[duljina - 1];
-    brojString = brojString.replace(".", "").replace(",", "");
+    let Lista = [];
+    Lista = informacije!.split(" ");
+    const duljina = Lista.length;
+    let brojString = Lista[duljina - 1];
+    brojString = brojString.replace(".", "");
+    brojString = brojString.replace(",", "");
+
     const brojModela = parseInt(brojString, 10);
-    await DodajDesc(modelAviona, informacije, brojModela);
+
+    await DodajDesc(modelAviona, informacije!, brojModela);
+
     return informacije;
   } catch (error) {
     console.error("Greška pri dohvaćanju podataka o modelu aviona:", error);
@@ -76,17 +72,49 @@ async function DodajDesc(
   modelAvion: string,
   opis: string,
   brojProizvedeno: number
-): Promise<any> {
+) {
   const { data, error } = await supabase
     .from("avioninadjeno")
     .update({ description: opis, modelnum: brojProizvedeno })
     .eq("model", modelAvion);
+
   if (error) {
     console.error("Greška pri ubacivanju opisa:", error.message);
     return [];
   }
   return data;
 }
+
+console.log("Hello from Functions!");
+
+serve(async (req) => {
+  if (req.method === "OPTIONS") {
+    return new Response("ok", { headers: corsHeaders });
+  }
+  try {
+    const url = new URL(req.url);
+    const modelAviona = url.searchParams.get("model");
+
+    if (!modelAviona) {
+      return new Response("Model se nije dohvatio", {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const informacije = await getFlightInfo(modelAviona);
+
+    return new Response(JSON.stringify({ informacije }), {
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  } catch (error) {
+    console.error("Error:", error);
+    return new Response("Internal Server Error", {
+      status: 500,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+});
 
 /* To invoke locally:
 

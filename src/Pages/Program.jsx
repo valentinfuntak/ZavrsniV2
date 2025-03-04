@@ -1,20 +1,15 @@
-//IZMJENIL SAM CREATEEFFECT
-
 import { useAuth } from "../Auth/AuthProvider.jsx";
 import { useNavigate, A } from "@solidjs/router";
 import { createEffect, createSignal, Show, For } from "solid-js";
 
-import { getPlanes, planes } from "../Backend/supabaseClient.js";
-
-//import { fetchFlightInfo } from "../Components/Navigacija";
 import Navigacija from "../Components/Navigacija.jsx";
 import { konverzijaDatum } from "../Components/Navigacija.jsx";
-//IZMJENA //import { userID } from "../Components/Navigacija.jsx";
 import { showNotification } from "../Components/Navigacija.jsx";
-
-import { getFlightInfo } from '../Services/OpenAIAPI';
 import { getImgUrl } from "../Services/ImageScraperADSBDB.js";
-import { spremiSliku } from "../Backend/supabaseClient";
+import { spremiSliku, getPlanes, planes } from "../Backend/supabaseClient";
+
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseKey = import.meta.env.VITE_SUPABASE_API_KEY;
 
 function Program(props) {
     const session = useAuth();
@@ -34,7 +29,14 @@ function Program(props) {
 
     const fetchFlightInfo = async (model, AVreg) => {
         try {
-            const informacijeAvion = await getFlightInfo(model);
+            const response = await fetch(`${supabaseUrl}/functions/v1/Search?model=${model}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${supabaseKey}`,
+                }
+            });
+            const informacijeAvion = await response.json();
             const slikaAvion = await getImgUrl(AVreg);
             await spremiSliku(model, slikaAvion, session().user.id);
             if (informacijeAvion !== null) {
@@ -50,8 +52,8 @@ function Program(props) {
     return (
         <>
             {isMobile() && <Navigacija />}
-            <div class="mt-5 flex flex-column sm:flex-row flex-wrap space-y-4 sm:space-y-0 items-center justify-between pb-4">
-                {/*<div>
+            {/*<div class="mt-5 flex flex-column sm:flex-row flex-wrap space-y-4 sm:space-y-0 items-center justify-between pb-4">
+                <div>
                     <button id="dropdownRadioButton" data-dropdown-toggle="dropdownRadio" class="inline-flex items-center  border focus:outline-none  focus:ring-4  font-medium rounded-lg text-sm px-3 py-1.5 bg-gray-800 text-white border-gray-600 hover:bg-gray-700 hover:border-gray-600 focus:ring-gray-700" type="button">
                         <svg class="w-3 h-3 text-gray-400 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
                             <path d="M10 0a10 10 0 1 0 10 10A10.011 10.011 0 0 0 10 0Zm3.982 13.982a1 1 0 0 1-1.414 0l-3.274-3.274A1.012 1.012 0 0 1 9 10V6a1 1 0 0 1 2 0v3.586l2.982 2.982a1 1 0 0 1 0 1.414Z" />
@@ -102,8 +104,8 @@ function Program(props) {
                         <svg class="w-5 h-5  text-gray-400" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path></svg>
                     </div>
                     <input type="text" id="table-search" class="block p-2 ps-10 text-sm text-gray-900 border rounded-lg w-80   bg-gray-700 border-gray-600 placeholder-gray-400 :text-white focus:ring-blue-500 focus:border-blue-500" placeholder="Search for items" />
-                </div>*/}
-            </div>
+                </div>
+            </div>*/}
             <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-5 border-2  border-gray-600">
                 <table class="w-full text-sm text-left rtl:text-right  text-gray-400">
                     <caption class="p-5 text-lg font-semibold text-left rtl:text-right   text-white bg-gray-800">
@@ -159,7 +161,6 @@ function Program(props) {
             </div>
 
         </>
-
     );
 }
 

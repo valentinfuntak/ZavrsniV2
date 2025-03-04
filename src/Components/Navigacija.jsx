@@ -4,7 +4,6 @@ import * as geolib from 'geolib';
 
 import { getFlightPositions } from '../Services/FlightRadarAPI.js';
 import { getElevationData } from '../Services/ElevacijaAPI.js';
-import { getFlightInfo } from '../Services/OpenAIAPI';
 import { insertPlane} from '../Backend/supabaseClient.js';
 import success from '../assets/bingo.mp3';
 import fail from '../assets/fail.mp3';
@@ -374,7 +373,6 @@ export default function KomponentaProgram(props) {
   }
 
   const [loading, setLoading] = createSignal(false);
-
 
   const fetchFlightData = async () => {
     setLoading(true);
