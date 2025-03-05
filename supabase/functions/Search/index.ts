@@ -14,8 +14,6 @@ const openai = new OpenAI({
   apiKey: Deno.env.get("VITE_OPENAI_KEY"),
 });
 
-console.log(Deno.env.get("VITE_OPENAI_KEY"));
-
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   Authorization: `Bearer ${Deno.env.get("VITE_OPENAI_KEY")}`,
@@ -50,6 +48,7 @@ async function getFlightInfo(modelAviona: string) {
       ],
     });
     const informacije = completion.choices[0].message.content;
+    const InformacijeString = String(informacije);
     let Lista = [];
     Lista = informacije!.split(" ");
     const duljina = Lista.length;
@@ -59,9 +58,9 @@ async function getFlightInfo(modelAviona: string) {
 
     const brojModela = parseInt(brojString, 10);
 
-    await DodajDesc(modelAviona, informacije!, brojModela);
+    await DodajDesc(modelAviona, InformacijeString!, brojModela);
 
-    return informacije;
+    return informacijeString;
   } catch (error) {
     console.error("Greška pri dohvaćanju podataka o modelu aviona:", error);
     throw error;
@@ -104,7 +103,7 @@ serve(async (req) => {
 
     const informacije = await getFlightInfo(modelAviona);
 
-    return new Response(JSON.stringify({ informacije }), {
+    return new Response(JSON.stringify({ informacijeString }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (error) {
