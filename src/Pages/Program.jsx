@@ -29,18 +29,19 @@ function Program(props) {
 
     const fetchFlightInfo = async (model, AVreg) => {
         try {
-            const response = await fetch(`${supabaseUrl}/functions/v1/Search?model=${model}`, {
+            const response = await fetch(`${supabaseUrl}/functions/v1/Search`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${supabaseKey}`,
-                }
+                },
+                body: JSON.stringify({ model }) 
             });
             const informacijeAvion = await response.json();
             const slikaAvion = await getImgUrl(AVreg);
             await spremiSliku(model, slikaAvion, session().user.id);
             if (informacijeAvion !== null) {
-                showNotification(`${String(informacijeAvion)}`, "info", 20000);
+                showNotification(`${informacijeAvion}`, "info", 20000);
             } else {
                 console.log("OPEN AI API vratio je null vrijednost");
             }
@@ -154,6 +155,7 @@ function Program(props) {
                         </For>
                     </tbody>
                 </table>
+
             </div>
             <div class="pt-8 mt-10 font-semibold text-xl hover:text-yellow-500">
                 <A href="/mojHangar">Kako bi vidjeli sve pronađene zrakoplove, posjetite Moj Hangar!</A>

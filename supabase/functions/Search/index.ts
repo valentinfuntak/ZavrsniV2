@@ -23,7 +23,6 @@ const corsHeaders = {
 
 const urlS = Deno.env.get("VITE_SUPABASE_URL");
 const apiKey = Deno.env.get("VITE_SUPABASE_API_KEY");
-console.log(urlS, apiKey);
 
 const supabase = createClient(urlS!, apiKey!);
 
@@ -48,7 +47,6 @@ async function getFlightInfo(modelAviona: string) {
       ],
     });
     const informacije = completion.choices[0].message.content;
-    const InformacijeString = String(informacije);
     let Lista = [];
     Lista = informacije!.split(" ");
     const duljina = Lista.length;
@@ -58,9 +56,9 @@ async function getFlightInfo(modelAviona: string) {
 
     const brojModela = parseInt(brojString, 10);
 
-    await DodajDesc(modelAviona, InformacijeString!, brojModela);
+    await DodajDesc(modelAviona, informacije, brojModela);
 
-    return informacijeString;
+    return informacije;
   } catch (error) {
     console.error("Greška pri dohvaćanju podataka o modelu aviona:", error);
     throw error;
@@ -91,8 +89,7 @@ serve(async (req) => {
     return new Response("ok", { headers: corsHeaders });
   }
   try {
-    const url = new URL(req.url);
-    const modelAviona = url.searchParams.get("model");
+    const {modelAviona} = await req.json();
 
     if (!modelAviona) {
       return new Response("Model se nije dohvatio", {
@@ -103,7 +100,7 @@ serve(async (req) => {
 
     const informacije = await getFlightInfo(modelAviona);
 
-    return new Response(JSON.stringify({ informacijeString }), {
+    return new Response(JSON.stringify({ informacije }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (error) {
