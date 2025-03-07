@@ -14,8 +14,6 @@ const openai = new OpenAI({
   apiKey: Deno.env.get("VITE_OPENAI_KEY"),
 });
 
-console.log(Deno.env.get("VITE_OPENAI_KEY"));
-
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   Authorization: `Bearer ${Deno.env.get("VITE_OPENAI_KEY")}`,
@@ -25,13 +23,12 @@ const corsHeaders = {
 
 const urlS = Deno.env.get("VITE_SUPABASE_URL");
 const apiKey = Deno.env.get("VITE_SUPABASE_API_KEY");
-console.log(urlS, apiKey);
 
 const supabase = createClient(urlS!, apiKey!);
 
-async function getFlightInfo(modelAviona: string) {
+async function getFlightInfo(model: string) {
   try {
-    if (modelAviona === null) {
+    if (model === null) {
       console.log("API nije uspio dohvatiti model aviona");
       return null;
     }
@@ -45,13 +42,13 @@ async function getFlightInfo(modelAviona: string) {
         },
         {
           role: "user",
-          content: `Napiši mi neke važne informacije o zrakoplovu: ${modelAviona}.`,
+          content: `Napiši mi neke važne informacije o zrakoplovu: ${model}.`,
         },
       ],
     });
-    const informacije = completion.choices[0].message.content;
+    const info = completion.choices[0].message.content;
     let Lista = [];
-    Lista = informacije!.split(" ");
+    Lista = info!.split(" ");
     const duljina = Lista.length;
     let brojString = Lista[duljina - 1];
     brojString = brojString.replace(".", "");
@@ -59,30 +56,11 @@ async function getFlightInfo(modelAviona: string) {
 
     const brojModela = parseInt(brojString, 10);
 
-    await DodajDesc(modelAviona, informacije!, brojModela);
-
-    return informacije;
+    return informacije, brojModela;
   } catch (error) {
     console.error("Greška pri dohvaćanju podataka o modelu aviona:", error);
     throw error;
   }
-}
-
-async function DodajDesc(
-  modelAvion: string,
-  opis: string,
-  brojProizvedeno: number
-) {
-  const { data, error } = await supabase
-    .from("avioninadjeno")
-    .update({ description: opis, modelnum: brojProizvedeno })
-    .eq("model", modelAvion);
-
-  if (error) {
-    console.error("Greška pri ubacivanju opisa:", error.message);
-    return [];
-  }
-  return data;
 }
 
 console.log("Hello from Functions!");
@@ -92,17 +70,17 @@ serve(async (req) => {
     return new Response("ok", { headers: corsHeaders });
   }
   try {
-    const url = new URL(req.url);
-    const modelAviona = url.searchParams.get("model");
+    const {model} = await req.json();
+    console.log("U EDGE FUNKCIJI MODEL JE", model, typeof(model));
 
-    if (!modelAviona) {
-      return new Response("Model se nije dohvatio", {
+    if (!model) {
+      return new Response("model se nije dohvatio", {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    const informacije = await getFlightInfo(modelAviona);
+    const informacije = await getFlightInfo(model);
 
     return new Response(JSON.stringify({ informacije }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },

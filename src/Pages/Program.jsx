@@ -6,7 +6,7 @@ import Navigacija from "../Components/Navigacija.jsx";
 import { konverzijaDatum } from "../Components/Navigacija.jsx";
 import { showNotification } from "../Components/Navigacija.jsx";
 import { getImgUrl } from "../Services/ImageScraperADSBDB.js";
-import { spremiSliku, getPlanes, planes } from "../Backend/supabaseClient";
+import { spremiSliku, getPlanes, planes, DodajDesc } from "../Backend/supabaseClient";
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseKey = import.meta.env.VITE_SUPABASE_API_KEY;
@@ -28,19 +28,23 @@ function Program(props) {
     });
 
     const fetchFlightInfo = async (model, AVreg) => {
+        console.log("PRIJE POSTA model je", model, typeof(model));
         try {
-            const response = await fetch(`${supabaseUrl}/functions/v1/Search?model=${model}`, {
+            const response = await fetch(`${supabaseUrl}/functions/v1/Search`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${supabaseKey}`,
-                }
+                },
+                body: JSON.stringify({ model }) 
             });
+            console.log("PREKO POSTA PREBACUJE SE", JSON.stringify({model}));
             const informacijeAvion = await response.json();
             const slikaAvion = await getImgUrl(AVreg);
             await spremiSliku(model, slikaAvion, session().user.id);
-            if (informacijeAvion !== null) {
-                showNotification(`${informacijeAvion}`, "info", 20000);
+            if (informacijeAvion) {
+                DodajDesc(model, informacijeAvion.informacije.informacije, informacijeAvion.informacije.brojM);
+                showNotification(`${informacijeAvion.informacije.informacije}`, "info", 20000);
             } else {
                 console.log("OPEN AI API vratio je null vrijednost");
             }

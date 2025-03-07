@@ -38,17 +38,6 @@ export async function getPlanes(userID) {
   setPlanes(data);
 }
 
-export async function DodajDesc(modelAvion, opis, brojProizvedeno){
-  const { data, error } = await supabase.from("avioninadjeno")
-  .update({ description: opis, modelnum: brojProizvedeno})
-  .eq("model", modelAvion);
-
-  if (error) {
-    console.error("Greška pri ubacivanju opisa:", error.message);
-    return [];
-  }
-   return data;
-}
 
 async function StvoriTablicuModelUniq(){
   let { data, error } = await supabase
@@ -79,7 +68,7 @@ if(error){
   console.log(error);
 }
 
-if(!data.length){
+if(data.length === 0 || !data[0].url){
   const { data, error } = await supabase.from("avioninadjeno")
   .update({url: urlAviona})
   .eq('model', modelAV)
@@ -91,6 +80,23 @@ if(!data.length){
 }else{
   console.log("ovaj model zrakoplova već ima sliku");
 }
+}
+
+export async function DodajDesc(
+  modelAvion,
+  opis,
+  brojProizvedeno
+) {
+  const { data, error } = await supabase
+    .from("avioninadjeno")
+    .update({ description: opis, modelnum: brojProizvedeno })
+    .eq("model", modelAvion);
+
+  if (error) {
+    console.error("Greška pri ubacivanju opisa:", error.message);
+    return [];
+  }
+  return data;
 }
 
 export default supabase;
