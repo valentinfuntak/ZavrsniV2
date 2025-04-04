@@ -4,18 +4,18 @@ import supabase from '../Backend/supabaseClient';
 
 import Plane from "../assets/planefav.png";
 
+  export const [result, setResult] = createSignal({
+  email: '',
+  username: '',
+  password: '',
+  confirmPassword: '',
+  error: '',
+  loading: false,
+  success: false
+});
+
 function Registracija(props) {
   const navigate = useNavigate();
-
-  // Koristimo jedan signal za spremanje e-maila i lozinke
-  const [result, setResult] = createSignal({
-    email: '',
-    password: '',
-    confirmPassword: '',
-    error: '',
-    loading: false,
-    success: false
-  });
 
   const handleRegistration = async (e) => {
     e.preventDefault();
@@ -37,7 +37,6 @@ function Registracija(props) {
       } else {
         setResult({ ...result(), success: true, loading: false });
         console.log('Korisnik uspješno registriran:', user);
-
         navigate('/prijava');
       }
     } catch (err) {
@@ -81,6 +80,24 @@ function Registracija(props) {
                     placeholder="name@company.com"
                     value={result().email}
                     onInput={(e) => setResult({ ...result(), email: e.target.value })}
+                    required
+                  />
+                </div>
+                <div>
+                  <label
+                    htmlFor="username"
+                    className="block mb-2 text-sm font-medium  text-white"
+                  >
+                    Username
+                  </label>
+                  <input
+                    type="text"
+                    name="username"
+                    id="username"
+                    className="border   text-sm rounded-lg   block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="MyUsername123"
+                    value={result().username}
+                    onInput={(e) => setResult({ ...result(), username: e.target.value })}
                     required
                   />
                 </div>

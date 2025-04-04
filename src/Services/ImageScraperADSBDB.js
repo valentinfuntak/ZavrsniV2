@@ -9,7 +9,7 @@ export async function getImgUrl(planeRegistration) {
                 return null;
             } else {
                 const data = await response.json();
-                let ImgUrl = data.response.aircraft.url_photo;
+                let ImgUrl = data.response.aircraft.url_photo_thumbnail;
                 console.log(planeRegistration);
                 return ImgUrl;
             }

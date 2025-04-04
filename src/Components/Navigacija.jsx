@@ -5,6 +5,7 @@ import * as geolib from 'geolib';
 import { getFlightPositions } from '../Services/FlightRadarAPI.js';
 import { getElevationData } from '../Services/ElevacijaAPI.js';
 import { insertPlane} from '../Backend/supabaseClient.js';
+import { result } from "../Pages/Registracija.jsx";
 import success from '../assets/bingo.mp3';
 import fail from '../assets/fail.mp3';
 
@@ -332,7 +333,7 @@ export default function KomponentaProgram(props) {
       var audio = document.getElementById("audiosuccess");
       audio.play();
 
-      insertPlane(avionLa, avionLn, visina, brzina, callA, model, userID(), liveryA, reg);
+      insertPlane(result().username, avionLa, avionLn, visina, brzina, callA, model, userID(), liveryA, reg);
 
       if (error) {
         console.error('Greška pri spremanju podataka u bazu:', error.message);

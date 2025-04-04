@@ -18,9 +18,9 @@ function Upute(props) {
             <div>
                 <h2 class="text-2xl text-yellow-600 font-semibold mb-8">Korištenje karte</h2>
                 <p class="font-semibold mb-10">
-                    Kartu možete koristiti kako bi se mogli što lakše pozicionirali.<br></br>
-                    Karta će uvjek prikazati vaš trenutačni položaj.<br></br>
-                    Karta se može povećati i smanjiti gestikuliranjem.<br></br>
+                    Kartu možete koristiti kako bi se mogli što lakše orijentirati u prostoru.<br></br>
+                    Karta će uvjek prikazivati vaš trenutačan položaj.<br></br>
+                    Karta se može povećati i smanjiti po želji.<br></br>
                     Nakon pritiska na gumb "Skeniraj", na karti će se prikazati svi avioni<br></br>
                     u okrugu od 30km.<br></br>
                 </p>
@@ -41,7 +41,7 @@ function Upute(props) {
             <div>
                 <h2 class="text-2xl text-yellow-600 font-semibold mb-8">Podaci o avionu</h2>
                 <p class="font-semibold mb-10">
-                    U kućici pod nazivom "Podaci o avionu" možete pronaći podatke o najbližem zrakoplov.<br></br>
+                    U kućici pod nazivom "Podaci o avionu" možete pronaći podatke o najbližem zrakoplovu.<br></br>
                     Vrijednosti ovih polja popunjavaju se kada korisnik ne pronađe zrakoplov<br></br>
                     nakon pritiska na gumb "Skeniraj".<br></br>
                     Ovdje možete pronaći podatke koji će vam pomoći da pronađete najbliži zrakoplov.<br></br>

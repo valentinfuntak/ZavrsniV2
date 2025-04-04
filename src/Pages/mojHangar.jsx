@@ -54,7 +54,7 @@ function MojHangar(props) {
                     </div>
                 </div>
             );
-        } else if (kartica.modelnum > 2000) {
+        } else if (kartica.modelnum > 1000) {
             return (
                 <div class="custom-card content-center pb-8 pt-9 flex items-center justify-center">
                     <div class="content-center p-5 flex items-center justify-center bg-red-400 rounded-md bg-clip-padding backdrop-filter backdrop-blur-md bg-opacity-20 border border-fushia-100 animate-glow duration-1000 delay-200">
@@ -72,7 +72,7 @@ function MojHangar(props) {
                 </div>
 
             );
-        } else if (kartica.modelnum > 1000 && kartica.modelnum <= 2000) {
+        } else if (kartica.modelnum < 1000 && kartica.modelnum >= 200) {
             console.log(kartica.url);
             return (
 
@@ -91,7 +91,7 @@ function MojHangar(props) {
                     </div>
                 </div>
             );
-        } else if (kartica.modelnum <= 1000 && kartica.modelnum > 100) {
+        } else if (kartica.modelnum <= 200 && kartica.modelnum > 40) {
             return (
                 <div class="custom-card content-center pb-8 pt-9 flex items-center justify-center">
                     <div class="content-center p-5 flex items-center justify-center bg-purple-500 rounded-md bg-clip-padding backdrop-filter backdrop-blur-md bg-opacity-20 border border-gray-100 animate-glow3 duration-1000 delay-200">
@@ -108,7 +108,7 @@ function MojHangar(props) {
                     </div>
                 </div>
             );
-        } else if (kartica.modelnum <= 100) {
+        } else if (kartica.modelnum <= 40) {
             return (
                 <div class="custom-card content-center pb-8 pt-9 flex items-center justify-center">
                     <div class="content-center p-5 flex items-center justify-center  bg-yellow-300 rounded-md bg-clip-padding backdrop-filter backdrop-blur-md bg-opacity-20 border border-gray-100 animate-glow4 duration-1000 delay-200">

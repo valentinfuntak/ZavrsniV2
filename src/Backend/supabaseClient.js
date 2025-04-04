@@ -8,13 +8,14 @@ const apiKey = import.meta.env.VITE_SUPABASE_API_KEY;
 export const supabase = createClient(url, apiKey);
 
 export const [planes, setPlanes] = createSignal(null);
+export const [userLeadenboard, setUserLeadenboard] = createSignal(null);
 
 
-export async function insertPlane(lat, lon, alt, brzina, call, modelA, userID, Livery, registrationA) {
+export async function insertPlane(userNam, lat, lon, alt, brzina, call, modelA, userID, Livery, registrationA) {
   const { error } = await supabase
     .from("avioninadjeno")
     .insert([
-      { latitude: lat, longitude: lon, altitude: alt, speed: brzina, callsign: call, model: modelA, owner_id: userID, livery: Livery, registration: registrationA }
+      {userName: userNam, latitude: lat, longitude: lon, altitude: alt, speed: brzina, callsign: call, model: modelA, owner_id: userID, livery: Livery, registration: registrationA }
     ]);
   if (error) {
     console.error('Greška pri spremanju podataka u bazu:', error.message);
@@ -97,6 +98,21 @@ export async function DodajDesc(
     return [];
   }
   return data;
+}
+
+export async function getUserLeadenboard(){
+  const { error, data} = await supabase
+  .from("modelifiltrirani")
+  .select("*")
+  .order('modelnum', { ascending: true })
+  .limit(100)
+
+  if (error) {
+    console.error("Greška pri dohvacanju korisnika:", error.message);
+  }
+
+  setUserLeadenboard(data);
+  console.log(data);
 }
 
 export default supabase;
