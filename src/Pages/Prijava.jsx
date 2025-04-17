@@ -2,6 +2,9 @@ import { createSignal } from 'solid-js';
 import { useNavigate } from '@solidjs/router'; 
 import supabase from '../Backend/supabaseClient.js';
 import Plane from "../assets/planefav.png";
+import { useAuth } from '../Auth/AuthProvider.jsx';
+import { differenceInCalendarDays } from "date-fns";
+
 
 function Prijava(props) {
     const [email, setEmail] = createSignal('');
@@ -11,6 +14,8 @@ function Prijava(props) {
     const [rememberMe, setRememberMe] = createSignal(false);
     
     const navigate = useNavigate();
+    const session = useAuth();
+
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -27,7 +32,15 @@ function Prijava(props) {
                 setError('Neispravni podaci za prijavu.');
                 console.log(error.message);
             } else {
-                navigate('/pocetna'); // Preusmjeravanje na početnu
+                const razlika = differenceInCalendarDays(
+                    new Date(),
+                    new Date(session().user.created_at)
+                  );
+                  if(razlika <= 3){
+                   navigate("/upute");
+                  }else{
+                    navigate('/pocetna'); // Preusmjeravanje na početnu
+                  }
             }
         } catch (err) {
             setError('Došlo je do pogreške pri prijavi.');

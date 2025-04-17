@@ -1,12 +1,13 @@
 import { useAuth } from "../Auth/AuthProvider.jsx";
 import { useNavigate, A } from "@solidjs/router";
 import { createEffect, createSignal, Show, For } from "solid-js";
+import { differenceInCalendarDays } from "date-fns";
 
 import Navigacija from "../Components/Navigacija.jsx";
 import { konverzijaDatum } from "../Components/Navigacija.jsx";
 import { showNotification } from "../Components/Navigacija.jsx";
 import { getImgUrl } from "../Services/ImageScraperADSBDB.js";
-import { spremiSliku, getPlanes, planes, DodajDesc } from "../Backend/supabaseClient";
+import { spremiSliku, getPlanes, planes, DodajDesc, getLatesResearchDate } from "../Backend/supabaseClient";
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseKey = import.meta.env.VITE_SUPABASE_API_KEY;
@@ -28,30 +29,53 @@ function Program(props) {
     });
 
     const fetchFlightInfo = async (model, AVreg) => {
-        console.log("PRIJE POSTA model je", model, typeof model);
         try {
-            const response = await fetch(`${supabaseUrl}/functions/v1/Search`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${supabaseKey}`,
-                },
-                body: JSON.stringify({ model }),
-            });
-            console.log("PREKO POSTA PREBACUJE SE", JSON.stringify({ model }));
-            const data = await response.json();
-            const flightInfo = data.informacije;
             const slikaAvion = await getImgUrl(AVreg);
             await spremiSliku(model, slikaAvion, session().user.id);
-            if (flightInfo) {
-                DodajDesc(model, flightInfo.info, flightInfo.brojModela);
-                showNotification(`${flightInfo.info}`, "info", 20000);
+            const res = await getLatesResearchDate(model);
+            let fetchdata;
+            if (!res[0]) {
+                fetchdata = true;
             } else {
-                console.log("OPEN AI API vratio je null vrijednost");
+                const razlika = differenceInCalendarDays(
+                    new Date(),
+                    new Date(res[0].time)
+                );
+                if (razlika >= 365) {
+                    fetchdata = true;
+                } else {
+                    DodajDesc(model, res[0].description, res[0].modelnum);
+                    showNotification(`${res[0].description}`, "info", 20000);
+                }
+
+            }
+
+            if (fetchdata) {
+                const response = await fetch(`${supabaseUrl}/functions/v1/Search`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${supabaseKey}`,
+                    },
+                    body: JSON.stringify({ model }),
+                });
+                console.log("PREKO POSTA PREBACUJE SE", JSON.stringify({ model }));
+                const data = await response.json();
+                const flightInfo = data.informacije;
+                if (flightInfo) {
+                    DodajDesc(model, flightInfo.info, flightInfo.brojModela);
+                    showNotification(`${flightInfo.info}`, "info", 20000);
+                } else {
+                    console.log("OPEN AI API vratio je null vrijednost");
+                }
             }
         } catch (error) {
             console.error("Greška pri pokušaju dohvaćanja informacija: ", error);
         }
+
+
+
+
     };
 
     return (

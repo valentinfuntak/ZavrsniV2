@@ -15,7 +15,7 @@ export async function insertPlane(userNam, lat, lon, alt, brzina, call, modelA, 
   const { error } = await supabase
     .from("avioninadjeno")
     .insert([
-      {userName: userNam, latitude: lat, longitude: lon, altitude: alt, speed: brzina, callsign: call, model: modelA, owner_id: userID, livery: Livery, registration: registrationA }
+      {username: userNam, latitude: lat, longitude: lon, altitude: alt, speed: brzina, callsign: call, model: modelA, owner_id: userID, livery: Livery, registration: registrationA }
     ]);
   if (error) {
     console.error('Greška pri spremanju podataka u bazu:', error.message);
@@ -114,5 +114,23 @@ export async function getUserLeadenboard(){
   setUserLeadenboard(data);
   console.log(data);
 }
+export async function getLatesResearchDate(modelAv){
+  const { error, data} = await supabase
+  .from("avioninadjeno")
+  .select("time, description, modelnum")
+  .eq("model", modelAv)
+  .not("description", "is", null) 
+  .order('time', { ascending: false })
+  .limit(1)
+  
+
+  if (error) {
+    console.error("Greška pri dohvacanju korisnika:", error.message);
+  }
+
+console.log(data);
+return data;
+}
+
 
 export default supabase;

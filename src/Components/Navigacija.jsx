@@ -236,6 +236,10 @@ export default function KomponentaProgram(props) {
   setUserID(session().user.id);
     console.log("SESSION::",userID);
   onMount(() => {
+    const mapContainer = document.getElementById("map-container");
+    if (mapContainer) {
+      initializeMap(mapContainer);
+    }
     let magSensor = new Magnetometer();
 
     magSensor.addEventListener("reading", (e) => {
@@ -261,10 +265,7 @@ export default function KomponentaProgram(props) {
     showNotification("Kako bi ste koristili magnetometar, posjetite lokaciju chrome://flags ili edge://flags te dozvolite rad magnetometra!", "info", 10000);
 
     orijentacijaUredjaja();
-    const mapContainer = document.getElementById("map-container");
-    if (mapContainer) {
-      initializeMap(mapContainer);
-    }
+    
     window.addEventListener("deviceorientation", handleOrientation);
 
     return () => {
@@ -326,16 +327,15 @@ export default function KomponentaProgram(props) {
 
     const gornjaGranicaY = kutYAvion() + 20;
     const donjaGranicaY = kutYAvion() - 20;
-    const gornjaGranicaX = kutAvionaX() + 20;
-    const donjaGranicaX = kutAvionaX() - 20;
+    const gornjaGranicaX = kutAvionaX() + 25;
+    const donjaGranicaX = kutAvionaX() - 25;
 
     if (beta >= donjaGranicaY && beta <= gornjaGranicaY && smjer >= donjaGranicaX && smjer <= gornjaGranicaX) {
       var audio = document.getElementById("audiosuccess");
       audio.play();
-
-      insertPlane(result().username, avionLa, avionLn, visina, brzina, callA, model, userID(), liveryA, reg);
-
-      if (error) {
+ alert("insertPlane(" + session().user?.user_metadata?.username + ", " + avionLa + ", " + avionLn + ", " + visina + ", " + brzina + ", " + callA + ", " + model + ", " + userID() + ", " + liveryA + ", " + reg + ");");
+  insertPlane(session().user?.user_metadata?.username, avionLa, avionLn, visina, brzina, callA, model, userID(), liveryA, reg);
+      if (error) { 
         console.error('Greška pri spremanju podataka u bazu:', error.message);
       } else {
         console.log('Podaci spremljeni u bazu');
@@ -437,11 +437,27 @@ export default function KomponentaProgram(props) {
 
   //POKRECE SVE RADI
   async function pokretac() {
+    const buttonScan = document.getElementById("scan");
+    buttonScan.disabled = true;
+    buttonScan.classList.replace("bg-blue-600", "bg-red-500");
+    buttonScan.classList.remove("hover:bg-blue-700");
+    if (map()) {
+      map().remove();
+    }
+    const mapContainer = document.getElementById("map-container");
+    if (mapContainer) {
+      initializeMap(mapContainer);
+    }
     setUdaljenostKuteva(undefined);
     await lokacijaKorisnik();
     await prozor(latitude(), longitude());
     await getElevation(latitude(), longitude());
     await fetchFlightData();
+    setTimeout(() => {
+      buttonScan.disabled = false;
+      buttonScan.classList.replace("bg-red-500", "bg-blue-600");
+      buttonScan.classList.add("hover:bg-blue-700");
+    }, 5000);
   }
   return (
     <>
@@ -493,7 +509,7 @@ export default function KomponentaProgram(props) {
             <audio id="audiofail" src={fail}></audio>
 
             <button
-              onClick={pokretac}
+              onClick={pokretac} id = "scan"
               class="bg-blue-600 text-white font-semibold py-2 px-4 w-full rounded-lg shadow-md hover:bg-blue-700 transition duration-200"
             >
               Skeniraj
