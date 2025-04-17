@@ -26,6 +26,7 @@
   "dependencies": {
     "@solidjs/router": "^0.15.1",
     "@supabase/supabase-js": "^2.47.10",
+    "date-fns": "^4.1.0",
     "flowbite": "^2.5.2",
     "geolib": "^3.3.4",
     "leaflet": "^1.9.4",
